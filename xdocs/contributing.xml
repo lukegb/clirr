@@ -1,3 +1,5 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
 <document>
     <properties>
         <title>Clirr Ant Task</title>
@@ -6,7 +8,7 @@
     <body>
         <section name="Contributing to Clirr">
             <p>
-                If you have made an improvent to the Clirr source code, documentation,
+                If you have made an improvement to the Clirr source code, documentation,
                 or anything else, please consider contributing it back to the community.
             </p>
             <p>
@@ -16,7 +18,7 @@
             </p>
             <p>
                 Note that anything you contribute must have the same license
-                as the rest of Clirr, i.e. LGPL, Copyright Lars KÃ¼hne.
+                as the rest of Clirr, i.e. LGPL, Copyright Lars Kühne.
             </p>
         </section>
         <section name="Copyright Lars? Why not copyright myself?">
