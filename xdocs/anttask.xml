@@ -124,6 +124,39 @@
         for details.
                 </p>
             </section>
+
+
+
+            <section name="formatter">
+
+                <p>
+        A formatter that generates Clirr output. Multiple formatters can be specified.
+        Available attributes for each formatter element:
+                </p>
+                <table>
+                    <tr>
+                        <td>Attribute</td>
+                        <td>Description</td>
+                        <td>Required</td>
+                        <td>Default</td>
+                    </tr>
+                    <tr>
+                        <td>type</td>
+                        <td>The formatter type. Available types are <em>plain</em> and <em>xml</em></td>
+                        <td>No</td>
+                        <td>plain</td>
+                    </tr>
+                    <tr>
+                        <td>outfile</td>
+                        <td>The file to write to. If not specified, output is written to stdout</td>
+                        <td>No</td>
+                        <td>stdout</td>
+                    </tr>
+                </table>
+            </section>
+            <p>
+                If no formatter is specified, Clirr will write it's findings to stdout in plain format.
+            </p>
         </section>
     </body>
 </document>

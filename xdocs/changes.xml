@@ -24,6 +24,10 @@
             create the impression that there are no compatibility problems,
             just because Clirr didn't report anything.
         </action>
+        <action dev="lkuehne" type="fix">
+            <!-- RFE #958807 -->
+            Documented formatter subelements in Ant task.
+        </action>
     </release>
 
     <release version="0.2" date="2004-05-22">
