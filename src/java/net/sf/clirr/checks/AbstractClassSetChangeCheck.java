@@ -24,9 +24,10 @@ import java.util.Arrays;
 import net.sf.clirr.event.Severity;
 import net.sf.clirr.framework.AbstractDiffReporter;
 import net.sf.clirr.framework.ApiDiffDispatcher;
+import net.sf.clirr.framework.ClassSetChangeCheck;
 
 abstract class AbstractClassSetChangeCheck
-        extends AbstractDiffReporter
+        extends AbstractDiffReporter implements ClassSetChangeCheck
 {
     protected AbstractClassSetChangeCheck(ApiDiffDispatcher dispatcher)
     {

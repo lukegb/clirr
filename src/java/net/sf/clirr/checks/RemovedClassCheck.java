@@ -21,7 +21,6 @@ package net.sf.clirr.checks;
 
 import net.sf.clirr.event.Severity;
 import net.sf.clirr.framework.ApiDiffDispatcher;
-import net.sf.clirr.framework.ClassSetChangeCheck;
 import org.apache.bcel.util.ClassSet;
 
 /**
@@ -31,7 +30,6 @@ import org.apache.bcel.util.ClassSet;
  */
 public final class RemovedClassCheck
         extends AbstractClassSetChangeCheck
-        implements ClassSetChangeCheck
 {
     /**
      * Create a new instance of this check.
