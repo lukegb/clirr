@@ -22,27 +22,27 @@
         To do this you will need an ant snippet similar to the following:
             </p>
 
-            <pre>
-                &lt;target name="checkbinarycompatibility" depends="build"&gt;
+            <source>
+        &lt;target name="checkbinarycompatibility" depends="build"&gt;
 
-                &lt;!-- buildtools.classpath should contain clirr.jar and the libraries it depends on --&gt;
+        &lt;!-- buildtools.classpath should contain clirr.jar and the libraries it depends on --&gt;
 
-                &lt;taskdef classpathref="buildtools.classpath" resource="clirrtask.properties"/&gt;
+        &lt;taskdef classpathref="buildtools.classpath" resource="clirrtask.properties"/&gt;
 
-                &lt;property name="jar.baseline" value="${ant.project.name}-${compatibility.baseline.version}.jar"/&gt;
+        &lt;property name="jar.baseline" value="${ant.project.name}-${compatibility.baseline.version}.jar"/&gt;
 
-                &lt;get src="${url.libbase}/${ant.project.name}/${jar.baseline}" dest="build/tmp/${jar.baseline}"/&gt;
+        &lt;get src="${url.libbase}/${ant.project.name}/${jar.baseline}" dest="build/tmp/${jar.baseline}"/&gt;
 
-                &lt;clirr&gt;
-                &lt;origfiles dir="build/tmp" includes="${jar.baseline}"&gt;
-                &lt;newfiles dir="build/lib" includes="${jar.buildresult}"&gt;
+        &lt;clirr&gt;
+        &lt;origfiles dir="build/tmp" includes="${jar.baseline}"&gt;
+        &lt;newfiles dir="build/lib" includes="${jar.buildresult}"&gt;
 
-                &lt;!-- &lt;formatter type="xml" outfile="build/clirr.xml" /&gt; --&gt;
-                &lt;!-- TODO: example for 3rd party classpath --&gt;
-                &lt;/clirr&gt;
+        &lt;!-- &lt;formatter type="xml" outfile="build/clirr.xml" /&gt; --&gt;
+        &lt;!-- TODO: example for 3rd party classpath --&gt;
+        &lt;/clirr&gt;
 
-                &lt;/target&gt;
-            </pre>
+        &lt;/target&gt;
+            </source>
         </section>
         <section name="Parameters">
 
