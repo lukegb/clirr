@@ -62,7 +62,11 @@ public class MethodSetCheck extends AbstractDiffReporter implements ClassChangeC
 
     private ScopeSelector scopeSelector;
 
-    /** {@inheritDoc} */
+    /**
+     * Instatiates the check.
+     * @param dispatcher the dispatcher where detected differences shoudl be reported.
+     * @param scopeSelector defines the scopes to look at when searching for differences.
+     */
     public MethodSetCheck(ApiDiffDispatcher dispatcher, ScopeSelector scopeSelector)
     {
         super(dispatcher);
