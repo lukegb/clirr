@@ -24,7 +24,7 @@
   <!-- the year the project started -->
   <inceptionYear>2003</inceptionYear>
   <package>net.sf.clirr</package>
-<!--  <logo>http://maven.apache.org/images/maven.jpg</logo> -->
+  <logo>/images/clirr.png</logo>
   <description>
     Checks Java libraries for binary compatibility with older releases.
   </description>
