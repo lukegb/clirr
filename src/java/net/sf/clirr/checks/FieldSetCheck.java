@@ -119,6 +119,8 @@ public class FieldSetCheck
         }
 
         // TODO: Check field types
+
+        // TODO: warn about constant value changes (see JLS, section 13.4.8)
     }
 
     private void checkForModifierChange(Field bField, Field cField, JavaClass clazz)
@@ -143,7 +145,10 @@ public class FieldSetCheck
             fireDiff("Field " + bField.getName() + " is now static", Severity.ERROR, clazz, cField);
         }
 
-        // TODO: What about transient and volatile?
+        // JLS, 13.4.10: Adding or deleting a transient modifier of a field
+        // does not break compatibility with pre-existing binaries
+
+        // TODO: What about volatile?
     }
 
     private void checkForVisibilityChange(Field bField, Field cField, JavaClass clazz)
