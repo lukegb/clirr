@@ -76,9 +76,11 @@ public final class AntTask extends Task
         public void setType(String type)
         {
             String lowerCase = type.toLowerCase();
-            if (!lowerCase.equals(FORMATTER_TYPE_XML) && !lowerCase.equals(FORMATTER_TYPE_PLAIN))
+            if (!lowerCase.equals(FORMATTER_TYPE_XML)
+                && !lowerCase.equals(FORMATTER_TYPE_PLAIN))
             {
-                throw new BuildException("Illegal formatter type, only plain and xml are supported");
+                throw new BuildException(
+                    "Illegal formatter type, only plain and xml are supported");
             }
 
             this.type = type;
@@ -189,7 +191,8 @@ public final class AntTask extends Task
 
         if (origFiles == null || newFiles == null)
         {
-            throw new BuildException("Missing nested filesets origFiles and newFiles.", getLocation());
+            throw new BuildException(
+                "Missing nested filesets origFiles and newFiles.", getLocation());
         }
 
         if (newClassPath == null)
@@ -207,12 +210,16 @@ public final class AntTask extends Task
 
         if (origJars.length == 0)
         {
-            throw new BuildException("No files in nested fileset origFiles - nothing to check!" + " Please check your fileset specification.");
+            throw new BuildException(
+                "No files in nested fileset origFiles - nothing to check!"
+                + " Please check your fileset specification.");
         }
 
         if (newJars.length == 0)
         {
-            throw new BuildException("No files in nested fileset newFiles - nothing to check!" + " Please check your fileset specification.");
+            throw new BuildException(
+                "No files in nested fileset newFiles - nothing to check!"
+                + " Please check your fileset specification.");
         }
 
         final ClassLoader origThirdPartyLoader = createClasspathLoader(origClassPath);
@@ -244,7 +251,8 @@ public final class AntTask extends Task
             }
             catch (IOException ex)
             {
-                log("unable to initialize formatter: " + ex.getMessage(), Project.MSG_WARN);
+                log("unable to initialize formatter: " + ex.getMessage(),
+                    Project.MSG_WARN);
             }
         }
 
@@ -256,19 +264,22 @@ public final class AntTask extends Task
         checker.addDiffListener(counter);
         try
         {
-            checker.reportDiffs(origJars, newJars, origThirdPartyLoader, newThirdPartyLoader, null);
+            checker.reportDiffs(
+                origJars, newJars, origThirdPartyLoader, newThirdPartyLoader, null);
         }
         catch (CheckerException ex)
         {
             throw new BuildException(ex.getMessage());
         }
 
-        if (counter.getBinWarnings() > 0 && failOnBinWarning || counter.getBinErrors() > 0 && failOnBinError)
+        if ((counter.getBinWarnings() > 0 && failOnBinWarning)
+            || (counter.getBinErrors() > 0 && failOnBinError))
         {
             throw new BuildException("detected binary incompatible API changes");
         }
 
-        if (counter.getSrcWarnings() > 0 && failOnSrcWarning || counter.getSrcErrors() > 0 && failOnSrcError)
+        if ((counter.getSrcWarnings() > 0 && failOnSrcWarning)
+            || (counter.getSrcErrors() > 0 && failOnSrcError))
         {
             throw new BuildException("detected source incompatible API changes");
         }
@@ -290,7 +301,9 @@ public final class AntTask extends Task
             }
             catch (MalformedURLException ex)
             {
-                final IllegalArgumentException illegalArgEx = new IllegalArgumentException("Cannot create classLoader from classpath entry " + entry);
+                final IllegalArgumentException illegalArgEx =
+                    new IllegalArgumentException(
+                        "Cannot create classLoader from classpath entry " + entry);
                 illegalArgEx.initCause(ex);
                 throw illegalArgEx;
             }

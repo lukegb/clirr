@@ -65,9 +65,12 @@ public class Clirr
         options.addOption("o", "old-version", true, "jar files of old version");
         options.addOption("n", "new-version", true, "jar files of new version");
         options.addOption("s", "style", true, "output style [text|xml]");
-        options.addOption("i", "include-pkg", true, "include only classes from this package and its subpackages");
-        options.addOption("p", "show-pkg-scope", false, "show package scope classes");
-        options.addOption("a", "show-all-scopes", false, "show private and package classes");
+        options.addOption("i", "include-pkg", true,
+            "include only classes from this package and its subpackages");
+        options.addOption("p", "show-pkg-scope", false,
+            "show package scope classes");
+        options.addOption("a", "show-all-scopes", false,
+            "show private and package classes");
         options.addOption("f", "output-file", true, "output file name");
 
         CommandLine cmdline = null;
@@ -174,7 +177,10 @@ public class Clirr
     {
         HelpFormatter hf = new HelpFormatter();
         PrintWriter out = new PrintWriter(System.err);
-        hf.printHelp(75, "java " + getClass().getName() + " -o path -n path [options]", null, options, null);
+        hf.printHelp(
+            75,
+            "java " + getClass().getName() + " -o path -n path [options]",
+            null, options, null);
     }
 
     private File[] pathToFileArray(String path)
