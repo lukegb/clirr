@@ -34,8 +34,8 @@
         &lt;get src="${url.libbase}/${ant.project.name}/${jar.baseline}" dest="build/tmp/${jar.baseline}"/&gt;
 
         &lt;clirr&gt;
-        &lt;origfiles dir="build/tmp" includes="${jar.baseline}"&gt;
-        &lt;newfiles dir="build/lib" includes="${jar.buildresult}"&gt;
+        &lt;origfiles dir="build/tmp" includes="${jar.baseline}"/&gt;
+        &lt;newfiles dir="build/lib" includes="${jar.buildresult}"/&gt;
 
         &lt;!-- &lt;formatter type="xml" outfile="build/clirr.xml" /&gt; --&gt;
         &lt;!-- TODO: example for 3rd party classpath --&gt;
