@@ -19,8 +19,8 @@
 
 package net.sf.clirr.core.internal.checks;
 
-import java.util.HashSet;
 import java.util.Set;
+import java.util.TreeSet;
 
 import net.sf.clirr.core.Severity;
 import net.sf.clirr.core.Message;
@@ -110,13 +110,20 @@ public final class InterfaceSetCheck
         return true;
     }
 
+    /**
+     * Creates a Set of JavaClass objects.
+     * @param classes the classes to include in the set, might contain duplicates
+     * @return Set<JavaClass>
+     */
     private Set createClassSet(JavaClass[] classes)
     {
-        Set current = new HashSet();
+        // JavaClass does not define equals(), so we use a Set implementation
+        // that determines equality by invoking a Comparator instead of calling equals()
+
+        Set current = new TreeSet(JavaClassNameComparator.COMPARATOR);
         for (int i = 0; i < classes.length; i++)
         {
-            String currentInterface = classes[i].getClassName();
-            current.add(currentInterface);
+            current.add(classes[i]);
         }
         return current;
     }
