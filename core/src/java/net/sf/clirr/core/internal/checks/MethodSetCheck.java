@@ -43,7 +43,9 @@ import java.util.Map;
  *
  * @author lkuehne
  */
-public class MethodSetCheck extends AbstractDiffReporter implements ClassChangeCheck
+public class MethodSetCheck
+    extends AbstractDiffReporter
+    implements ClassChangeCheck
 {
     private static final Message MSG_METHOD_NOW_IN_SUPERCLASS = new Message(7000);
     private static final Message MSG_METHOD_NOW_IN_INTERFACE = new Message(7001);
@@ -54,8 +56,8 @@ public class MethodSetCheck extends AbstractDiffReporter implements ClassChangeC
     private static final Message MSG_METHOD_RETURNTYPE_CHANGED = new Message(7006);
     private static final Message MSG_METHOD_DEPRECATED = new Message(7007);
     private static final Message MSG_METHOD_UNDEPRECATED = new Message(7008);
-    private static final Message MSG_METHOD_LESS_ACCESSABLE = new Message(7009);
-    private static final Message MSG_METHOD_MORE_ACCESSABLE = new Message(7010);
+    private static final Message MSG_METHOD_LESS_ACCESSIBLE = new Message(7009);
+    private static final Message MSG_METHOD_MORE_ACCESSIBLE = new Message(7010);
     private static final Message MSG_METHOD_ADDED = new Message(7011);
     private static final Message MSG_METHOD_ADDED_TO_INTERFACE = new Message(7012);
     private static final Message MSG_ABSTRACT_METHOD_ADDED = new Message(7013);
@@ -63,7 +65,8 @@ public class MethodSetCheck extends AbstractDiffReporter implements ClassChangeC
     private ScopeSelector scopeSelector;
 
     /**
-     * Instatiates the check.
+     * Instantiates the check.
+     *
      * @param dispatcher the dispatcher where detected differences shoudl be reported.
      * @param scopeSelector defines the scopes to look at when searching for differences.
      */
@@ -114,9 +117,14 @@ public class MethodSetCheck extends AbstractDiffReporter implements ClassChangeC
                 List baselineMethods = (List) bNameToMethod.get(baselineMethodName);
                 List currentMethods = (List) cNameToMethod.get(currentMethodName);
 
-                filterSoftMatchedMethods(compatBaseline, baselineMethods, currentVersion, currentMethods);
+                filterSoftMatchedMethods(
+                    compatBaseline, baselineMethods,
+                    currentVersion, currentMethods);
 
-                filterChangedMethods(baselineMethodName, compatBaseline, baselineMethods, currentVersion, currentMethods);
+                filterChangedMethods(
+                    baselineMethodName,
+                    compatBaseline, baselineMethods,
+                    currentVersion, currentMethods);
 
                 // if any methods are left, they have no matching method in
                 // the other version, so report as removed or added respectively.
@@ -155,7 +163,11 @@ public class MethodSetCheck extends AbstractDiffReporter implements ClassChangeC
      * Note that one or both method lists may be empty on return from
      * this method.
      */
-    private void filterSoftMatchedMethods(JavaClass compatBaseline, List baselineMethods, JavaClass currentVersion, List currentMethods)
+    private void filterSoftMatchedMethods(
+            JavaClass compatBaseline,
+            List baselineMethods,
+            JavaClass currentVersion,
+            List currentMethods)
     {
         for (Iterator bIter = baselineMethods.iterator(); bIter.hasNext();)
         {
@@ -220,7 +232,12 @@ public class MethodSetCheck extends AbstractDiffReporter implements ClassChangeC
      * <p>
      * On return, at least one of the method lists will be empty.
      */
-    private void filterChangedMethods(String methodName, JavaClass compatBaseline, List baselineMethods, JavaClass currentVersion, List currentMethods)
+    private void filterChangedMethods(
+            String methodName,
+            JavaClass compatBaseline,
+            List baselineMethods,
+            JavaClass currentVersion,
+            List currentMethods)
     {
         // ok, we now have to deal with the tricky cases, where it is not
         // immediately obvious which old methods correspond to which new
@@ -349,7 +366,10 @@ public class MethodSetCheck extends AbstractDiffReporter implements ClassChangeC
     /**
      * Given a list of methods, report each one as being removed.
      */
-    private void reportMethodsRemoved(JavaClass baselineClass, List baselineMethods, JavaClass currentClass)
+    private void reportMethodsRemoved(
+            JavaClass baselineClass,
+            List baselineMethods,
+            JavaClass currentClass)
     {
         for (Iterator i = baselineMethods.iterator(); i.hasNext();)
         {
@@ -364,7 +384,10 @@ public class MethodSetCheck extends AbstractDiffReporter implements ClassChangeC
      * @param oldMethod the method that has been removed
      * @param currentClass the superclass where the method is now available, might be null
      */
-    private void reportMethodRemoved(JavaClass oldClass, Method oldMethod, JavaClass currentClass)
+    private void reportMethodRemoved(
+            JavaClass oldClass,
+            Method oldMethod,
+            JavaClass currentClass)
     {
         if (!scopeSelector.isSelected(oldMethod))
         {
@@ -381,22 +404,30 @@ public class MethodSetCheck extends AbstractDiffReporter implements ClassChangeC
 
         if (superClassName != null)
         {
-            fireDiff(MSG_METHOD_NOW_IN_SUPERCLASS, Severity.INFO, oldClass, oldMethod, new String[]{superClassName});
+            fireDiff(MSG_METHOD_NOW_IN_SUPERCLASS,
+                    Severity.INFO, oldClass, oldMethod,
+                    new String[] {superClassName});
         }
         else if (superInterfaceName != null)
         {
-            fireDiff(MSG_METHOD_NOW_IN_INTERFACE, Severity.INFO, oldClass, oldMethod, new String[]{superInterfaceName});
+            fireDiff(MSG_METHOD_NOW_IN_INTERFACE,
+                    Severity.INFO, oldClass, oldMethod,
+                    new String[] {superInterfaceName});
         }
         else
         {
-            fireDiff(MSG_METHOD_REMOVED, Severity.ERROR, oldClass, oldMethod, null);
+            fireDiff(MSG_METHOD_REMOVED,
+                    getSeverity(oldClass, oldMethod, Severity.ERROR),
+                    oldClass, oldMethod, null);
         }
     }
 
     /**
      * Given a list of methods, report each one as being added.
      */
-    private void reportMethodsAdded(JavaClass currentClass, List currentMethods)
+    private void reportMethodsAdded(
+            JavaClass currentClass,
+            List currentMethods)
     {
         for (Iterator i = currentMethods.iterator(); i.hasNext();)
         {
@@ -417,15 +448,42 @@ public class MethodSetCheck extends AbstractDiffReporter implements ClassChangeC
 
         if (newClass.isInterface())
         {
-            fireDiff(MSG_METHOD_ADDED_TO_INTERFACE, Severity.ERROR, newClass, newMethod, null);
+            // TODO: this is not an incompatibility if the new method
+            // actually already exists on a parent interface of the
+            // old interface. In that case, any class implementing the
+            // old version of this interface must already have an
+            // implementation of this method. See bugtracker #961217
+            fireDiff(MSG_METHOD_ADDED_TO_INTERFACE,
+                    getSeverity(newClass, newMethod, Severity.ERROR),
+                    newClass, newMethod, null);
         }
         else if (newMethod.isAbstract())
         {
-            fireDiff(MSG_ABSTRACT_METHOD_ADDED, Severity.ERROR, newClass, newMethod, null);
+            // TODO: this is not an incompatibility if the new method
+            // actually already exists on a parent interface of the
+            // old interface and was abstract. In that case, any class
+            // extending the old version of this class must already
+            // have an implementation of this method.
+            //
+            // Note that abstract methods can never be package or private
+            // scope, so we don't need to use the getSeverity method.
+            fireDiff(MSG_ABSTRACT_METHOD_ADDED,
+                    Severity.ERROR, newClass, newMethod, null);
         }
         else
         {
-            fireDiff(MSG_METHOD_ADDED, Severity.INFO, newClass, newMethod, null);
+            // TODO:
+            //. (a) check whether this method exists on a parent of the
+            //  new class. If so, indicate that this new method is overriding
+            //  some inherited method.
+            //  (b) if not a, then check whether this method exists on a parent
+            //  of the old class. If so, then report that the method has
+            //  been moved from the parent to the child class. This is
+            //  potentially useful info for the user.
+            //
+            // See bugtracker #959225
+            fireDiff(MSG_METHOD_ADDED,
+                    Severity.INFO, newClass, newMethod, null);
         }
     }
 
@@ -473,7 +531,9 @@ public class MethodSetCheck extends AbstractDiffReporter implements ClassChangeC
 
         if (bArgs.length != cArgs.length)
         {
-            fireDiff(MSG_METHOD_ARGCOUNT_CHANGED, Severity.ERROR, compatBaseline, baselineMethod, null);
+            fireDiff(MSG_METHOD_ARGCOUNT_CHANGED,
+                    getSeverity(compatBaseline, baselineMethod, Severity.ERROR),
+                    compatBaseline, baselineMethod, null);
             return;
         }
 
@@ -489,8 +549,14 @@ public class MethodSetCheck extends AbstractDiffReporter implements ClassChangeC
             }
 
             // TODO: Check assignability...
-            String[] args = {"" + (i + 1), cArg.toString()};
-            fireDiff(MSG_METHOD_PARAMTYPE_CHANGED, Severity.ERROR, compatBaseline, baselineMethod, args);
+            String[] args =
+            {
+                "" + (i + 1),
+                cArg.toString()
+            };
+            fireDiff(MSG_METHOD_PARAMTYPE_CHANGED,
+                    getSeverity(compatBaseline, baselineMethod, Severity.ERROR),
+                    compatBaseline, baselineMethod, args);
         }
     }
 
@@ -504,27 +570,36 @@ public class MethodSetCheck extends AbstractDiffReporter implements ClassChangeC
         // compatible even when binary-incompatible.
         if (!bReturnType.toString().equals(cReturnType.toString()))
         {
-            fireDiff(MSG_METHOD_RETURNTYPE_CHANGED, Severity.ERROR, compatBaseline, baselineMethod, new String[]{cReturnType.toString()});
+            fireDiff(MSG_METHOD_RETURNTYPE_CHANGED,
+                    getSeverity(compatBaseline, baselineMethod, Severity.ERROR),
+                    compatBaseline, baselineMethod,
+                    new String[] {cReturnType.toString()});
         }
     }
 
-    private void checkDeclaredExceptions(JavaClass compatBaseline, Method baselineMethod, Method currentMethod)
+    private void checkDeclaredExceptions(
+            JavaClass compatBaseline,
+            Method baselineMethod, Method currentMethod)
     {
         // TODO
     }
 
-    private void checkDeprecated(JavaClass compatBaseline, Method baselineMethod, Method currentMethod)
+    private void checkDeprecated(
+            JavaClass compatBaseline,
+            Method baselineMethod, Method currentMethod)
     {
         boolean bIsDeprecated = isDeprecated(baselineMethod);
         boolean cIsDeprecated = isDeprecated(currentMethod);
 
         if (bIsDeprecated && !cIsDeprecated)
         {
-            fireDiff(MSG_METHOD_UNDEPRECATED, Severity.INFO, compatBaseline, baselineMethod, null);
+            fireDiff(MSG_METHOD_UNDEPRECATED,
+                    Severity.INFO, compatBaseline, baselineMethod, null);
         }
         else if (!bIsDeprecated && cIsDeprecated)
         {
-            fireDiff(MSG_METHOD_DEPRECATED, Severity.INFO, compatBaseline, baselineMethod, null);
+            fireDiff(MSG_METHOD_DEPRECATED,
+                    Severity.INFO, compatBaseline, baselineMethod, null);
         }
     }
 
@@ -540,12 +615,15 @@ public class MethodSetCheck extends AbstractDiffReporter implements ClassChangeC
         if (cScope.isLessVisibleThan(bScope))
         {
             String[] args = {bScope.getDesc(), cScope.getDesc()};
-            fireDiff(MSG_METHOD_LESS_ACCESSABLE, Severity.ERROR, compatBaseline, baselineMethod, args);
+            fireDiff(MSG_METHOD_LESS_ACCESSIBLE,
+                    getSeverity(compatBaseline, baselineMethod, Severity.ERROR),
+                    compatBaseline, baselineMethod, args);
         }
         else if (cScope.isMoreVisibleThan(bScope))
         {
             String[] args = {bScope.getDesc(), cScope.getDesc()};
-            fireDiff(MSG_METHOD_MORE_ACCESSABLE, Severity.INFO, compatBaseline, baselineMethod, args);
+            fireDiff(MSG_METHOD_MORE_ACCESSIBLE,
+                    Severity.INFO, compatBaseline, baselineMethod, args);
         }
     }
 
@@ -601,9 +679,10 @@ public class MethodSetCheck extends AbstractDiffReporter implements ClassChangeC
     private void fireDiff(Message msg, Severity severity, JavaClass clazz, Method method, String[] args)
     {
         final String className = clazz.getClassName();
-        final ApiDifference diff = new ApiDifference(msg, severity, className, getMethodId(clazz, method), null, args);
+        final ApiDifference diff =
+            new ApiDifference(
+                msg, severity, className, getMethodId(clazz, method), null, args);
         getApiDiffDispatcher().fireDiff(diff);
-
     }
 
     private boolean isDeprecated(Method method)
