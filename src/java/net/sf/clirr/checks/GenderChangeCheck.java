@@ -64,42 +64,4 @@ public final class GenderChangeCheck
 
         return true;
     }
-
-    // TODO: This should be a method in BCEL's ClassSet !!!
-    private JavaClass findClass(String className, ClassSet classSet)
-    {
-        JavaClass[] classes = classSet.toArray();
-        for (int i = 0; i < classes.length; i++)
-        {
-            JavaClass clazz = classes[i];
-            if (clazz.getClassName().equals(className))
-            {
-                return clazz;
-            }
-        }
-        throw new IllegalStateException();
-    }
-
-    private String[] intersectionClassNames(ClassSet setA, ClassSet setB)
-    {
-        String[] aNames = setA.getClassNames();
-        String[] bNames = setB.getClassNames();
-        Arrays.sort(aNames);
-        Arrays.sort(bNames);
-
-        List helper = new ArrayList();
-
-        for (int i = 0; i < aNames.length; i++)
-        {
-            String aName = aNames[i];
-            if (Arrays.binarySearch(bNames, aName) >= 0)
-            {
-                helper.add(aName);
-            }
-        }
-
-        String[] retVal = new String[helper.size()];
-        helper.toArray(retVal);
-        return retVal;
-    }
 }
