@@ -34,6 +34,8 @@ public class FieldSetCheckTest extends AbstractCheckTestCase
             new ExpectedDiff("Changed type of field obj2 from java.lang.Boolean to java.lang.String", Severity.ERROR, "testlib.MembersChange", null, "obj2"),
             new ExpectedDiff("Value of field fin6 is no longer a compile-time constant", Severity.WARNING, "testlib.MembersChange", null, "fin6"),
             new ExpectedDiff("Value of compile-time constant fin5 has been changed", Severity.WARNING, "testlib.MembersChange", null, "fin5"),
+            new ExpectedDiff("Removed field pub5", Severity.ERROR, "testlib.MembersChange", null, "pub5"),
+            new ExpectedDiff("Field fin7 has been removed, but it was previously a constant", Severity.WARNING, Severity.ERROR, "testlib.MembersChange", null, "fin7"),
         };
         verify(expected);
     }
