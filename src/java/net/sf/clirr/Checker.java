@@ -43,6 +43,7 @@ import net.sf.clirr.event.ApiDifference;
 import net.sf.clirr.event.DiffListener;
 import net.sf.clirr.event.ScopeSelector;
 import net.sf.clirr.event.Severity;
+import net.sf.clirr.event.Message;
 import net.sf.clirr.framework.ApiDiffDispatcher;
 import net.sf.clirr.framework.ClassChangeCheck;
 import net.sf.clirr.framework.ClassSelector;
@@ -68,6 +69,8 @@ import org.apache.bcel.util.ClassLoaderRepository;
  */
 public final class Checker implements ApiDiffDispatcher
 {
+    private static final Message MSG_CLASS_ADDED = new Message(8000);
+    private static final Message MSG_CLASS_REMOVED = new Message(8001);
 
     private List listeners = new ArrayList();
 
@@ -334,14 +337,14 @@ public final class Checker implements ApiDiffDispatcher
             {
                 final String className = currentClass.getClassName();
                 final ApiDifference diff = new ApiDifference(
-                    "Added " + className, Severity.INFO, className, null, null);
+                    MSG_CLASS_ADDED, Severity.INFO, className, null, null, null);
                 fireDiff(diff);
             }
             else if (currentClass == null)
             {
                 final String className = compatBaselineClass.getClassName();
                 final ApiDifference diff = new ApiDifference(
-                    "Removed " + className, Severity.ERROR, className, null, null);
+                    MSG_CLASS_REMOVED, Severity.ERROR, className, null, null, null);
                 fireDiff(diff);
             }
             else
