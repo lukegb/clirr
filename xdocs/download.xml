@@ -32,9 +32,7 @@
             </p>
             <ul>
                 <li>
-                    the latest release of <a
-                    href="http://maven.apache.org">Maven</a>, at the time of
-                    writing that's beta-10.
+                    <a href="http://maven.apache.org">Maven</a> 1.0 RC1 or above.
                 </li>
                 <li>
                     A CVS client. If you are on Linux you probably
