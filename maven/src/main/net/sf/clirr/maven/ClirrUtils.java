@@ -75,11 +75,13 @@ public class ClirrUtils
     public static void getBaselineJar(MavenJellyContext context)
         throws Exception
     {
+        String targetFileName = (String) context.getVariable("clirr.baseline.destination");
+        File targetFile = new File(targetFileName);
         HttpUtils.getFile(
             (String) context.getVariable("clirr.baseline.url"),
-            new File((String) context.getVariable("clirr.baseline.destination")),
+            targetFile,
             false,
-            false,
+            true,
             null,
             null,
             null,
