@@ -8,6 +8,13 @@
   <body>
 
     <release version="0.4-SNAPSHOT" date="in CVS">
+        <action dev="lkuehne" type="add" due-to="skitching">
+            Improved change messages if field accessibility is weakened/strengthened.
+        </action>
+        <action dev="lkuehne" type="add">
+            <!-- RFE #961227-->
+            Detect 'pull up in class hierarchy' refactoring for methods.
+        </action>
         <action dev="lkuehne" type="fix">
             XML formatter did not write method and field attributes
             correctly.
