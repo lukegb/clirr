@@ -19,10 +19,8 @@
 
 package net.sf.clirr.checks;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import net.sf.clirr.event.Severity;
+import net.sf.clirr.event.Message;
 import net.sf.clirr.framework.AbstractDiffReporter;
 import net.sf.clirr.framework.ApiDiffDispatcher;
 import net.sf.clirr.framework.ClassChangeCheck;
@@ -39,6 +37,9 @@ public final class ClassHierarchyCheck
         extends AbstractDiffReporter
         implements ClassChangeCheck
 {
+    private static final Message MSG_ADDED_CLASS_TO_SUPERCLASSES = new Message(5000);
+    private static final Message MSG_REMOVED_CLASS_FROM_SUPERCLASSES = new Message(5001);
+
     /**
      * Create a new instance of this check.
      * @param dispatcher the diff dispatcher that distributes the detected changes to the listeners.
@@ -46,28 +47,6 @@ public final class ClassHierarchyCheck
     public ClassHierarchyCheck(ApiDiffDispatcher dispatcher)
     {
         super(dispatcher);
-    }
-
-    private List getSetDifference(JavaClass[] orig, JavaClass[] subtracted)
-    {
-        List list1 = getClassNames(orig);
-        List list2 = getClassNames(subtracted);
-
-        List retval = new ArrayList(list1);
-        retval.removeAll(list2);
-
-        return retval;
-    }
-
-    private List getClassNames(JavaClass[] orig)
-    {
-        List list = new ArrayList(orig.length);
-        for (int i = 0; i < orig.length; i++)
-        {
-            JavaClass javaClass = orig[i];
-            list.add(javaClass.getClassName());
-        }
-        return list;
     }
 
     /** {@inheritDoc} */
@@ -99,15 +78,25 @@ public final class ClassHierarchyCheck
 
             if (baselineSuper == null)
             {
-                log("Added " + currentSuper.getClassName()
-                    + " to the list of superclasses of " + className,
-                        isThrowable ? Severity.WARNING : Severity.INFO, className, null, null);
+                Severity severity;
+                if (isThrowable)
+                {
+                    severity = Severity.WARNING;
+                }
+                else
+                {
+                    severity = Severity.INFO;
+                }
+
+                log(MSG_ADDED_CLASS_TO_SUPERCLASSES,
+                    severity, className, null, null,
+                    new String[] {currentSuper.getClassName()});
             }
             else if (currentSuper == null)
             {
-                log("Removed " +  baselineSuper.getClassName()
-                    + " from the list of superclasses of " + className,
-                        Severity.ERROR, className, null, null);
+                log(MSG_REMOVED_CLASS_FROM_SUPERCLASSES,
+                    Severity.ERROR, className, null, null,
+                    new String[] {baselineSuper.getClassName()});
             }
         }
 
