@@ -420,6 +420,24 @@
         </p>
       </section>
 
+      <section name="6011 - Removed Constant Field">
+        <p>Binary Severity: <code>WARNING</code></p>
+        <p>Source Severity: <code>ERROR</code></p>
+        <p>
+          The new class has removed a field present in the old version.
+          Pre-existing source code which directly accesses that field will no 
+          longer be valid.
+        </p>
+        <p>
+          Previously, however, the field was final and was initialised with a 
+          constant value. Therefore code compiled against the previous version 
+          of the class will have inlined this constant and will continue to 
+          work, using the previous value of this field. A warning is issued
+          as this is often not desirable behaviour. However it is not a
+          binary incompatibility.
+        </p>
+      </section>
+
       <section name="7000 - Method now in Superclass">
         <p>Severity: <code>INFO</code></p>
         <p>
