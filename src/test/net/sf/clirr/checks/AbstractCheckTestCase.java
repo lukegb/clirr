@@ -9,6 +9,7 @@ import net.sf.clirr.Checker;
 import net.sf.clirr.CheckerFactory;
 import net.sf.clirr.event.ApiDifference;
 import net.sf.clirr.framework.ClassChangeCheck;
+import net.sf.clirr.framework.ClassSelector;
 import org.apache.bcel.util.ClassSet;
 
 /**
@@ -48,8 +49,32 @@ public abstract class AbstractCheckTestCase extends TestCase
     {
         TestDiffListener tdl = new TestDiffListener();
         Checker checker = CheckerFactory.createChecker(createCheck(tdl));
-        checker.reportDiffs(getBaseLine(), getCurrent(), new URLClassLoader(new URL[]{}), new URLClassLoader(new URL[]{}));
+        ClassSelector classSelector = createClassSelector();
+
+        checker.reportDiffs(
+            getBaseLine(), getCurrent(), 
+            new URLClassLoader(new URL[]{}), 
+            new URLClassLoader(new URL[]{}),
+            classSelector);
+            
         tdl.checkExpected(expected);
+    }
+
+    /**
+     * Creates an object which selects the appropriate classes from the
+     * test jars for this test.
+     * <p>
+     * This base implementation returns a selector which selects all classes
+     * in the base "testlib" package (but no sub-packages). Tests which wish
+     * to select different classes from the test jars should override this
+     * method.
+     */
+    protected ClassSelector createClassSelector()
+    {
+        // only check classes in the base "testlib" package of the jars
+        ClassSelector classSelector = new ClassSelector(ClassSelector.MODE_IF);
+        classSelector.addPackage("testlib");
+        return classSelector;
     }
 
     /**
