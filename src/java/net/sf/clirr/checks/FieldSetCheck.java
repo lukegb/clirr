@@ -198,25 +198,25 @@ public class FieldSetCheck
 
     private void checkForVisibilityChange(Field bField, Field cField, JavaClass clazz)
     {
-        int bVisibility = ScopeSelector.getVisibilityRating(bField);
-        int cVisibility = ScopeSelector.getVisibilityRating(cField);
+        ScopeSelector.Scope bScope = ScopeSelector.getScope(bField);
+        ScopeSelector.Scope cScope = ScopeSelector.getScope(cField);
 
-        if (cVisibility > bVisibility)
+        if (cScope.isMoreVisibleThan(bScope))
         {
             fireDiff(
                 "Accessability of field " + bField.getName()
                 + " has been increased"
-                + " from " + ScopeSelector.getScopeDesc(bField)
-                + " to " + ScopeSelector.getScopeDesc(cField),
+                + " from " + bScope.getDesc()
+                + " to " + cScope.getDesc(),
                 Severity.INFO, clazz, cField);
         }
-        else if (cVisibility < bVisibility)
+        else if (cScope.isLessVisibleThan(bScope))
         {
             fireDiff(
                 "Accessibility of field " + bField.getName()
                 + " has been weakened"
-                + " from " + ScopeSelector.getScopeDesc(bField)
-                + " to " + ScopeSelector.getScopeDesc(cField),
+                + " from " + bScope.getDesc()
+                + " to " + cScope.getDesc(),
                 Severity.ERROR, clazz, cField);
         }
     }

@@ -23,8 +23,10 @@ import net.sf.clirr.Checker;
 import net.sf.clirr.event.DiffListener;
 import net.sf.clirr.event.PlainDiffListener;
 import net.sf.clirr.event.XmlDiffListener;
+import net.sf.clirr.event.ScopeSelector;
 import net.sf.clirr.framework.CheckerException;
 import net.sf.clirr.framework.ClassSelector;
+
 import org.apache.commons.cli.BasicParser;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.HelpFormatter;
@@ -100,8 +102,7 @@ public class Clirr
         Checker checker = new Checker();
         if (showAll)
         {
-            checker.getScopeSelector().selectPrivate(true);
-            checker.getScopeSelector().selectPackage(true);
+            checker.getScopeSelector().setScope(ScopeSelector.SCOPE_PRIVATE);
         }
 
         DiffListener diffListener = null;
