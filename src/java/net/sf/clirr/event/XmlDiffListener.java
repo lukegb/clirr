@@ -26,7 +26,7 @@ import java.io.PrintStream;
  * A DiffListener that reports any detected difference to
  * an XML file. That file can be used by subsequent processing steps
  * to create nice looking reports in HTML, PDF, etc.
- * 
+ *
  * @author lkuehne
  */
 public final class XmlDiffListener extends FileDiffListener
@@ -59,7 +59,7 @@ public final class XmlDiffListener extends FileDiffListener
 
     /**
      * Writes an XML header and toplevel tag to the xml stream.
-     * 
+     *
      * @see DiffListener#start()
      */
     public void start()
@@ -80,7 +80,7 @@ public final class XmlDiffListener extends FileDiffListener
 
     /**
      * Closes the toplevel tag that was opened in start.
-     * 
+     *
      * @see DiffListener#stop()
      */
     protected void writeFooter()

@@ -224,7 +224,8 @@ public final class Checker implements ApiDiffDispatcher
             }
             catch (MalformedURLException ex)
             {
-                final IllegalArgumentException illegalArgumentException = new IllegalArgumentException("Cannot create classloader with jar file " + jarFile);
+                final IllegalArgumentException illegalArgumentException =
+                        new IllegalArgumentException("Cannot create classloader with jar file " + jarFile);
                 illegalArgumentException.initCause(ex);
                 throw illegalArgumentException;
             }

@@ -22,7 +22,7 @@ package net.sf.clirr.event;
 
 /**
  * Describes an API change.
- * 
+ *
  * @author Lars
  */
 public final class ApiDifference
@@ -67,7 +67,7 @@ public final class ApiDifference
 
     /**
      * Create a new API differnce representation.
-     * 
+     *
      * @param report   a human readable string describing the change that was made.
      * @param severity the severity in terms of binary API compatibility.
      */
@@ -85,7 +85,7 @@ public final class ApiDifference
      * definately break, WARNING means that clients may break, depending
      * on how they use the library. See the eclipse paper for further
      * explanation.
-     * 
+     *
      * @return the severity of the API difference.
      */
     public Severity getSeverity()
@@ -95,7 +95,7 @@ public final class ApiDifference
 
     /**
      * Human readable api change description.
-     * 
+     *
      * @return a human readable description of this API difference.
      */
     public String getReport()
@@ -147,19 +147,26 @@ public final class ApiDifference
         {
             return false;
         }
+
         if (severity != null ? !severity.equals(other.severity) : other.severity != null)
         {
             return false;
         }
-        if (affectedClass != null ? !affectedClass.equals(other.affectedClass) : other.affectedClass != null)
+
+        final String otherClass = other.affectedClass;
+        if (affectedClass != null ? !affectedClass.equals(otherClass) : otherClass != null)
         {
             return false;
         }
-        if (affectedMethod != null ? !affectedMethod.equals(other.affectedMethod) : other.affectedMethod != null)
+
+        final String otherMethod = other.affectedMethod;
+        if (affectedMethod != null ? !affectedMethod.equals(otherMethod) : otherMethod != null)
         {
             return false;
         }
-        if (affectedField != null ? !affectedField.equals(other.affectedField) : other.affectedField != null)
+
+        final String otherField = other.affectedField;
+        if (affectedField != null ? !affectedField.equals(otherField) : otherField != null)
         {
             return false;
         }
