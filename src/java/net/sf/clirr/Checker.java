@@ -39,6 +39,7 @@ import net.sf.clirr.checks.GenderChangeCheck;
 import net.sf.clirr.checks.InterfaceSetCheck;
 import net.sf.clirr.checks.RemovedClassCheck;
 import net.sf.clirr.checks.FieldSetCheck;
+import net.sf.clirr.checks.MethodSetCheck;
 import net.sf.clirr.event.ApiDifference;
 import net.sf.clirr.event.DiffListener;
 import net.sf.clirr.framework.ApiDiffDispatcher;
@@ -99,6 +100,7 @@ public final class Checker implements ApiDiffDispatcher
         classChecks.add(new InterfaceSetCheck(this));
         classChecks.add(new ClassHierarchyCheck(this));
         classChecks.add(new FieldSetCheck(this));
+        classChecks.add(new MethodSetCheck(this));
     }
 
     public void addDiffListener(DiffListener listener)
