@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
-<project name="Clirr">
-    <title>Clirr</title>
+<project name="Clirr Core">
+    <title>Clirr Core</title>
     <body>
         <links>
             <item name="SourceForge Project Page"
@@ -8,7 +8,7 @@
             <item name="Hosted by SourceForge"
                 href="http://sourceforge.net/"/>
         </links>
-        <menu name="Clirr">
+        <menu name="Clirr Core">
             <item name="Overview"
                 href="/index.html"/>
             <item name="Download"
