@@ -12,6 +12,11 @@
 
   <goal name="dist-site" prereqs="dist,multiproject:site"/>
 
+  <goal name="site:deploy">
+    <attainGoal name="multiproject:site"/>
+    <attainGoal name="site:${maven.site.deploy.method}deploy"/>
+  </goal>
+
   <preGoal name="clean">
     <attainGoal name="multiproject:clean"/>
   </preGoal>
