@@ -110,28 +110,20 @@ public class MethodSetCheck
 
                 filterChangedMethods(
                     baselineMethodName,
-                    compatBaseline, baselineMethods, 
+                    compatBaseline, baselineMethods,
                     currentVersion, currentMethods);
 
-                if (baselineMethods.isEmpty() && currentMethods.isEmpty())
-                {
-                    // ok, all done
-                }
-                else if (baselineMethods.isEmpty())
-                {
-                    reportMethodsAdded(currentVersion, currentMethods);
-                }
-                else if (currentMethods.isEmpty())
+                // if any methods are left, they have no matching method in
+                // the other version, so report as removed or added respectively.
+
+                if (!baselineMethods.isEmpty())
                 {
                     reportMethodsRemoved(compatBaseline, baselineMethods, currentVersion);
                 }
-                else
+
+                if (!currentMethods.isEmpty())
                 {
-                    // error: this should not happen
-                    throw new RuntimeException(
-                        "Internal error in Clirr: one or more methods"
-                        + " on input class [" + compatBaseline.getClassName()
-                        + "] were not correlated.");
+                    reportMethodsAdded(currentVersion, currentMethods);
                 }
             }
         }
@@ -141,7 +133,7 @@ public class MethodSetCheck
 
     /**
      * Given a list of old and new methods for a particular method name,
-     * find the (old, new) method pairs which have identical argument lists. 
+     * find the (old, new) method pairs which have identical argument lists.
      * <p>
      * For these:
      * <ul>
@@ -149,10 +141,10 @@ public class MethodSetCheck
      *  <li>remove from the list
      * </ul>
      *
-     * On return from this method, the old and new method lists contain only 
-     * methods whose argument lists have changed between versions [or possibly, 
-     * methods which have been deleted while one or more new methods of the 
-     * same name have been added, depending on how you view it]. All other 
+     * On return from this method, the old and new method lists contain only
+     * methods whose argument lists have changed between versions [or possibly,
+     * methods which have been deleted while one or more new methods of the
+     * same name have been added, depending on how you view it]. All other
      * situations have been dealt with.
      * <p>
      * Note that one or both method lists may be empty on return from
@@ -167,11 +159,11 @@ public class MethodSetCheck
         for(Iterator bIter = baselineMethods.iterator(); bIter.hasNext(); )
         {
             Method bMethod = (Method) bIter.next();
-            
+
             for(Iterator cIter = currentMethods.iterator(); cIter.hasNext(); )
             {
                 Method cMethod = (Method) cIter.next();
-                
+
                 if (isSoftMatch(bMethod, cMethod))
                 {
                     check(compatBaseline, bMethod, cMethod);
@@ -187,8 +179,8 @@ public class MethodSetCheck
      * Two methods are a "soft" match if they have the same name and argument
      * list. No two methods on the same class are ever a "soft match" for
      * each other, because the compiler requires distinct parameter lists for
-     * overloaded methods. This also implies that for a given method on an "old" 
-     * class version, there are either zero or one "soft matches" on the new 
+     * overloaded methods. This also implies that for a given method on an "old"
+     * class version, there are either zero or one "soft matches" on the new
      * version.
      * <p>
      * However a "soft match" is not sufficient to ensure binary compatibility.
@@ -196,27 +188,27 @@ public class MethodSetCheck
      * with code compiled against the previous version of the class.
      * <p>
      * There may also be other differences between methods that are regarded
-     * as "soft matches": the exceptions thrown, the deprecation status of the 
+     * as "soft matches": the exceptions thrown, the deprecation status of the
      * methods, their accessability, etc.
      */
     private boolean isSoftMatch(Method oldMethod, Method newMethod)
     {
         String oldName = oldMethod.getName();
         String newName = newMethod.getName();
-        
+
         if (!oldName.equals(newName))
         {
             return false;
         }
-        
+
         StringBuffer buf = new StringBuffer();
         appendHumanReadableArgTypeList(oldMethod, buf);
         String oldArgs = buf.toString();
-        
+
         buf.setLength(0);
         appendHumanReadableArgTypeList(newMethod, buf);
         String newArgs = buf.toString();
-        
+
         return (oldArgs.equals(newArgs));
     }
 
