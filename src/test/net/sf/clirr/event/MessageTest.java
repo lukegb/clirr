@@ -37,8 +37,11 @@ public class MessageTest extends TestCase
      */
     public void testComplete()
     {
+        java.util.Collection messages = MessageManager.getInstance().getMessages();
+
         // check the english locale
-        MessageManager.getInstance().setLocale(new Locale("en"));
-        MessageManager.getInstance().checkComplete();
+        MessageTranslator translator = new MessageTranslator();
+        translator.setLocale(new Locale("en"));
+        translator.checkComplete(messages);
     }
 }
