@@ -46,23 +46,17 @@ public abstract class AbstractCheckTestCase extends TestCase
     }
 
     protected void verify(ApiDifference[] expected)
+    throws Exception
     {
         TestDiffListener tdl = new TestDiffListener();
         Checker checker = CheckerFactory.createChecker(createCheck(tdl));
         ClassSelector classSelector = createClassSelector();
         
-        try
-        {
-            checker.reportDiffs(
-                getBaseLine(), getCurrent(), 
-                new URLClassLoader(new URL[]{}), 
-                new URLClassLoader(new URL[]{}),
-                classSelector);
-        }
-        catch(Exception ex)
-        {
-            fail("Exception generated:" + ex.getMessage());
-        }
+        checker.reportDiffs(
+            getBaseLine(), getCurrent(), 
+            new URLClassLoader(new URL[]{}), 
+            new URLClassLoader(new URL[]{}),
+            classSelector);
             
         tdl.checkExpected(expected);
     }
