@@ -74,6 +74,16 @@ public final class ClassHierarchyCheck
         JavaClass[] compatSuper = compatBaseline.getSuperClasses();
         JavaClass[] currentSuper = currentVersion.getSuperClasses();
 
+        boolean isThrowable = false;
+        for (int i = 0; i < compatSuper.length; i++)
+        {
+            JavaClass javaClass = compatSuper[i];
+            if ("java.lang.Throwable".equals(javaClass.getClassName()))
+            {
+                isThrowable = true;
+            }
+        }
+
         List added = getSetDifference(currentSuper, compatSuper);
         List removed = getSetDifference(compatSuper, currentSuper);
 
@@ -82,7 +92,7 @@ public final class ClassHierarchyCheck
         {
             String s = (String) added.get(i);
             log("Added " + s + " to the list of superclasses of " + className,
-                    Severity.INFO, className, null, null);
+                    isThrowable ? Severity.WARNING : Severity.INFO, className, null, null);
         }
 
         for (int i = 0; i < removed.size(); i++)

@@ -36,6 +36,12 @@
             have the old value inlined and continue to use that old value.
             See the Java Language Spec, Chapter 13.4.8, for details.
         </action>
+        <action dev="lkuehne" type="add">
+            <!-- RFE #958809 -->
+            Warn about adding new superclasses to a class derived from java.lang.Throwable.
+            Such changes are not binary incompatible (you won't get any Exception),
+            but a different catch clause might get selected in client code.
+        </action>
     </release>
 
     <release version="0.2" date="2004-05-22">
