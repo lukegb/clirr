@@ -12,7 +12,7 @@ import net.sf.clirr.framework.ClassChangeCheck;
  */
 public class FieldSetCheckTest extends AbstractCheckTestCase
 {
-    public void testFieldCheck()
+    public void testFieldCheck() throws Exception
     {
         ApiDifference[] expected = new ApiDifference[] {
             new ApiDifference("Field stat7 has been removed in testlib.MembersChange", Severity.ERROR, "testlib.MembersChange", null, "stat7"),

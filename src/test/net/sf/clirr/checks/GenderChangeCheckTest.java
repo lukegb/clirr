@@ -6,7 +6,7 @@ import net.sf.clirr.framework.ClassChangeCheck;
 
 public class GenderChangeCheckTest extends AbstractCheckTestCase
 {
-    public void testGenderChangeCheckTest()
+    public void testGenderChangeCheckTest() throws Exception
     {
         ApiDifference[] expected = new ApiDifference[] {
             new ApiDifference("Changed Gender of testlib.ClassBecomesInterface", Severity.ERROR, "testlib.ClassBecomesInterface", null, null),

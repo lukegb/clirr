@@ -9,7 +9,7 @@ import net.sf.clirr.event.Severity;
  */
 public class ClassHierarchyCheckTest extends AbstractCheckTestCase
 {
-    public void testHierarchyChangesAreReported()
+    public void testHierarchyChangesAreReported() throws Exception
     {
         ApiDifference[] expected = new ApiDifference[] {
             new ApiDifference("Added java.util.NoSuchElementException to the list of superclasses of testlib.ApplicationException", Severity.WARNING, "testlib.ApplicationException", null, null),

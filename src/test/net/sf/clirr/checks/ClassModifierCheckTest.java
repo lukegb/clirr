@@ -3,7 +3,6 @@ package net.sf.clirr.checks;
 import net.sf.clirr.framework.ClassChangeCheck;
 import net.sf.clirr.event.ApiDifference;
 import net.sf.clirr.event.Severity;
-import net.sf.clirr.event.ScopeSelector;
 import net.sf.clirr.framework.ClassSelector;
 
 /**
@@ -11,7 +10,7 @@ import net.sf.clirr.framework.ClassSelector;
  */
 public class ClassModifierCheckTest extends AbstractCheckTestCase
 {
-    public void testAll()
+    public void testAll() throws Exception
     {
         ApiDifference[] expected = new ApiDifference[] {
             new ApiDifference("Added final modifier in class testlib.modifiers.NonFinalBecomesFinal", Severity.ERROR, "testlib.modifiers.NonFinalBecomesFinal", null, null),

@@ -13,21 +13,21 @@ import net.sf.clirr.framework.ClassSelector;
  */
 public class ClassScopeCheckTest extends AbstractCheckTestCase
 {
-    public void testAccessChangesAreReported()
+    public void testAccessChangesAreReported() throws Exception
     {
         ApiDifference[] expected = new ApiDifference[] {
             new ApiDifference("Decreased visibility of class from public to protected", Severity.ERROR, "testlib.scope.ClassScopeChange$A2", null, null),
             new ApiDifference("Decreased visibility of class from public to package", Severity.ERROR, "testlib.scope.ClassScopeChange$A3", null, null),
             new ApiDifference("Decreased visibility of class from public to private", Severity.ERROR, "testlib.scope.ClassScopeChange$A4", null, null),
-            
+
             new ApiDifference("Increased visibility of class from protected to public", Severity.INFO, "testlib.scope.ClassScopeChange$B2", null, null),
             new ApiDifference("Decreased visibility of class from protected to package", Severity.ERROR, "testlib.scope.ClassScopeChange$B3", null, null),
             new ApiDifference("Decreased visibility of class from protected to private", Severity.ERROR, "testlib.scope.ClassScopeChange$B4", null, null),
-            
+
             new ApiDifference("Increased visibility of class from package to public", Severity.INFO, "testlib.scope.ClassScopeChange$C2", null, null),
             new ApiDifference("Increased visibility of class from package to protected", Severity.INFO, "testlib.scope.ClassScopeChange$C3", null, null),
             new ApiDifference("Decreased visibility of class from package to private", Severity.ERROR, "testlib.scope.ClassScopeChange$C4", null, null),
-            
+
             new ApiDifference("Increased visibility of class from private to public", Severity.INFO, "testlib.scope.ClassScopeChange$D2", null, null),
             new ApiDifference("Increased visibility of class from private to protected", Severity.INFO, "testlib.scope.ClassScopeChange$D3", null, null),
             new ApiDifference("Increased visibility of class from private to package", Severity.INFO, "testlib.scope.ClassScopeChange$D4", null, null),
