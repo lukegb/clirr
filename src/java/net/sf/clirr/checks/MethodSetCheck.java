@@ -49,8 +49,8 @@ public class MethodSetCheck
 {
      private static final Message MSG_METHOD_NOW_IN_SUPERCLASS = new Message(7000);
      private static final Message MSG_METHOD_NOW_IN_INTERFACE = new Message(7001);
-     // 7002 unused
-     private static final Message MSG_METHOD_REMOVED = new Message(7003);
+     private static final Message MSG_METHOD_REMOVED = new Message(7002);
+     // 7003 unused
      private static final Message MSG_METHOD_ARGCOUNT_CHANGED = new Message(7004);
      private static final Message MSG_METHOD_PARAMTYPE_CHANGED = new Message(7005);
      private static final Message MSG_METHOD_RETURNTYPE_CHANGED = new Message(7006);
