@@ -193,7 +193,7 @@ public final class Checker implements ApiDiffDispatcher
         }
         catch (IOException ex)
         {
-            throw new BuildException("Cannot read " + zipEntry + " from " + zip, ex);
+            throw new BuildException("Cannot read " + zipEntry.getName() + " from " + zip.getName(), ex);
         }
         finally
         {
@@ -205,7 +205,7 @@ public final class Checker implements ApiDiffDispatcher
                 }
                 catch (IOException ex)
                 {
-                    throw new BuildException(ex);
+                    throw new BuildException("Cannot close " + zip.getName(), ex);
                 }
             }
         }
@@ -224,7 +224,9 @@ public final class Checker implements ApiDiffDispatcher
             }
             catch (MalformedURLException ex)
             {
-                throw new RuntimeException("Cannot create classloader with jar file " + jarFile);
+                final IllegalArgumentException illegalArgumentException = new IllegalArgumentException("Cannot create classloader with jar file " + jarFile);
+                illegalArgumentException.initCause(ex);
+                throw illegalArgumentException;
             }
         }
         final URLClassLoader jarsLoader = new URLClassLoader(jarUrls, thirdPartyClasses);

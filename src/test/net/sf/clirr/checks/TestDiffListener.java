@@ -19,7 +19,7 @@ class TestDiffListener implements ApiDiffDispatcher
 
         public void checkExpected(ApiDifference[] expected)
         {
-            HashSet expectedDiffs = new HashSet();
+            HashSet expectedDiffs = new HashSet(expected.length);
             for (int i = 0; i < expected.length; i++) {
                 ApiDifference apiDifference = expected[i];
                 expectedDiffs.add(apiDifference);

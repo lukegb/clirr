@@ -32,7 +32,7 @@ final class AntLogger extends DiffListenerAdapter
 {
     private Task task;
 
-    private Map severityPrioMap = new HashMap();
+    private Map severityPrioMap = new HashMap(3);
 
     AntLogger(Task task)
     {

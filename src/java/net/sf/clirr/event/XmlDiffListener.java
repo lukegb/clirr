@@ -45,7 +45,7 @@ public final class XmlDiffListener extends FileDiffListener
         out.print("  <" + DIFFERENCE);
         out.print(" severity=\"" + difference.getSeverity() + "\">");
         out.print(difference.getReport()); // TODO: XML escapes??
-        out.println("</" + DIFFERENCE + ">");
+        out.println("</" + DIFFERENCE + '>');
     }
 
     /**
@@ -56,7 +56,7 @@ public final class XmlDiffListener extends FileDiffListener
     {
         PrintStream out = getOutputStream();
         out.println("<?xml version=\"1.0\"?>");
-        out.println("<" + DIFFREPORT + ">");
+        out.println('<' + DIFFREPORT + '>');
         out.println("<!--");
         out.println("  In future versions the differences will have more attributes, e.g.");
         out.println("  - affected package");
@@ -75,6 +75,6 @@ public final class XmlDiffListener extends FileDiffListener
     protected void writeFooter()
     {
         PrintStream out = getOutputStream();
-        out.println("</" + DIFFREPORT + ">");
+        out.println("</" + DIFFREPORT + '>');
     }
 }
