@@ -42,11 +42,13 @@
   <!-- the project home page -->
   <url>http://clirr.sourceforge.net/</url>
   <issueTrackingUrl>https://sourceforge.net/tracker/?group_id=89627&amp;atid=590799</issueTrackingUrl>
+  <siteAddress>shell.sourceforge.net</siteAddress>
 <!--
-  <siteAddress>clirr.sourceforge.net</siteAddress>
-  <siteDirectory>/www/maven.apache.org/reference/plugins/examples/</siteDirectory>
-  <distributionDirectory>/www/maven.apache.org/builds/</distributionDirectory>
+  <siteDirectory>/home/lk/rmdir</siteDirectory>
 -->
+  <siteDirectory>/home/groups/c/cl/clirr/htdocs/</siteDirectory>
+  <distributionSite>shell.sourceforge.net</distributionSite>
+  <distributionDirectory>/home/groups/c/cl/clirr/htdocs/builds/</distributionDirectory>
   <!-- the version control repository and http url for online access
        the connection element has the form:
        scm:<system>:<system specific connection string> -->
@@ -133,9 +135,6 @@
     <resources>
       <resource>
         <directory>${basedir}/src/conf</directory>
-        <includes>
-          <include>*.properties</include>
-        </includes>
       </resource>
     </resources>
   </build>
