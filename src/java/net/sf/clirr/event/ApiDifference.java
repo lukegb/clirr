@@ -68,7 +68,7 @@ public final class ApiDifference
     /**
      * Create a new API differnce representation.
      *
-     * @param report   a human readable string describing the change that was made.
+     * @param report a human readable string describing the change that was made.
      * @param severity the severity in terms of binary API compatibility.
      */
     public ApiDifference(String report, Severity severity, String clazz, String method, String field)
@@ -124,7 +124,7 @@ public final class ApiDifference
     public String toString()
     {
         return report + " (" + severity + ") - "
-                + getAffectedClass() + '[' + getAffectedField() + '/'+ getAffectedMethod() + ']';
+                + getAffectedClass() + '[' + getAffectedField() + '/' + getAffectedMethod() + ']';
     }
 
     /**
