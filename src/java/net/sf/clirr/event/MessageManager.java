@@ -19,11 +19,10 @@
 
 package net.sf.clirr.event;
 
-import java.util.Locale;
 import java.util.Iterator;
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.ResourceBundle;
+import java.util.Collection;
 
 /**
  * Class which manages API Difference messages, including expanding message
@@ -31,16 +30,8 @@ import java.util.ResourceBundle;
  */
 public final class MessageManager
 {
-    /**
-     * The base name of the resource bundle from which message descriptions
-     * are read.
-     */
-    public static final String RESOURCE_NAME = "event-messages";
-
     private static MessageManager instance;
     private ArrayList messages = new ArrayList();
-    private Locale locale;
-    private ResourceBundle messageText;
 
     /**
      * Utility class to sort messages by their numeric ids.
@@ -84,24 +75,6 @@ public final class MessageManager
     }
 
     /**
-     * Define the local language etc. Future calls to the getDesc method
-     * will attempt to use a properties file which is appropriate to that
-     * locale to look the message descriptions up in.
-     * <p>
-     * @param locale may be a valid Locale object, or null to indicate
-     * that the default locale is to be used.
-     */
-    public void setLocale(Locale locale)
-    {
-        if (locale == null)
-        {
-            locale = Locale.getDefault();
-        }
-        this.locale = locale;
-        this.messageText = null;
-    }
-
-    /**
      * Verify that the list of known messages contains no two objects
      * with the same numeric message id. This method is expected to be
      * called from the unit tests, so that if a developer adds a new
@@ -128,51 +101,10 @@ public final class MessageManager
     }
 
     /**
-     * Verify that the resource bundle for the currently set locale has
-     * a translation string available for every registered message object.
-     * This method is expected to be called from the unit tests, so that
-     * if a developer adds a new message the unit tests will fail until
-     * translations are also available for that new message.
-     * <p>
-     * @throws java.util.MissingResourceException if there is a registered
-     * message for which no description is present in the current locale's
-     * resources.
+     * Return the complete set of registered messages.
      */
-    public void checkComplete()
+    public Collection getMessages()
     {
-        java.util.Collections.sort(messages, new MessageComparator());
-        for (Iterator i = messages.iterator(); i.hasNext();)
-        {
-            Message m = (Message) i.next();
-            getDesc(m);
-        }
-    }
-
-    /**
-     * Given a Message object (containing a unique message id), look up
-     * that id in the appropriate resource bundle (properties file) for
-     * the set locale and return the text string associated with that
-     * message id.
-     * <p>
-     * Message ids in the properties file should be prefixed with an 'm',
-     * eg "m1000", "m5003".
-     * <p>
-     * @throws java.util.MissingResourceException if there is no entry in the
-     * message translation resource bundle for the specified message.
-     */
-    public String getDesc(Message msg)
-    {
-        // load resource bundle
-        if (locale == null)
-        {
-            locale = Locale.getDefault();
-        }
-
-        if (messageText == null)
-        {
-            messageText = ResourceBundle.getBundle(RESOURCE_NAME, locale);
-        }
-
-        return messageText.getString("m" + msg.getId());
+        return messages;
     }
 }
