@@ -357,7 +357,7 @@ public class MethodSetCheck
     {
         boolean bIsDeprecated = isDeprecated(baselineMethod);
         boolean cIsDeprecated = isDeprecated(currentMethod);
-       
+
         if (bIsDeprecated && !cIsDeprecated)
         {
             fireDiff(
@@ -434,14 +434,14 @@ public class MethodSetCheck
     private boolean isDeprecated(Method method)
     {
         Attribute[] attrs = method.getAttributes();
-        for(int i=0; i<attrs.length; ++i) 
+        for (int i = 0; i < attrs.length; ++i)
         {
             if (attrs[i] instanceof org.apache.bcel.classfile.Deprecated)
             {
                 return true;
             }
         }
-        
+
         return false;
     }
 }

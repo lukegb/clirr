@@ -25,7 +25,7 @@ package net.sf.clirr.framework;
  * <p>
  * The Clirr coding conventions use checked exceptions (such as this one)
  * for errors whose cause is something external to the clirr library/app.
- * Unchecked exceptions are used for errors that are due to bugs within 
+ * Unchecked exceptions are used for errors that are due to bugs within
  * clirr code (assertion-violation type problems).
  */
 public class CheckerException extends Exception
@@ -34,7 +34,7 @@ public class CheckerException extends Exception
     {
         super(msg);
     }
-    
+
     public CheckerException(String msg, Throwable t)
     {
         super(msg, t);

@@ -103,7 +103,7 @@ public final class ClassSelector
         {
             return false;
         }
-        
+
         boolean matches = matchesCriteria(clazz);
         if (mode == MODE_IF)
         {
@@ -128,20 +128,20 @@ public final class ClassSelector
         {
             return false;
         }
-        
-        for(int i=dollarPos+1; i<name.length(); ++i)
+
+        for (int i = dollarPos + 1; i < name.length(); ++i)
         {
             if (!Character.isDigit(name.charAt(i)))
             {
                 return false;
             }
         }
-        
+
         // ok, we have a class name which contains a dollar sign, and
         // every subsequent character is a digit.
         return true;
     }
-    
+
     /**
      * Return true if this class matches one of the criteria stored
      * in this object.

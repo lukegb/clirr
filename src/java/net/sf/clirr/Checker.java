@@ -252,7 +252,7 @@ public final class Checker implements ApiDiffDispatcher
 
     private static JavaClass extractClass(
                 ZipEntry zipEntry, ZipFile zip, Repository repository)
-                throws CheckerException                
+                throws CheckerException
     {
         String name = zipEntry.getName();
         InputStream is = null;
