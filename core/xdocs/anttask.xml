@@ -1,0 +1,185 @@
+<document>
+    <properties>
+        <title>Clirr Ant Task</title>
+        <author>Lars Kühne</author>
+    </properties>
+    <body>
+        <section name="Running Clirr as an Ant Task">
+            <p>
+        clirr is distributed as an
+                <a href="http://ant.apache.org">Ant</a> task.
+        The following text assumes that you are familiar with Ant. To run clirr, you typically
+            </p>
+            <ul>
+                <li>compile the current version of the library you want to check, resulting in one or more jar file</li>
+                <li>tell ant about the clirr ant task</li>
+                <li>download the compatibility baseline release of your software from a central location via http
+        (if it is not available in your local filesystem already)</li>
+                <li>run the clirr task</li>
+            </ul>
+
+            <p>
+        To do this you will need an ant snippet similar to the following:
+            </p>
+
+            <source>
+&lt;target name="checkbinarycompatibility" depends="build"&gt;
+
+  &lt;!-- buildtools.classpath should contain
+        clirr.jar and the libraries it depends on --&gt;
+
+  &lt;taskdef
+        classpathref="buildtools.classpath"
+        resource="clirrtask.properties"/&gt;
+
+  &lt;property
+        name="jar.baseline"
+        value="${ant.project.name}-${compatibility.baseline.version}.jar"/&gt;
+
+  &lt;get
+        src="${url.libbase}/${ant.project.name}/${jar.baseline}"
+        dest="build/tmp/${jar.baseline}"/&gt;
+
+  &lt;clirr&gt;
+        &lt;origfiles dir="build/tmp" includes="${jar.baseline}"/&gt;
+        &lt;newfiles dir="build/lib" includes="${jar.buildresult}"/&gt;
+
+        &lt;!-- &lt;formatter type="xml" outfile="build/clirr.xml" /&gt; --&gt;
+        &lt;!-- TODO: example for 3rd party classpath --&gt;
+  &lt;/clirr&gt;
+
+&lt;/target&gt;
+            </source>
+        </section>
+        <section name="Parameters">
+
+            <table>
+                <tr>
+                    <td>Attribute</td>
+                    <td>Description</td>
+                    <td>Required</td>
+                    <td>Default</td>
+                </tr>
+                <tr>
+                    <td>failOnBinWarning</td>
+                    <td>Whether task execution should fail (break the build) on warnings
+                        about binary compatibility issues</td>
+                    <td>No</td>
+                    <td>No</td>
+                </tr>
+                <tr>
+                    <td>failOnBinError</td>
+                    <td>Whether task execution should fail (break the build) on binary
+                        compatibility errors</td>
+                    <td>No</td>
+                    <td>Yes</td>
+                </tr>
+                <tr>
+                    <td>failOnSrcWarning</td>
+                    <td>Whether task execution should fail (break the build) on warnings
+                        about source code compatibility issues</td>
+                    <td>No</td>
+                    <td>No</td>
+                </tr>
+                <tr>
+                    <td>failOnSrcError</td>
+                    <td>Whether task execution should fail (break the build) on source
+                        compatibility errors</td>
+                    <td>No</td>
+                    <td>Yes</td>
+                </tr>
+            </table>
+        </section>
+
+        <section name="Parameters specified as nested elements">
+
+            <section name="newFiles">
+
+                <p>
+        A
+                    <a href="http://ant.apache.org/manual/CoreTypes/fileset.html">FileSet</a>
+        that describes the current version that should be checked against
+        the compatibility baseline.
+                </p>
+
+                <p>
+        Clirr works with FileSets instead of individual jar files to allow
+        splitting up or combining library distributions. An example is log4j, the 1.3.0
+        release splits up the earlier log4j.jar into several jar files.
+                </p>
+            </section>
+
+            <section name="origFiles">
+
+                <p>
+        A
+                    <a href="http://ant.apache.org/manual/CoreTypes/fileset.html">FileSet</a>
+        that describes the compatibility baseline to check against.
+                </p>
+            </section>
+
+            <section name="newClassPath">
+
+                <p>
+        The 3rd party
+                    <a href="http://ant.apache.org/manual/using.html#path">ClassPath</a>
+        that is referenced by the checked library version (newFiles). Any
+        class or interface that occurs as a baseclass, parameter type or method return type
+        must be included here.
+                </p>
+            </section>
+
+            <section name="origClassPath">
+
+                <p>
+        The 3rd party
+                    <a href="http://ant.apache.org/manual/using.html#path">ClassPath</a>
+        that is referenced by the compatibility baseline version (origFiles). Any
+        class or interface that occurs as a baseclass, parameter type or method return type
+        must be included here.
+                </p>
+
+                <p>
+        Often the origClassPath is the same as the newClassPath.
+        In these cases you can specify these paths using the refid attribute to avoid
+        duplicating the classpath information. Please refer to the
+                    <a href="http://ant.apache.org/manual/using.html#path">ant manual</a>
+        for details.
+                </p>
+            </section>
+
+
+
+            <section name="formatter">
+
+                <p>
+        A formatter that generates Clirr output. Multiple formatters can be specified.
+        Available attributes for each formatter element:
+                </p>
+                <table>
+                    <tr>
+                        <td>Attribute</td>
+                        <td>Description</td>
+                        <td>Required</td>
+                        <td>Default</td>
+                    </tr>
+                    <tr>
+                        <td>type</td>
+                        <td>The formatter type. Available types are <em>plain</em> and <em>xml</em></td>
+                        <td>No</td>
+                        <td>plain</td>
+                    </tr>
+                    <tr>
+                        <td>outfile</td>
+                        <td>The file to write to. If not specified, output is written to stdout</td>
+                        <td>No</td>
+                        <td>stdout</td>
+                    </tr>
+                </table>
+            </section>
+            <p>
+                If no formatter is specified, Clirr will write it's findings to stdout in plain format.
+            </p>
+        </section>
+    </body>
+</document>
