@@ -20,6 +20,7 @@
 package net.sf.clirr.checks;
 
 import net.sf.clirr.event.Severity;
+import net.sf.clirr.event.Message;
 import net.sf.clirr.framework.AbstractDiffReporter;
 import net.sf.clirr.framework.ApiDiffDispatcher;
 import net.sf.clirr.framework.ClassChangeCheck;
@@ -38,6 +39,13 @@ public final class ClassModifierCheck
         extends AbstractDiffReporter
         implements ClassChangeCheck
 {
+    private static final Message MSG_MODIFIER_UNABLE_TO_DETERMINE_CLASS_SCOPE = new Message(3000);
+    private static final Message MSG_MODIFIER_REMOVED_FINAL = new Message(3001);
+    private static final Message MSG_MODIFIER_ADDED_FINAL_TO_EFFECTIVE_FINAL = new Message(3002);
+    private static final Message MSG_MODIFIER_ADDED_FINAL = new Message(3003);
+    private static final Message MSG_MODIFIER_REMOVED_ABSTRACT = new Message(3004);
+    private static final Message MSG_MODIFIER_ADDED_ABSTRACT = new Message(3005);
+
     /**
      * Create a new instance of this check.
      * @param dispatcher the diff dispatcher that distributes the detected changes to the listeners.
@@ -64,8 +72,8 @@ public final class ClassModifierCheck
         }
         catch (CheckerException ex)
         {
-            log("Unable to determine whether class is private",
-                    Severity.ERROR, className, null, null);
+            log(MSG_MODIFIER_UNABLE_TO_DETERMINE_CLASS_SCOPE,
+                    Severity.ERROR, className, null, null, null);
             return true;
         }
 
@@ -78,34 +86,33 @@ public final class ClassModifierCheck
 
         if (compatIsFinal && !currentIsFinal)
         {
-            log("Removed final modifier in class " + className,
-                    Severity.INFO, className, null, null);
+            log(MSG_MODIFIER_REMOVED_FINAL,
+                    Severity.INFO, className, null, null, null);
         }
         else if (!compatIsFinal && currentIsFinal)
         {
             if (isEffectivelyFinal(compatBaseLine))
             {
-                log("Added final modifier in class " + className
-                        + " (but class was effectively final anyway)",
-                        Severity.INFO, className, null, null);
-                }
+                log(MSG_MODIFIER_ADDED_FINAL_TO_EFFECTIVE_FINAL,
+                        Severity.INFO, className, null, null, null);
+            }
             else
             {
-                log("Added final modifier in class " + className,
-                        Severity.ERROR, className, null, null);
+                log(MSG_MODIFIER_ADDED_FINAL,
+                        Severity.ERROR, className, null, null, null);
             }
         }
 
         // interfaces are always abstract, don't report gender change here
         if (compatIsAbstract && !currentIsAbstract && !compatIsInterface)
         {
-            log("Removed abstract modifier in class " + className,
-                    Severity.INFO, className, null, null);
+            log(MSG_MODIFIER_REMOVED_ABSTRACT,
+                    Severity.INFO, className, null, null, null);
         }
         else if (!compatIsAbstract && currentIsAbstract && !currentIsInterface)
         {
-            log("Added abstract modifier in class " + className,
-                    Severity.ERROR, className, null, null);
+            log(MSG_MODIFIER_ADDED_ABSTRACT,
+                    Severity.ERROR, className, null, null, null);
         }
 
         return true;

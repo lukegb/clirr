@@ -21,6 +21,7 @@ package net.sf.clirr.checks;
 
 import net.sf.clirr.event.Severity;
 import net.sf.clirr.event.ScopeSelector;
+import net.sf.clirr.event.Message;
 import net.sf.clirr.framework.AbstractDiffReporter;
 import net.sf.clirr.framework.ApiDiffDispatcher;
 import net.sf.clirr.framework.ClassChangeCheck;
@@ -49,6 +50,11 @@ public final class ClassScopeCheck
         extends AbstractDiffReporter
         implements ClassChangeCheck
 {
+    private static final Message MSG_SCOPE_INCREASED = new Message(1000);
+    private static final Message MSG_SCOPE_DECREASED = new Message(1001);
+    private static final Message MSG_ERROR_DETERMINING_SCOPE_OLD = new Message(1002);
+    private static final Message MSG_ERROR_DETERMINING_SCOPE_NEW = new Message(1003);
+
     private ScopeSelector scopeSelector;
 
    /**
@@ -71,8 +77,9 @@ public final class ClassScopeCheck
         }
         catch (CheckerException ex)
         {
-            log(ex.getMessage() + " in old class version",
-                Severity.ERROR, compatBaseline.getClassName(), null, null);
+            log(MSG_ERROR_DETERMINING_SCOPE_OLD,
+                Severity.ERROR, compatBaseline.getClassName(), null, null,
+                new String[] {ex.getMessage()});
             return false;
         }
 
@@ -83,8 +90,9 @@ public final class ClassScopeCheck
         }
         catch (CheckerException ex)
         {
-            log(ex.getMessage() + " in new class version",
-                Severity.ERROR, compatBaseline.getClassName(), null, null);
+            log(MSG_ERROR_DETERMINING_SCOPE_NEW,
+                Severity.ERROR, compatBaseline.getClassName(), null, null,
+                new String[] {ex.getMessage()});
             return false;
         }
 
@@ -98,21 +106,25 @@ public final class ClassScopeCheck
 
         if (cScope.isMoreVisibleThan(bScope))
         {
-            log(
-                "Increased visibility of class from "
-                + bScope.getDesc()
-                + " to "
-                + cScope.getDesc(),
-                Severity.INFO, compatBaseline.getClassName(), null, null);
+            String[] args =
+            {
+                bScope.getDesc(),
+                cScope.getDesc()
+            };
+
+            log(MSG_SCOPE_INCREASED,
+                Severity.INFO, compatBaseline.getClassName(), null, null, args);
         }
         else if (cScope.isLessVisibleThan(bScope))
         {
-            log(
-                "Decreased visibility of class from "
-                + bScope.getDesc()
-                + " to "
-                + cScope.getDesc(),
-                Severity.ERROR, compatBaseline.getClassName(), null, null);
+            String[] args =
+            {
+                bScope.getDesc(),
+                cScope.getDesc()
+            };
+
+            log(MSG_SCOPE_DECREASED,
+                Severity.ERROR, compatBaseline.getClassName(), null, null, args);
         }
 
         // Apply further checks only if both versions of the class have scopes

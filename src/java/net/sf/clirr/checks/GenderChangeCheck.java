@@ -19,8 +19,8 @@
 
 package net.sf.clirr.checks;
 
-import net.sf.clirr.event.ApiDifference;
 import net.sf.clirr.event.Severity;
+import net.sf.clirr.event.Message;
 import net.sf.clirr.framework.AbstractDiffReporter;
 import net.sf.clirr.framework.ApiDiffDispatcher;
 import net.sf.clirr.framework.ClassChangeCheck;
@@ -35,6 +35,8 @@ public final class GenderChangeCheck
         extends AbstractDiffReporter
         implements ClassChangeCheck
 {
+    private static final Message MSG_GENDER_CLASS_TO_INTERFACE = new Message(2000);
+    private static final Message MSG_GENDER_INTERFACE_TO_CLASS = new Message(2001);
 
     /**
      * Create a new instance of this check.
@@ -49,12 +51,15 @@ public final class GenderChangeCheck
     /** {@inheritDoc} */
     public boolean check(JavaClass baseLine, JavaClass current)
     {
-        if (baseLine.isClass() != current.isClass())
+        if (baseLine.isClass() && current.isInterface())
         {
-            getApiDiffDispatcher().fireDiff(new ApiDifference(
-                    "Changed Gender of " + baseLine.getClassName(), Severity.ERROR,
-                    baseLine.getClassName(), null, null)
-            );
+            log(MSG_GENDER_CLASS_TO_INTERFACE,
+                Severity.ERROR, baseLine.getClassName(), null, null, null);
+        }
+        else if (baseLine.isInterface() && current.isClass())
+        {
+            log(MSG_GENDER_INTERFACE_TO_CLASS,
+                Severity.ERROR, baseLine.getClassName(), null, null, null);
         }
 
         return true;
