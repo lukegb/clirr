@@ -19,11 +19,6 @@
 
 package net.sf.clirr.core;
 
-import net.sf.clirr.core.ApiDifference;
-import net.sf.clirr.core.FileDiffListener;
-import net.sf.clirr.core.Message;
-import net.sf.clirr.core.MessageTranslator;
-
 import java.io.IOException;
 import java.io.PrintStream;
 

@@ -19,8 +19,6 @@
 
 package net.sf.clirr.core;
 
-import net.sf.clirr.core.DiffListenerAdapter;
-
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.OutputStream;

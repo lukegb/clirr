@@ -19,10 +19,6 @@
 
 package net.sf.clirr.core;
 
-import net.sf.clirr.core.ApiDifference;
-import net.sf.clirr.core.DiffListener;
-
-
 /**
  * Provides empty implementations for all methods
  * in the DiffListener interface.
