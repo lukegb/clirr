@@ -4,6 +4,8 @@
   <!-- the version of maven's project object model -->
   <pomVersion>3</pomVersion>
 
+  <groupId>clirr</groupId>
+
   <!-- a unique name for this project -->
   <id>clirr</id>
 
