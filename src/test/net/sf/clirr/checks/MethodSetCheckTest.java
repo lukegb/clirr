@@ -21,6 +21,8 @@ public class MethodSetCheckTest extends AbstractCheckTestCase
                     Severity.ERROR, "testlib.MethodsChange", "public void removedMethod(java.lang.String)", null),
             new ApiDifference("Method 'public int getPriv2()' has been removed in testlib.MethodsChange",
                     Severity.ERROR, "testlib.MethodsChange", "public int getPriv2()", null),
+            new ApiDifference("Method 'protected MethodsChange(int, boolean)' has been added in testlib.MethodsChange",
+                    Severity.INFO, "testlib.MethodsChange", "protected MethodsChange(int, boolean)", null),
             new ApiDifference("Method 'public java.lang.Long getPrivSquare()' has been added in testlib.MethodsChange",
                     Severity.INFO, "testlib.MethodsChange", "public java.lang.Long getPrivSquare()", null),
 
