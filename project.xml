@@ -60,31 +60,31 @@
   
   <!-- who the developers are for the project -->
   <developers>
-   <developer>
-      <name><![CDATA[Lars K&#252;hne]]></name>
-      <id>lkuehne</id>
-<!--      <email>lkuehne at users sourceforge net</email> -->
-      <organization>ppi Media</organization>
-      <timezone>+1</timezone>
-      <roles>
-        <role>Java Developer</role>
-        <role>Project Admin</role>
-      </roles>
-    </developer>
-  </developers>
+      <developer>
+          <name><![CDATA[Lars K&#252;hne]]></name>
+          <id>lkuehne</id>
+          <!--      <email>lkuehne at users sourceforge net</email> -->
+          <organization>ppi Media</organization>
+          <timezone>+1</timezone>
+          <roles>
+              <role>Java Developer</role>
+              <role>Project Admin</role>
+          </roles>
+      </developer>
+      <developer>
+          <name>Vincent Massol</name>
+          <id>vmassol</id>
+          <email></email>
+          <organization>Apache Software Foundation</organization>
+          <url>http://blogs.codehaus.org/people/vmassol</url>
+          <roles>
+              <role>Initial Inspiration and Feedback</role>
+              <role>Java Developer</role>
+              <role>Maven Guru</role>
+          </roles>
+      </developer>
 
-  <contributors>
-    <contributor>
-      <name>Vincent Massol</name>
-      <email></email>
-      <organization>Apache Software Foundation</organization>
-      <url>http://blogs.codehaus.org/people/vmassol</url>
-      <roles>
-          <role>Initial Inspiration</role>
-          <role>Feedback</role>
-      </roles>
-    </contributor>
-  </contributors>
+  </developers>
 
   <!-- jar files the project is dependent on -->
   <dependencies>
