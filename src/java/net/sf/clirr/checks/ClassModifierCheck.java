@@ -1,0 +1,74 @@
+//////////////////////////////////////////////////////////////////////////////
+// Clirr: compares two versions of a java library for binary compatibility
+// Copyright (C) 2003  Lars Kühne
+//
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License, or (at your option) any later version.
+//
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
+//
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+//////////////////////////////////////////////////////////////////////////////
+
+package net.sf.clirr.checks;
+
+import net.sf.clirr.AbstractDiffReporter;
+import net.sf.clirr.event.Severity;
+import net.sf.clirr.ApiDiffDispatcher;
+import net.sf.clirr.ClassChangeCheck;
+import org.apache.bcel.classfile.JavaClass;
+import org.apache.bcel.util.ClassSet;
+
+public class ClassModifierCheck
+        extends AbstractDiffReporter
+        implements ClassChangeCheck
+{
+    public ClassModifierCheck(ApiDiffDispatcher dispatcher)
+    {
+        super(dispatcher);
+    }
+
+    public void check(JavaClass compatBaseLine, JavaClass currentVersion)
+    {
+        final boolean currentIsFinal = currentVersion.isFinal();
+        final boolean compatIsFinal = compatBaseLine.isFinal();
+        final boolean currentIsAbstract = currentVersion.isAbstract();
+        final boolean compatIsAbstract = compatBaseLine.isAbstract();
+        final boolean currentIsInterface = currentVersion.isInterface();
+        final boolean compatIsInterface = compatBaseLine.isInterface();
+
+        final String className = compatBaseLine.getClassName();
+
+        // TODO: There are cases when nonfinal classes are effectively final
+        // because they do not have public or protected ctors. For such
+        // classes we should not emit errors when a final modifier is
+        // introduced.
+
+        if (compatIsFinal && !currentIsFinal)
+        {
+            log("Removed final modifier in class " + className, Severity.INFO);
+        }
+        else if (!compatIsFinal && currentIsFinal)
+        {
+            log("Added final modifier in class " + className, Severity.ERROR);
+        }
+
+        // interfaces are always abstract, don't report gender change here
+        if (compatIsAbstract && !currentIsAbstract && !compatIsInterface)
+        {
+            log("Removed abstract modifier in class " + className, Severity.INFO);
+        }
+        else if (!compatIsAbstract && currentIsAbstract && !currentIsInterface)
+        {
+            log("Added abstract modifier in class " + className, Severity.ERROR);
+        }
+    }
+
+}
