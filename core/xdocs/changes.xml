@@ -33,7 +33,7 @@
             are no longer reported as a compatibility problem.
         </action>
         <action dev="s_kitching" type="add">
-            Report on classes changing accessability (top-level classes changing
+            Report on classes changing accessibility (top-level classes changing
             between public and package, or nested classes changing between any
             of public/protected/package/private).
         </action>
@@ -49,6 +49,12 @@
         </action>
         <action dev="lkuehne" type="add">
             Error messages are now localized. Initial supported languages are english and german.
+        </action>
+        <action dev="s_kitching" type="fix">
+            Treat all changes in package and private items as being of INFO level
+            severity only, ie changes which would result in an ERROR being 
+            reported if they were public or protected are reported with a severity
+            of INFO if they are package or private.
         </action>
     </release>
 
