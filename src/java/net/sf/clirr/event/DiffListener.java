@@ -20,13 +20,28 @@
 package net.sf.clirr.event;
 
 /**
- * @author Lars
+ * Listener for API differences.
+ *
+ * @author lkuehne
  */
 public interface DiffListener
 {
+    /**
+     * Called when the listener should start listening.
+     * This gives implementations a chance to write some header info.
+     */
     void start();
 
+    /**
+     * Called when an API difference has been detected.
+     * @param difference the difference that has been detected.
+     */
     void reportDiff(ApiDifference difference);
 
+    /**
+     * Called when the listener should stop listening.
+     * This gives implementations a chance to write footer info,
+     * close files, etc.
+     */
     void stop();
 }

@@ -25,16 +25,20 @@ import java.io.OutputStream;
 import java.io.PrintStream;
 
 /**
- * Created by IntelliJ IDEA.
- * User: lk
- * Date: Sep 7, 2003
- * Time: 1:58:20 PM
- * To change this template use Options | File Templates.
+ * Abstract DiffListener that writes output to some textual
+ * output stream. That stream can either be System.out or a textfile.
+ *
+ * @author lkuehne
  */
-public class FileDiffListener extends DiffListenerAdapter
+abstract class FileDiffListener extends DiffListenerAdapter
 {
     private PrintStream outputStream;
 
+    /**
+     * Initializes the outputstream.
+     * @param outFile the filename (System.out is used if null is provided here)
+     * @throws FileNotFoundException if there are problems with
+     */
     FileDiffListener(String outFile) throws FileNotFoundException
     {
         if (outFile == null)
@@ -49,19 +53,41 @@ public class FileDiffListener extends DiffListenerAdapter
 
     }
 
+    /**
+     * Returns the output stream so subclasses can write data.
+     * @return the output stream
+     */
     protected final PrintStream getOutputStream()
     {
         return outputStream;
     }
 
+
+    /**
+     * Writes a footer and closes the
+     * output stream if necessary.
+     *
+     * @see #writeFooter()
+     */
     public final void stop()
     {
+        writeFooter();
 
-        // TODO: duplicate code in XML
         if (outputStream != System.out)
         {
             outputStream.close();
         }
         super.stop();
+    }
+
+    /**
+     * A hook to write footer info to the output stream.
+     * This implementation does nothing, subclasses can override
+     * this method if necessary.
+     *
+     * @see #stop()
+     */
+    protected void writeFooter()
+    {
     }
 }

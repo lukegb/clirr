@@ -19,45 +19,42 @@
 
 package net.sf.clirr.event;
 
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.io.PrintStream;
 
-public final class XmlDiffListener extends DiffListenerAdapter
+/**
+ * A DiffListener that reports any detected difference to
+ * an XML file. That file can be used by subsequent processing steps
+ * to create nice looking reports in HTML, PDF, etc.
+ *
+ * @author lkuehne
+ */
+public final class XmlDiffListener extends FileDiffListener
 {
     private static final String DIFFREPORT = "diffreport";
     private static final String DIFFERENCE = "difference";
 
-    // TODO: ---- duplicate code in PlainDiffListener
-    private PrintStream out;
-
     public XmlDiffListener(String outFile) throws IOException
     {
-        if (outFile == null)
-        {
-            this.out = System.out;
-        }
-        else
-        {
-            final OutputStream out = new FileOutputStream(outFile);
-            this.out = new PrintStream(out);
-        }
+        super(outFile);
     }
-
-    // TODO: ---- end of duplicate code in PlainDiffListener
-
 
     public void reportDiff(ApiDifference difference)
     {
+        PrintStream out = getOutputStream();
         out.print("  <" + DIFFERENCE);
         out.print(" severity=\"" + difference.getSeverity() + "\">");
         out.print(difference.getReport()); // TODO: XML escapes??
         out.println("</" + DIFFERENCE + ">");
     }
 
+    /**
+     * Writes an XML header and toplevel tag to the xml stream.
+     * @see DiffListener#start()
+     */
     public void start()
     {
+        PrintStream out = getOutputStream();
         out.println("<?xml version=\"1.0\"?>");
         out.println("<" + DIFFREPORT + ">");
         out.println("<!--");
@@ -70,13 +67,14 @@ public final class XmlDiffListener extends DiffListenerAdapter
         out.println("-->");
     }
 
-    public void stop()
-    {
-        out.println("</" + DIFFREPORT + ">");
 
-        if (out != System.out)
-        {
-            out.close();
-        }
+    /**
+     * Closes the toplevel tag that was opened in start.
+     * @see DiffListener#stop()
+     */
+    protected void writeFooter()
+    {
+        PrintStream out = getOutputStream();
+        out.println("</" + DIFFREPORT + ">");
     }
 }

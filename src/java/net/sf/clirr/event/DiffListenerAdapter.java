@@ -20,17 +20,34 @@
 package net.sf.clirr.event;
 
 
-
+/**
+ * Provides empty implementations for all methods
+ * in the DiffListener interface.
+ *
+ * @author lkuehne
+ */
 public class DiffListenerAdapter implements DiffListener
 {
+    /**
+     * Does nothing
+     * @see DiffListener#reportDiff(ApiDifference)
+     */
     public void reportDiff(ApiDifference difference)
     {
     }
 
+    /**
+     * Does nothing
+     * @see DiffListener#start()
+     */
     public void start()
     {
     }
 
+    /**
+     * Does nothing
+     * @see DiffListener#stop()
+     */
     public void stop()
     {
     }
