@@ -42,16 +42,21 @@ class TestDiffListener implements ApiDiffDispatcher
                     MessageTranslator translator = new MessageTranslator();
 
                     StringBuffer buf = new StringBuffer();
-                    buf.append("Expected diff " + expected + " was not generated.");
-                    buf.append(" Actual diffs generated were: ");
-                    for(Iterator diffIter = diffs.iterator(); diffIter.hasNext();)
+                    buf.append("Expected diff " + expected + " was not generated.\n");
+                    if (diffs.size() == 0)
                     {
-                        ApiDifference diff = (ApiDifference) diffIter.next();
-
-                        buf.append(diff.toString(translator));
-                        if (diffIter.hasNext())
+                        buf.append("No diffs were generated.");
+                    }
+                    else
+                    {
+                        buf.append("Actual diffs generated were: \n");
+                        for(Iterator diffIter = diffs.iterator(); diffIter.hasNext();)
                         {
-                            buf.append(", ");
+                            ApiDifference diff = (ApiDifference) diffIter.next();
+
+                            buf.append(" * ");
+                            buf.append(diff.toString(translator));
+                            buf.append("\n");
                         }
                     }
 
@@ -60,7 +65,7 @@ class TestDiffListener implements ApiDiffDispatcher
             }
 
             StringBuffer buf = null;
-            for (Iterator it = diffs.iterator(); it.hasNext();) 
+            for (Iterator it = diffs.iterator(); it.hasNext();)
             {
                 ApiDifference actual = (ApiDifference) it.next();
 
@@ -76,13 +81,11 @@ class TestDiffListener implements ApiDiffDispatcher
                     if (buf == null)
                     {
                         buf = new StringBuffer();
-                        buf.append("Unexpected diffs: ");
+                        buf.append("Unexpected diffs:\n");
                     }
-                    else
-                    {
-                        buf.append(", ");
-                    }
+                    buf.append(" * ");
                     buf.append(actual.toString(translator));
+                    buf.append("\n");
                 }
             }
 
