@@ -19,7 +19,6 @@
 
 package net.sf.clirr.checks;
 
-import java.util.Arrays;
 import java.util.Comparator;
 
 import net.sf.clirr.framework.ClassChangeCheck;
@@ -79,10 +78,10 @@ public class FieldSetCheck
 
             Field bField = (Field) iter.getLeft();
             Field cField = (Field) iter.getRight();
-            
+
             if (bField == null)
             {
-                if (scopeSelector.isSelected(cField)) 
+                if (scopeSelector.isSelected(cField))
                 {
                     final String name = cField.getName();
                     String scope = ScopeSelector.getScopeDesc(cField);
@@ -91,7 +90,7 @@ public class FieldSetCheck
             }
             else if (cField == null)
             {
-                if (scopeSelector.isSelected(bField)) 
+                if (scopeSelector.isSelected(bField))
                 {
                     final String name = bField.getName();
                     fireDiff("Field " + name + " has been removed", Severity.ERROR, baselineClass, bField);
@@ -105,7 +104,7 @@ public class FieldSetCheck
                 checkForConstantValueChange(bField, cField,  currentClass);
             }
         }
-        
+
         return true;
     }
 
