@@ -7,6 +7,13 @@
   </properties>
   <body>
 
+    <release version="0.4-SNAPSHOT" date="in CVS">
+        <action dev="lkuehne" type="fix">
+            XML formatter did not write method and field attributes
+            correctly.
+        </action>
+    </release>
+
     <release version="0.3" date="2004-05-23">
         <action dev="lkuehne" due-to="Stephen Colebourne" type="fix">
             Fixed a copy + paste error in field modifier comparison logic

@@ -44,7 +44,7 @@ public final class XmlDiffListener extends FileDiffListener
         PrintStream out = getOutputStream();
         out.print("  <" + DIFFERENCE);
         out.print(" severity=\"" + difference.getSeverity() + "\"");
-        out.print(" class=\"" + difference.getAffectedClass() + "\">");
+        out.print(" class=\"" + difference.getAffectedClass() + "\"");
         if (difference.getAffectedMethod() != null)
         {
             out.print(" method=\"" + difference.getAffectedMethod() + "\"");
@@ -53,6 +53,7 @@ public final class XmlDiffListener extends FileDiffListener
         {
             out.print(" field=\"" + difference.getAffectedField() + "\"");
         }
+        out.print(">");
         out.print(difference.getReport()); // TODO: XML escapes??
         out.println("</" + DIFFERENCE + '>');
     }
