@@ -7,65 +7,419 @@
   </properties>
   <body>
     <section name="Introduction">
+      <p>
+        When clirr generates an ERROR, WARNING or INFO message about
+        a change in the jars being compared, there is an associated
+        message reference code. This document contains an explanation
+        of the meaning of that message which may contain information
+        which could not be fitted into the brief message summary.
+      </p>
+      <p>
+        Messages are separated into three severity levels:
+        <ul>
+          <li>ERROR</li>
+          <li>WARNING</li>
+          <li>INFO</li>
+        </ul>
+      </p>
+      <p>
+        Errors come in two flavours: 
+        <ul>
+          <li>
+            Link-time failures, where an exception will be thrown as soon
+            as code compiled against an old version of a class and the
+            new version of the class are loaded into the same classloader
+            hierarchy.
+          </li>
+          <li>
+            Run-time failures, where an exception is thrown when code
+            compiled against the old version of a class attempts to call a 
+            method on a new version of the class, or vice versa.
+          </li>
+        </ul>
         <p>
-            When clirr generates an ERROR, WARNING or INFO message about
-            a change in the jars being compared, there is an associated
-            message reference code. This document contains an explanation
-            of the meaning of that message which may contain information
-            which could not be fitted into the brief message summary.
+          Clirr reports "errors" for cases where it is <i>possible</i>
+          to get a run-time failure. Whether one actually occurs can
+          depend upon the way the library is called, ie changes reported
+          as an error may in fact work when used as long as the patterns
+          of use of the library do not trigger the failure situation.
         </p>
-        <p>
-            Messages are separated into three severity levels:
-            <ul>
-              <li>ERROR</li>
-              <li>WARNING</li>
-              <li>INFO</li>
-            </ul>
-        </p>
-        <p>
-            Errors come in two flavours: 
-            <ul>
-              <li>
-                Link-time failures, where an exception will be thrown as soon
-                as code compiled against an old version of a class and the
-                new version of the class are loaded into the same classloader
-                hierarchy.
-              </li>
-              <li>
-                Run-time failures, where an exception is thrown when code
-                compiled against the old version of a class attempts to call a 
-                method on a new version of the class, or vice versa.
-              </li>
-            </ul>
-            <p>
-                Clirr reports "errors" for cases where it is <i>possible</i>
-                to get a run-time failure. Whether one actually occurs can
-                depend upon the way the library is called, ie changes reported
-                as an error may in fact work when used as long as the patterns
-                of use of the library do not trigger the failure situation.
-            </p>
-        </p>
-        <p>
-            Warnings are issued for situations where no link or runtime
-            exception will occur, but where the application may behave
-            unexpectedly due to the changes that have occurred.
-        </p>
-        <p>
-            Information messages provide users with information about
-            new features which have been added without breaking backward
-            compatibility in any way.
-        </p>
-        <p>
-            In the following sections, the term "old" is used to refer to
-            a class, interface, method or field from the set of jars which
-            represent the old/previous/original/baseline version of the
-            library being inspected. The term "new" is used to refer to
-            a class, interface, method or field from the set of jars
-            which represent the new/current/latest version of the library
-            being inspected.
-        </p>
+      </p>
+      <p>
+        Warnings are issued for situations where no link or runtime
+        exception will occur, but where the application may behave
+        unexpectedly due to the changes that have occurred.
+      </p>
+      <p>
+        Information messages provide users with information about
+        new features which have been added without breaking backward
+        compatibility in any way.
+      </p>
+      <p>
+        When using clirr to report on changes to items which have
+        private or package scope, these changes are always reported
+        as INFO level changes, never WARNING or ERROR level. This allows
+        users of clirr to generate "change reports" at a level suitable for
+        developers without having some of those changes marked (irrelevantly) 
+        as binary incompatibilities.
+        
+        There can never be binary incompatibilities for changes to private 
+        classes, methods or fields as that access can only occur from 
+        within the same class (ie the same compilation unit). 
+        
+        Clirr does not report binary incompatibility WARNINGs or ERRORs for 
+        package-scoped items either, because java packages are intended to be 
+        "release units", ie all classes within a package are compiled together 
+        (ensuring compatibility) then released as a unit. The only time that 
+        package-scope incompatibilities could possibly be an issue is when 
+        users of a library write their own classes using a package declaration 
+        belonging to some external library, or when a subset of updated classes 
+        (eg a single class) from a package is used to override certain classes 
+        from a previous release of the library. Both of these situations are 
+        considered very poor practice by java programming convention. 
+      </p>
+      <p>
+        In the following sections, the term "old" is used to refer to
+        a class, interface, method or field from the set of jars which
+        represent the old/previous/original/baseline version of the
+        library being inspected. The term "new" is used to refer to
+        a class, interface, method or field from the set of jars
+        which represent the new/current/latest version of the library
+        being inspected.
+      </p>
+      <p>
+        In the following sections, the term "type" is used to refer to
+        something which may be either a class or interface. 
+      </p>
     </section>
     <section name="Messages">
+      <section name="1000 - Increased visibility of class">
+        <p>Severity: <code>INFO</code></p>
+        <p>
+          The specified type exists in both versions, but its declared access 
+          specifier has changed to relax restrictions on what other code can 
+          access it.
+        </p>
+        <p>
+          Top-level types (ie those which are not nested within another class) 
+          may only have "package" or "public" accessibility. Nested types can
+          take on any of the four available accessibility values.
+        </p>
+        <p>
+          Regardless of whether the object is top-level or nested, a change
+          in accessibility from left-to-right of the sequence
+          private->package->protected->public always ensures that all code which
+          could previously access that type can still access that type.
+          Therefore such a change is always binary and source-code compatible.
+        </p>
+        <p>
+          Note that the declaration "protected" provides access to <i>both</i>
+          code derived from the type <i>and</i> to code within the same package,
+          ie "protected" accessibility also implies package accessibility.
+        </p>
+      </section>
+
+      <section name="1001 - Decreased visibility of class">
+        <p>Severity: <code>ERROR</code></p>
+        <p>
+          The specified type exists in both versions, but its declared access 
+          specifier has changed to tighten the restrictions on what other code 
+          may access it. 
+        </p>
+        <p>
+          Top-level types (ie those which are not nested within another class) 
+          may only have "package" or "public" accessibility. Nested types can 
+          take on any of the four available accessibility values.
+        </p>
+        <p>
+          Regardless of whether the type is top-level or nested, a change
+          in accessibility from left-to-right of the sequence
+          public->protected->package->private may cause existing code which
+          could previously access the type to no longer be able to do so. 
+        </p>
+        <p>
+          Section 13.4.3 of the java language specification states explicitly 
+          that an IllegalAccessError should occur if a pre-existing binary tries
+          to access a type when the type accessability has been changed to
+          something that would cause a compile-time error. However this does
+          not appear to be enforced in practice, at least in current JVMs. 
+          Nevertheless this <i>should</i> be an error, and so clirr reports 
+          this change as a binary-compatibility ERROR.
+        </p>
+      </section>
+
+      <section name="2000 - Changed from class to interface">
+        <p>Severity: <code>ERROR</code></p>
+        <p>
+          The specified class has become an interface in the new version.
+          This change is always a binary and source-code incompatibility, for 
+          obvious reasons.
+        </p>
+      </section>
+
+      <section name="2001 - Changed from interface to class">
+        <p>Severity: <code>ERROR</code></p>
+        <p>
+          The specified interface has become an class in the new version.
+          This change is always a binary and source-code incompatibility, for 
+          obvious reasons.
+        </p>
+      </section>
+
+      <section name="3001 - Removed final modifier from class">
+        <p>Severity: <code>INFO</code></p>
+        <p>
+          The specified class was declared final in the old version, but is
+          no longer final in the new version.
+        </p>
+      </section>
+
+      <section name="3002 - Added final modifier to effectively final class">
+        <p>Severity: <code>INFO</code></p>
+        <p>
+          The specified class was not declared final in the old version, but is
+          now declared final. Normally, this would be an incompatibility
+          because pre-existing derived classes would no longer be valid when
+          used with the new version of this class. However in this case
+          the old class version had no public or protected constructors,
+          so it was not possible for any derived classes to exist even for
+          the old version of the library. Changing such a class to final
+          therefore can not break any existing code.
+        </p>
+      </section>
+
+      <section name="3003 - Added final modifier to class">
+        <p>Severity: <code>ERROR</code></p>
+        <p>
+          The specified class was not declared final in the old version, but is
+          now declared final. Any pre-existing classes which were declared
+          as subclasses of this class will therefore not be valid with the
+          new version of the library.
+         </p>
+         <p>
+          A VerifyError is thrown by the classloader when an attempt is made to 
+          load a subclass of a final class.
+         </p>
+         <p>
+          Note that a class Y is loaded by the standard classloader only when
+          the first attempt is made to create an instance of Y, or to directly
+          reference the Class object for class Y. If some other class X has 
+          class Y as a declared member, or as a parameter to some method, then 
+          loading class X does <em>not</em> cause class Y to be loaded.
+         </p>
+      </section>
+
+      <section name="3004 - Removed abstract modifier from class">
+        <p>Severity: <code>INFO</code></p>
+        <p>
+          The old version of this class was declared to be an abstract
+          class. The new version is not abstract, allowing users to
+          create instances of the class. 
+        </p>
+      </section>
+
+      <section name="3005 - Added abstract modifier to class">
+        <p>Severity: <code>ERROR</code></p>
+        <p>
+          The old version of this class was not declared to be abstract.
+          The new version is abstract. Pre-existing code which creates
+          instances of this class is no longer valid with the new version.
+        </p>
+      </section>
+
+      <section name="4000 - Added interface to the set of implemented interfaces">
+        <p>Severity: <code>INFO</code></p>
+        <p>
+          The new version of the type now implements an additional interface. 
+          This does not invalidate any existing code (source or binary), and is 
+          a completely backward-compatible change.
+        </p>
+        <p>
+          Note that this message can be reported without any change occurring
+          in the specified type; a change to the set of interfaces supported by 
+          a type will cause this message to be reported for every descendant
+          of that type.
+        </p>
+      </section>
+
+      <section name="4001 - Removed interface from the set of implemented interfaces">
+        <p>Severity: <code>ERROR</code></p>
+        <p>
+          The old version of this type declared that it implemented an interface 
+          which the new class or interface does not. Existing code which 
+          explicitly or implicitly casts objects of this type to the now missing 
+          interface is no longer valid.
+        </p>
+        <p>
+          Note that this message can be reported without any change occurring
+          in the specified type; a change to the set of interfaces supported by 
+          a type will cause this message to be reported for every descendant
+          of that type.
+        </p>
+      </section>
+
+      <section name="5000 - Added class to the set of superclasses">
+        <p>Severity: <code>INFO or WARNING</code></p>
+        <p>
+          The new version of the class has a class in its inheritance hierarchy
+          which the old version did not, either because its direct parent is 
+          now a different class, or because one of its parent classes has 
+          changed its inheritance hierarchy.
+        </p>
+        <p>
+         If the specified class has java.lang.Throwable as an ancestor, then 
+         this change is reported as a WARNING, because this class change may 
+         change the exception-catching behaviour of programs that use this class.
+        </p>
+        <p>
+          Note that this message can be reported without any change occurring
+          in the specified class; a change to the set of superclasses of an
+          ancestor class will cause this message to be reported for every 
+          descendant class.
+        </p>
+      </section>
+
+      <section name="5001 - Removed class from the set of superclasses">
+        <p>Severity: <code>ERROR</code></p>
+        <p>
+          The old version of this class has a class in its inheritance hierarchy
+          which the new version does not, either because its direct parent
+          is now a different class, or because one of its parent classes has
+          changed its inheritance hierarchy.
+        </p>
+        <p>
+          Existing code which explicitly or implicitly casts objects of this 
+          type to the now missing class type is no longer valid.
+        </p>
+        <p>
+          Note that this message can be reported without any change occurring
+          in the specified class; a change to the set of superclasses of an
+          ancestor class will cause this message to be reported for every 
+          descendent class.
+        </p>
+        <p>
+          Note also that if this class has Throwable in its ancestry, then
+          the class hierarchy change can also cause changes in the
+          exception-catching behaviour of programs using this class.
+        </p>
+      </section>
+
+      <section name="6000 - Added field">
+        <p>Severity: <code>INFO</code></p>
+        <p>
+          The new class has an additional static or instance member. This
+          change is completely backwards-compatible.
+        </p>
+      </section>
+
+      <section name="6001 - Removed field">
+        <p>Severity: <code>ERROR</code></p>
+        <p>
+          The new class has removed a field present in the old version.
+          Pre-existing code which directly accesses that field will no longer 
+          be valid.
+        </p>
+      </section>
+
+      <section name="6002 - Value of field no longer a compile-time constant">
+        <p>Severity: <code>WARNING</code></p>
+        <p>
+          Code compiled against the old version of the class was permitted to
+          "inline" the value of this field because it was a compile-time constant.
+          Therefore, existing binary code will continue to use the old value of
+          this field, instead of the new value (which cannot be inlined).
+        </p>
+      </section>
+
+      <section name="6003 - Value of compile-time constant has changed">
+        <p>Severity: <code>WARNING</code></p>
+        <p>
+          Code compiled against the old version of the class was permitted to
+          "inline" the value of this field because it was a compile-time constant.
+          Therefore, existing binary code will continue to use the old value of
+          this field, instead of the new value.
+        </p>
+      </section>
+
+      <section name="6004 - Field type changed">
+        <p>Severity: <code>ERROR</code></p>
+        <p>
+          The type associated with the specified static or instance member
+          of the specified class has changed. Pre-existing code which directly 
+          accesses that field may no longer be valid, and therefore this is
+          an incompatible change.
+        </p>
+      </section>
+
+      <section name="6005 - Field now non-final">
+        <p>Severity: <code>INFO</code></p>
+        <p>
+          The field was previously final, and is no longer final. This means
+          that the field value can now be modified during the lifetime of
+          the class or instance.
+        </p>
+        <p>
+          Whether a value in a field could previously be "inlined" into
+          other classes is an issue addressed by messages 6002 and 6003,
+          not this message.
+        </p>
+      </section>
+
+      <section name="6006 - Field now final">
+        <p>Severity: <code>ERROR</code></p>
+        <p>
+          The field can no longer be modified during the lifetime of the
+          class or instance. Code which previously modified this field is
+          therefore no longer valid.
+        </p>
+      </section>
+
+      <section name="6007 - Field now non-static">
+        <p>Severity: <code>ERROR</code></p>
+        <p>
+          The field is now an instance variable rather than a class variable.
+          Code which previously accessed this field via the Class rather
+          than an instance of the class is no longer valid.
+        </p>
+      </section>
+
+      <section name="6008 - Field now static">
+        <p>Severity: <code>ERROR</code></p>
+        <p>
+          The field is now a class variable rather than an instance variable.
+        </p>
+        <p>
+          For some reason (presumably internal implementation issues), the
+          java standard declares that this change is not binary-compatible,
+          and that an IncompatibleClassChangeError will be thrown if code
+          compiled against the "old" version of a class is used together with
+          a "new" version for which a field is now static.
+        </p>
+        <p>
+          Because source code is permitted to access class variables via
+          instances of that class, this is expected to be a source-code
+          compatible change. However currently CLIRR reports this as an
+          ERROR for source-code compatibility too.
+        </p>
+      </section>
+
+      <section name="6009 - Field More Accessible">
+        <p>Severity: <code>INFO</code></p>
+        <p>
+          In the new version, the specified field is accessible to more
+          code than it was previously. 
+        </p>
+      </section>
+
+      <section name="6010 - Field Less Accessible">
+        <p>Severity: <code>ERROR</code></p>
+        <p>
+          In the new version, the specified field is accessible to less
+          code than it was previously. Therefore existing code may no longer
+          be valid.
+        </p>
+      </section>
+
       <section name="7000 - Method now in Superclass">
         <p>Severity: <code>INFO</code></p>
         <p>
@@ -79,6 +433,7 @@
           is reported separately.
         </p>
       </section>
+
       <section name="7001 - Method now in Interface">
         <p>Severity: <code>INFO</code></p>
         <p>
@@ -93,6 +448,7 @@
           is reported separately.
         </p>
       </section>
+
       <section name="7002 - Method Removed">
         <p>Severity: <code>ERROR</code></p>
         <p>
@@ -109,9 +465,7 @@
           invocation occurs.
         </p>
       </section>
-      <section name="7003 - Unused">
-        <p>This message code is not currently used.</p>
-      </section>
+
       <section name="7004 - Method Argument Count Changed">
         <p>Severity: <code>ERROR</code></p>
         <p>
@@ -132,6 +486,7 @@
           then the change is a binary incompatibility.
         </p>
       </section>
+
       <section name="7005 - Method Argument Type changed">
         <p>Binary Severity: <code>INFO or ERROR</code></p>
         <p>Source Severity: <code>ERROR</code></p>
@@ -166,6 +521,7 @@
           <em>At the current date, clirr does not check for this situation</em>.
         </p>
       </section>
+
       <section name="7006 - Method Return Type changed">
         <p>Binary Severity: <code>ERROR</code></p>
         <p>Source Severity: <code>INFO or ERROR</code></p>
@@ -201,6 +557,7 @@
           reported as an ERROR.
         </p>
       </section>
+
       <section name="7007 - Method has been Deprecated">
         <p>Severity: <code>INFO</code></p>
         <p>
@@ -209,6 +566,7 @@
           change.
         </p>
       </section>
+
       <section name="7008 - Method has been Undeprecated">
         <p>Severity: <code>INFO</code></p>
         <p>
@@ -218,6 +576,7 @@
           binary-compatible change as well as a source-code-compatible change.
         </p>
       </section>
+
       <section name="7009 - Method is now Less Accessable">
         <p>Severity: <code>ERROR</code></p>
         <p>
@@ -225,21 +584,19 @@
           been tightened to permit less user code to access the method.
         </p>
         <p>
-          Whether this change is truly a binary-compatibility error depends
-          upon patterns of usage. If the change is from public to protected,
-          and the protected method is only invoked from code which subclasses
-          the modified class then the new accessability for the method is still
-          adequate and no problem will occur. Old code will also continue to
-          work correctly as long as the modified method is not invoked. If it
-          is invoked, then an IllegalAccessException is thrown at the time of
-          method invocation.
+          Whether this change is a source-code compatibility issue or not
+          depends upon patterns of usage.
         </p>
         <p>
-          Whether this change is a source-code compatibility issue or not
-          also depends upon patterns of usage. This change is therefore
-          always reported as an ERROR.
+          This change <i>should</i> be a binary incompatibility. Note,
+          however, that current JVMs do not validate this. Code compiled
+          against a previous version of a class can successfully invoke
+          methods for which they no longer have access rights. Nevertheless,
+          the java language specification states that this is an error, so
+          clirr reports this change as a binary incompatibility.
         </p>
       </section>
+
       <section name="7010 - Method is now More Accessable">
         <p>Severity: <code>INFO</code></p>
         <p>
@@ -248,6 +605,7 @@
           is always a binary and source-code compatible change.
         </p>
       </section>
+
       <section name="7011 - Method Added">
         <p>Severity: <code>INFO</code></p>
         <p>
@@ -262,6 +620,7 @@
          does code compiled against the old library invoke?
         </p>
       </section>
+
       <section name="7012 - Method Added to Interface">
         <p>Binary Severity: <code>ERROR</code></p>
         <p>Source Severity: <code>ERROR</code></p>
@@ -288,6 +647,7 @@
           to implement the declared method.
         </p>
       </section>
+
       <section name="7013 - Abstract Method Added to Class">
         <p>Binary Severity: <code>ERROR</code></p>
         <p>Source Severity: <code>ERROR</code></p>
