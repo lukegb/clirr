@@ -22,9 +22,9 @@ package net.sf.clirr.event;
 import java.io.IOException;
 import java.io.PrintStream;
 
-
 public final class PlainDiffListener extends FileDiffListener
 {
+    private MessageTranslator translator = new MessageTranslator();
 
     public PlainDiffListener(String outFile) throws IOException
     {
@@ -45,7 +45,7 @@ public final class PlainDiffListener extends FileDiffListener
         out.print(": ");
         out.print(difference.getAffectedClass());
         out.print(": ");
-        out.println(difference.getReport());
+        out.println(difference.getReport(translator));
     }
 
 }
