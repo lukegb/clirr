@@ -150,7 +150,7 @@ public class MethodSetCheck
      * <p>
      * For these:
      * <ul>
-     *  <li>report on changes in accessability, return type, etc
+     *  <li>report on changes in accessibility, return type, etc
      *  <li>remove from the list
      * </ul>
      *
@@ -202,7 +202,7 @@ public class MethodSetCheck
      * <p>
      * There may also be other differences between methods that are regarded
      * as "soft matches": the exceptions thrown, the deprecation status of the
-     * methods, their accessability, etc.
+     * methods, their accessibility, etc.
      */
     private boolean isSoftMatch(Method oldMethod, Method newMethod)
     {
@@ -604,7 +604,7 @@ public class MethodSetCheck
     }
 
     /**
-     * Report changes in the declared accessability of a method
+     * Report changes in the declared accessibility of a method
      * (public/protected/etc).
      */
     private void checkVisibility(JavaClass compatBaseline, Method baselineMethod, Method currentMethod)
