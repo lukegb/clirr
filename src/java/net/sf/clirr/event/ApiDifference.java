@@ -205,6 +205,17 @@ public final class ApiDifference
     }
 
     /**
+     * Return the message object (if any) associated with this difference.
+     * <p>
+     * Checks which support the "new" message API will provide ApiDifference
+     * objects with non-null message objects.
+     */
+    public Message getMessage()
+    {
+        return message;
+    }
+
+    /**
      * The Severity of the API difference in terms of binary compatibility.
      * ERROR means that clients will definitely break, WARNING means that
      * clients may break, depending on how they use the library.
