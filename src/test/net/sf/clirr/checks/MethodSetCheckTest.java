@@ -3,6 +3,7 @@ package net.sf.clirr.checks;
 import net.sf.clirr.framework.ClassChangeCheck;
 import net.sf.clirr.event.ApiDifference;
 import net.sf.clirr.event.Severity;
+import net.sf.clirr.event.ScopeSelector;
 
 /**
  * TODO: Docs.
@@ -22,6 +23,11 @@ public class MethodSetCheckTest extends AbstractCheckTestCase
                     Severity.ERROR, "testlib.MethodsChange", "public int getPriv2()", null),
             new ApiDifference("Method 'public java.lang.Long getPrivSquare()' has been added in testlib.MethodsChange",
                     Severity.INFO, "testlib.MethodsChange", "public java.lang.Long getPrivSquare()", null),
+
+            new ApiDifference("Method 'public void moveToSuper()' has been added in testlib.ComplexMethodMoveBase",
+                    Severity.INFO, "testlib.ComplexMethodMoveBase", "public void moveToSuper()", null),
+            new ApiDifference("Method 'public void moveToSuper()' is now implemented in superclass testlib.ComplexMethodMoveBase in testlib.ComplexMethodMoveSub",
+                    Severity.INFO, "testlib.ComplexMethodMoveSub", "public void moveToSuper()", null),
 
             // Constructor changes
             new ApiDifference("Parameter 1 of 'protected MethodsChange(int)' has changed it's type to java.lang.Integer in testlib.MethodsChange",
@@ -57,6 +63,6 @@ public class MethodSetCheckTest extends AbstractCheckTestCase
 
     protected final ClassChangeCheck createCheck(TestDiffListener tdl)
     {
-        return new MethodSetCheck(tdl);
+        return new MethodSetCheck(tdl, new ScopeSelector());
     }
 }

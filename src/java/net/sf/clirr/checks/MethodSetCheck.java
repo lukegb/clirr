@@ -21,6 +21,7 @@ package net.sf.clirr.checks;
 
 import net.sf.clirr.event.ApiDifference;
 import net.sf.clirr.event.Severity;
+import net.sf.clirr.event.ScopeSelector;
 import net.sf.clirr.framework.AbstractDiffReporter;
 import net.sf.clirr.framework.ApiDiffDispatcher;
 import net.sf.clirr.framework.ClassChangeCheck;
@@ -46,10 +47,13 @@ public class MethodSetCheck
         extends AbstractDiffReporter
         implements ClassChangeCheck
 {
+    private ScopeSelector scopeSelector;
+
     /** {@inheritDoc} */
-    public MethodSetCheck(ApiDiffDispatcher dispatcher)
+    public MethodSetCheck(ApiDiffDispatcher dispatcher, ScopeSelector scopeSelector)
     {
         super(dispatcher);
+        this.scopeSelector = scopeSelector;
     }
 
     public final void check(JavaClass compatBaseline, JavaClass currentVersion)
@@ -171,7 +175,9 @@ public class MethodSetCheck
                 for (Iterator rmIterator = removedMethods.iterator(); rmIterator.hasNext();)
                 {
                     Method method = (Method) rmIterator.next();
-                    reportMethodRemoved(compatBaseline, method);
+                    String methodSignature = getMethodId(compatBaseline, method);
+                    String superClass = findSuperClassWithSignature(methodSignature, currentVersion);
+                    reportMethodRemoved(compatBaseline, method, superClass);
                 }
                 bNameToMethod.remove(name);
             }
@@ -193,12 +199,55 @@ public class MethodSetCheck
         }
     }
 
-    private void reportMethodRemoved(JavaClass oldClass, Method oldMethod)
+    /**
+     * Searches the class hierarchy for a method that has a certtain signature.
+     * @param methodSignature the sig we're looking for
+     * @param clazz class where search starts
+     * @return class name of a superclass of clazz, might be null
+     */
+    private String findSuperClassWithSignature(String methodSignature, JavaClass clazz)
     {
-        fireDiff("Method '"
-                + getMethodId(oldClass, oldMethod)
-                + "' has been removed",
-                Severity.ERROR, oldClass, oldMethod);
+        final JavaClass[] superClasses = clazz.getSuperClasses();
+        for (int i = 0; i < superClasses.length; i++)
+        {
+            JavaClass superClass = superClasses[i];
+            final Method[] superMethods = superClass.getMethods();
+            for (int j = 0; j < superMethods.length; j++)
+            {
+                Method superMethod = superMethods[j];
+                final String superMethodSignature = getMethodId(superClass, superMethod);
+                if (methodSignature.equals(superMethodSignature))
+                {
+                    return superClass.getClassName();
+                }
+            }
+
+        }
+        return null;
+    }
+
+    /**
+     * Report that a method has been removed from a class.
+     * @param oldClass the class where the method was available
+     * @param oldMethod the method that has been removed
+     * @param superClassName the superclass where the method is now available, might be null
+     */
+    private void reportMethodRemoved(JavaClass oldClass, Method oldMethod, String superClassName)
+    {
+        if (superClassName == null)
+        {
+            fireDiff("Method '"
+                    + getMethodId(oldClass, oldMethod)
+                    + "' has been removed",
+                    Severity.ERROR, oldClass, oldMethod);
+        }
+        else
+        {
+            fireDiff("Method '"
+                    + getMethodId(oldClass, oldMethod)
+                    + "' is now implemented in superclass " + superClassName,
+                    Severity.INFO, oldClass, oldMethod);
+        }
     }
 
     private void reportMethodAdded(JavaClass newClass, Method newMethod)
@@ -225,7 +274,7 @@ public class MethodSetCheck
         {
             Method method = methods[i];
 
-            if (!(method.isPublic() || method.isProtected()))
+            if (!scopeSelector.isSelected(method))
             {
                 continue;
             }
@@ -311,15 +360,14 @@ public class MethodSetCheck
      */
     private String getMethodId(JavaClass clazz, Method method)
     {
-        if (!method.isPublic() && !method.isProtected())
-        {
-            throw new IllegalArgumentException();
-        }
-
         StringBuffer buf = new StringBuffer();
 
-        buf.append(method.isPublic() ? "public" : "protected");
-        buf.append(" ");
+        final String scopeDecl = ScopeSelector.getScopeDecl(method);
+        if (scopeDecl.length() > 0)
+        {
+            buf.append(scopeDecl);
+            buf.append(" ");
+        }
 
         String name = method.getName();
         if ("<init>".equals(name))
