@@ -17,8 +17,8 @@ public class MembersChange
     public static int fin4 = 0;          // removed final
 
     public int pub1 = 0;
-    public int pub2 = 0;
-    public int pub3 = 0;
+    public static int pub2 = 0;          // added static
+    public final int pub3 = 0;           // added final
     public int pub4 = 0;
 
     protected int prot1 = 0;

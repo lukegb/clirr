@@ -49,11 +49,6 @@ public class FieldSetCheck
             final String name1 = f1.getName();
             final String name2 = f2.getName();
 
-            if (name1 == null || name2 == null)
-            {
-                System.out.println("name2 = " + name2);
-                System.out.println("name1 = " + name1);
-            }
             return name1.compareTo(name2);
         }
     }
@@ -135,12 +130,12 @@ public class FieldSetCheck
             fireDiff("Field " + bField.getName() + " is now final", Severity.ERROR, clazz, cField);
         }
 
-        if (!bField.isStatic() && cField.isStatic())
+        if (bField.isStatic() && !cField.isStatic())
         {
             fireDiff("Field " + bField.getName() + " is now non-static", Severity.ERROR, clazz, cField);
         }
 
-        if (!bField.isFinal() && cField.isFinal())
+        if (!bField.isStatic() && cField.isStatic())
         {
             fireDiff("Field " + bField.getName() + " is now static", Severity.ERROR, clazz, cField);
         }
