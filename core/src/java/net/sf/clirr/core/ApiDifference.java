@@ -126,7 +126,11 @@ public final class ApiDifference
      * made available for the message description string to reference via
      * the standard {n} syntax.
      */
-    public ApiDifference(Message message, Severity binarySeverity, Severity sourceSeverity, String clazz, String method, String field, String[] args)
+    public ApiDifference(
+        Message message,
+        Severity binarySeverity, Severity sourceSeverity,
+        String clazz, String method, String field,
+        String[] args)
     {
         checkNonNull(message);
         checkNonNull(binarySeverity);
