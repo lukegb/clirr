@@ -34,7 +34,7 @@
     compatibility with older releases. Basically you give it two sets
     of jar files and Clirr dumps out a list of changes in the public
     api. Clirr provides an Ant task that can be configured to break
-    the build if it detects incompatible api changes. In a continuos
+    the build if it detects incompatible api changes. In a continuous
     integration process Clirr can automatically prevent accidental
     introduction of binary compatibility problems in Java libraries.
   </shortDescription>
