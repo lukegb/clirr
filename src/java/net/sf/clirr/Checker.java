@@ -239,7 +239,7 @@ public final class Checker implements ApiDiffDispatcher
                 if (!zipEntry.isDirectory() && zipEntry.getName().endsWith(".class"))
                 {
                     JavaClass clazz = extractClass(zipEntry, zip, repository);
-                    if (scopeSelector.isSelected(clazz))
+                    if (scopeSelector.isSelected(clazz) && classSelector.isSelected(clazz))
                     {
                         ret.add(clazz);
                     }
