@@ -32,8 +32,6 @@ public class MethodSetCheckTest extends AbstractCheckTestCase
             // Constructor changes
             new ApiDifference("Parameter 1 of 'protected MethodsChange(int)' has changed it's type to java.lang.Integer in testlib.MethodsChange",
                     Severity.ERROR, "testlib.MethodsChange", "protected MethodsChange(int)", null),
-//            new ApiDifference("Constructor 'protected MethodsChange(int, boolean)' has been added in testlib.MethodsChange",
-//                    Severity.INFO, "testlib.MethodsChange", "public MethodsChange(int, boolean)", null),
 
             // return type changes
             new ApiDifference("Return type of Method 'public java.lang.Number getPrivAsNumber()' has been changed to java.lang.Integer in testlib.MethodsChange",
@@ -54,7 +52,12 @@ public class MethodSetCheckTest extends AbstractCheckTestCase
             new ApiDifference("Parameter 1 of 'public void changeParamType(java.lang.String)' has changed it's type to java.lang.Integer in testlib.MethodsChange",
                     Severity.ERROR, "testlib.MethodsChange", "public void changeParamType(java.lang.String)", null),
 
-
+            // deprecation changes
+            new ApiDifference("Method 'public void becomesDeprecated()' has been deprecated in testlib.MethodsChange",
+                    Severity.INFO, "testlib.MethodsChange", "public void becomesDeprecated()", null),
+            new ApiDifference("Method 'public void becomesUndeprecated()' is no longer deprecated in testlib.MethodsChange",
+                    Severity.INFO, "testlib.MethodsChange", "public void becomesUndeprecated()", null),
+                    
             // declared exceptions
             // TODO
         };
