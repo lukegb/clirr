@@ -157,7 +157,7 @@ public final class MessageManager
      * Message ids in the properties file should be prefixed with an 'm',
      * eg "m1000", "m5003".
      * <p>
-     * @throws MissingResourceException if there is no entry in the
+     * @throws java.util.MissingResourceException if there is no entry in the
      * message translation resource bundle for the specified message.
      */
     public String getDesc(Message msg)
