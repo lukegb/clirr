@@ -10,7 +10,20 @@
     <section name="Using the Clirr plugin">
       <ol>
         <li>
-          xxx
+          Make sure you have the Clirr plugin <a href="installing.html">installed</a>.
+        </li>
+        <li>
+          Make sure you have the old versions of your project 
+          <a href="http://maven.apache.org/reference/project-descriptor.html#versions">declared</a>
+          in your POM. The versions should be declared from oldest to youngest.
+          Clirr will check the current code against the latest released version, ingnoring
+          the current development version (version control tag 'HEAD').
+          <!-- TODO: docs for checking against a specific version -->
+        </li>
+        <li>
+          Type "maven clirr". This will create an XML file that contains all changes
+          in your public API. For each change, the file includes Clirr's compatibility
+          analysis.
         </li>
       </ol>
     </section>
