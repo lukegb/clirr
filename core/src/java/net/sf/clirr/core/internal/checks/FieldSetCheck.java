@@ -97,7 +97,6 @@ public class FieldSetCheck
             {
                 if (scopeSelector.isSelected(cField))
                 {
-                    final String name = cField.getName();
                     String scope = ScopeSelector.getScopeDesc(cField);
                     fireDiff(MSG_FIELD_ADDED,
                         Severity.INFO, currentClass, cField,
@@ -108,7 +107,6 @@ public class FieldSetCheck
             {
                 if (scopeSelector.isSelected(bField))
                 {
-                    final String name = bField.getName();
                     if ((bField.getConstantValue() != null) && bField.isFinal())
                     {
                         // Fields which are compile-time constants will have
