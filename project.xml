@@ -16,7 +16,7 @@
   
   <!-- details about the organization that 'owns' the project -->
   <organization>
-    <name><![CDATA[Lars Kühne]]></name>
+    <name>Lars Kühne</name>
     <url>mailto:clirr-devel@lists.sourceforge.net</url>
 <!--    <logo>http://maven.apache.org/images/jakarta-logo-blue.gif</logo> -->
   </organization>
