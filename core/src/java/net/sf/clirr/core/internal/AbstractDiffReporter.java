@@ -60,9 +60,9 @@ public abstract class AbstractDiffReporter
      * to INFO because the specified class is package or private accessibility.
      * Clirr reports changes at level INFO for all private and package
      * scoped objects.
-     * <p
-     * Note that the class passed here should always be from the <iold</i
-     * class version, because we're checking whether <iexisting</i code
+     * <p>
+     * Note that the class passed here should always be from the <i>old</i>
+     * class version, because we're checking whether <i>existing</i> code
      * would have been able to access it (potential compatibility problems)
      * or not.
      *
@@ -107,16 +107,16 @@ public abstract class AbstractDiffReporter
     /**
      * Determine whether the severity of the problem should be reduced
      * to INFO because:
-     * <ul
-     *  <lithe specified method is package or private accessibility, or</li
-     *  <lithe specified method is in a package or private class. </li
-     * </ul
-     * <p
+     * <ul>
+     *  <li>the specified method is package or private accessibility, or</li>
+     *  <li>the specified method is in a package or private class. </li
+     * </ul>
+     * <p>
      * Clirr reports changes at level INFO for all private and package
      * scoped objects.
-     * <p
-     * Note that the method passed here should always be from the <iold</i
-     * class version, because we're checking whether <iexisting</i code
+     * <p>
+     * Note that the method passed here should always be from the <i>old</i>
+     * class version, because we're checking whether <i>existing</i> code
      * would have been able to access it (potential compatibility problems)
      * or not.
      *
@@ -143,16 +143,16 @@ public abstract class AbstractDiffReporter
     /**
      * Determine whether the severity of the problem should be reduced
      * to INFO because:
-     * <ul
-     *  <lithe specified field is package or private accessibility, or</li
-     *  <lithe specified field is in a package or private class. </li
-     * </ul
-     * <p
+     * <ul>
+     * <li>the specified field is package or private accessibility, or</li>
+     * <li>the specified field is in a package or private class. </li>
+     * </ul>
+     * <p>
      * Clirr reports changes at level INFO for all private and package
      * scoped objects.
-     * <p
-     * Note that the field passed here should always be from the <iold</i
-     * class version, because we're checking whether <iexisting</i code
+     * <p>
+     * Note that the field passed here should always be from the <i>old</i>
+     * class version, because we're checking whether <i>existing</i> code
      * would have been able to access it (potential compatibility problems)
      * or not.
      *
