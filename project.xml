@@ -16,7 +16,7 @@
   
   <!-- details about the organization that 'owns' the project -->
   <organization>
-    <name>Lars KÃ¼hne</name>
+    <name>Lars Kühne</name>
     <url>mailto:clirr-devel@lists.sourceforge.net</url>
 <!--    <logo>http://maven.apache.org/images/jakarta-logo-blue.gif</logo> -->
   </organization>
@@ -61,7 +61,7 @@
   <!-- who the developers are for the project -->
   <developers>
       <developer>
-          <name><![CDATA[Lars K&#252;hne]]></name>
+          <name>Lars Kühne</name>
           <id>lkuehne</id>
           <!--      <email>lkuehne at users sourceforge net</email> -->
           <organization>ppi Media</organization>
