@@ -3,24 +3,24 @@
 
   <!-- the version of maven's project object model -->
   <pomVersion>3</pomVersion>
-  
+
   <!-- a unique name for this project -->
   <id>clirr</id>
-  
+
   <!-- a short but descriptive name for the project -->
   <name>Clirr</name>
-  
+
   <!-- The version of the project under development, e.g.
        1.1, 1.2, 2.0-dev -->
   <currentVersion>0.2</currentVersion>
-  
+
   <!-- details about the organization that 'owns' the project -->
   <organization>
     <name>Lars Kühne</name>
     <url>mailto:clirr-devel@lists.sourceforge.net</url>
 <!--    <logo>http://maven.apache.org/images/jakarta-logo-blue.gif</logo> -->
   </organization>
-  
+
   <!-- the year the project started -->
   <inceptionYear>2003</inceptionYear>
   <package>net.sf.clirr</package>
@@ -72,7 +72,7 @@
       <archive>http://lists.sourceforge.net/lists/listinfo/clirr-devel</archive>
     </mailingList>
   </mailingLists>
-  
+
   <!-- who the developers are for the project -->
   <developers>
       <developer>
@@ -116,7 +116,7 @@
       <url>http://ant.apache.org</url>
    </dependency>
   </dependencies>
-  
+
   <!-- build information for the project -->
   <build>
     <nagEmailAddress>clirr-devel@lists.sourceforge.net</nagEmailAddress>
@@ -138,7 +138,7 @@
 
   <reports>
 <!--    <report>maven-changelog-plugin</report> -->
-<!--    <report>maven-changes-plugin</report> -->
+    <report>maven-changes-plugin</report>
     <report>maven-checkstyle-plugin</report>
 <!--    <report>maven-developer-activity-plugin</report> -->
 <!--    <report>maven-file-activity-plugin</report> -->
