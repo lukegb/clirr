@@ -51,7 +51,7 @@
        the connection element has the form:
        scm:<system>:<system specific connection string> -->
   <repository>
-    <connection>scm:cvs:perver:anonymous@cvs.sourceforge.net:/cvsroot/clirr</connection>
+    <connection>scm:cvs:perver:anonymous@cvs.sourceforge.net:/cvsroot/clirr:clirr</connection>
     <url>http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/clirr</url>
   </repository>
 
@@ -127,18 +127,18 @@
   </build>
 
   <reports>
-<!--    <report>maven-changelog-plugin</report> -->
+    <report>maven-changelog-plugin</report> -->
     <report>maven-changes-plugin</report>
     <report>maven-checkstyle-plugin</report>
-<!--    <report>maven-developer-activity-plugin</report> -->
-<!--    <report>maven-file-activity-plugin</report> -->
+    <report>maven-developer-activity-plugin</report> -->
+    <report>maven-file-activity-plugin</report> -->
     <report>maven-javadoc-plugin</report>
     <report>maven-jdepend-plugin</report>
     <report>maven-junit-report-plugin</report>
     <report>maven-jxr-plugin</report>
     <report>maven-license-plugin</report>
     <report>maven-linkcheck-plugin</report>
-<!-- we got checkstyle already, no need for pmd -->
+<!-- we got checkstyle already, so who needs pmd... :-) -->
     <report>maven-tasklist-plugin</report>
   </reports>
 
