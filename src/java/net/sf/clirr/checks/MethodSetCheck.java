@@ -22,6 +22,7 @@ package net.sf.clirr.checks;
 import net.sf.clirr.event.ApiDifference;
 import net.sf.clirr.event.Severity;
 import net.sf.clirr.event.ScopeSelector;
+import net.sf.clirr.event.Message;
 import net.sf.clirr.framework.AbstractDiffReporter;
 import net.sf.clirr.framework.ApiDiffDispatcher;
 import net.sf.clirr.framework.ClassChangeCheck;
@@ -46,6 +47,21 @@ public class MethodSetCheck
         extends AbstractDiffReporter
         implements ClassChangeCheck
 {
+     private static final Message MSG_METHOD_NOW_IN_SUPERCLASS = new Message(7000);
+     private static final Message MSG_METHOD_NOW_IN_INTERFACE = new Message(7001);
+     // 7002 unused
+     private static final Message MSG_METHOD_REMOVED = new Message(7003);
+     private static final Message MSG_METHOD_ARGCOUNT_CHANGED = new Message(7004);
+     private static final Message MSG_METHOD_PARAMTYPE_CHANGED = new Message(7005);
+     private static final Message MSG_METHOD_RETURNTYPE_CHANGED = new Message(7006);
+     private static final Message MSG_METHOD_DEPRECATED = new Message(7007);
+     private static final Message MSG_METHOD_UNDEPRECATED = new Message(7008);
+     private static final Message MSG_METHOD_LESS_ACCESSABLE = new Message(7009);
+     private static final Message MSG_METHOD_MORE_ACCESSABLE = new Message(7010);
+     private static final Message MSG_METHOD_ADDED = new Message(7011);
+     private static final Message MSG_METHOD_ADDED_TO_INTERFACE = new Message(7012);
+     private static final Message MSG_ABSTRACT_METHOD_ADDED = new Message(7013);
+
     private ScopeSelector scopeSelector;
 
     /** {@inheritDoc} */
@@ -64,14 +80,6 @@ public class MethodSetCheck
         {
             return true;
         }
-
-        // The main problem here is to figure out which old method corresponds to which new method.
-
-        // Methods that are named differently are trated as unrelated
-        //
-        // For Methods that differ only in their parameter list we build a similarity table, i.e.
-        // for new method i and old method j we have number that charaterizes how similar
-        // the method signatures are (0 means equal, higher number means more different)
 
         Map bNameToMethod = buildNameToMethodMap(compatBaseline);
         Map cNameToMethod = buildNameToMethodMap(currentVersion);
@@ -156,11 +164,11 @@ public class MethodSetCheck
             JavaClass currentVersion,
             List currentMethods)
     {
-        for(Iterator bIter = baselineMethods.iterator(); bIter.hasNext(); )
+        for (Iterator bIter = baselineMethods.iterator(); bIter.hasNext();)
         {
             Method bMethod = (Method) bIter.next();
 
-            for(Iterator cIter = currentMethods.iterator(); cIter.hasNext(); )
+            for (Iterator cIter = currentMethods.iterator(); cIter.hasNext();)
             {
                 Method cMethod = (Method) cIter.next();
 
@@ -229,6 +237,10 @@ public class MethodSetCheck
         // ok, we now have to deal with the tricky cases, where it is not
         // immediately obvious which old methods correspond to which new
         // methods.
+        //
+        // Here we build a similarity table, i.e. for new method i and old
+        // method j we have number that charaterizes how similar the method
+        // signatures are (0 means equal, higher number means more different)
 
         while (!baselineMethods.isEmpty() && !currentMethods.isEmpty())
         {
@@ -372,6 +384,11 @@ public class MethodSetCheck
             Method oldMethod,
             JavaClass currentClass)
     {
+        if (!scopeSelector.isSelected(oldMethod))
+        {
+            return;
+        }
+
         String methodSignature = getMethodId(oldClass, oldMethod);
         String superClassName = findSuperClassWithSignature(methodSignature, currentClass);
         String superInterfaceName = null;
@@ -382,24 +399,20 @@ public class MethodSetCheck
 
         if (superClassName != null)
         {
-            fireDiff("Method '"
-                    + getMethodId(oldClass, oldMethod)
-                    + "' is now implemented in superclass " + superClassName,
-                    Severity.INFO, oldClass, oldMethod);
+            fireDiff(MSG_METHOD_NOW_IN_SUPERCLASS,
+                    Severity.INFO, oldClass, oldMethod,
+                    new String[] {superClassName});
         }
         else if (superInterfaceName != null)
         {
-            fireDiff("Abstract method '"
-                    + getMethodId(oldClass, oldMethod)
-                    + "' is now specified by implemented interface " + superInterfaceName,
-                    Severity.INFO, oldClass, oldMethod);
+            fireDiff(MSG_METHOD_NOW_IN_INTERFACE,
+                    Severity.INFO, oldClass, oldMethod,
+                    new String[] {superInterfaceName});
         }
         else
         {
-            fireDiff("Method '"
-                    + getMethodId(oldClass, oldMethod)
-                    + "' has been removed",
-                    Severity.ERROR, oldClass, oldMethod);
+            fireDiff(MSG_METHOD_REMOVED,
+                    Severity.ERROR, oldClass, oldMethod, null);
         }
     }
 
@@ -422,26 +435,25 @@ public class MethodSetCheck
      */
     private void reportMethodAdded(JavaClass newClass, Method newMethod)
     {
+        if (!scopeSelector.isSelected(newMethod))
+        {
+            return;
+        }
+
         if (newClass.isInterface())
         {
-            fireDiff("Method '"
-                    + getMethodId(newClass, newMethod)
-                    + "' has been added to an interface",
-                    Severity.ERROR, newClass, newMethod);
+            fireDiff(MSG_METHOD_ADDED_TO_INTERFACE,
+                    Severity.ERROR, newClass, newMethod, null);
         }
         else if (newMethod.isAbstract())
         {
-            fireDiff("Abstract method '"
-                    + getMethodId(newClass, newMethod)
-                    + "' has been added",
-                    Severity.ERROR, newClass, newMethod);
+            fireDiff(MSG_ABSTRACT_METHOD_ADDED,
+                    Severity.ERROR, newClass, newMethod, null);
         }
         else
         {
-            fireDiff("Method '"
-                    + getMethodId(newClass, newMethod)
-                    + "' has been added",
-                    Severity.INFO, newClass, newMethod);
+            fireDiff(MSG_METHOD_ADDED,
+                    Severity.INFO, newClass, newMethod, null);
         }
     }
 
@@ -455,11 +467,6 @@ public class MethodSetCheck
         for (int i = 0; i < methods.length; i++)
         {
             Method method = methods[i];
-
-            if (!scopeSelector.isSelected(method))
-            {
-                continue;
-            }
 
             final String name = method.getName();
             List set = (List) retVal.get(name);
@@ -475,10 +482,16 @@ public class MethodSetCheck
 
     private void check(JavaClass compatBaseline, Method baselineMethod, Method currentMethod)
     {
+        if (!scopeSelector.isSelected(baselineMethod) && !scopeSelector.isSelected(currentMethod))
+        {
+            return;
+        }
+
         checkParameterTypes(compatBaseline, baselineMethod, currentMethod);
         checkReturnType(compatBaseline, baselineMethod, currentMethod);
         checkDeclaredExceptions(compatBaseline, baselineMethod, currentMethod);
         checkDeprecated(compatBaseline, baselineMethod, currentMethod);
+        checkVisibility(compatBaseline, baselineMethod, currentMethod);
     }
 
     private void checkParameterTypes(JavaClass compatBaseline, Method baselineMethod, Method currentMethod)
@@ -488,9 +501,8 @@ public class MethodSetCheck
 
         if (bArgs.length != cArgs.length)
         {
-            fireDiff("In Method '" + getMethodId(compatBaseline, baselineMethod)
-                    + "' the number of arguments has changed",
-                    Severity.ERROR, compatBaseline, baselineMethod);
+            fireDiff(MSG_METHOD_ARGCOUNT_CHANGED,
+                    Severity.ERROR, compatBaseline, baselineMethod, null);
             return;
         }
 
@@ -506,9 +518,13 @@ public class MethodSetCheck
             }
 
             // TODO: Check assignability...
-            fireDiff("Parameter " + (i + 1) + " of '" + getMethodId(compatBaseline, baselineMethod)
-                    + "' has changed it's type to " + cArg,
-                    Severity.ERROR, compatBaseline, baselineMethod);
+            String[] args =
+            {
+                "" + (i + 1),
+                cArg.toString()
+            };
+            fireDiff(MSG_METHOD_PARAMTYPE_CHANGED,
+                    Severity.ERROR, compatBaseline, baselineMethod, args);
         }
     }
 
@@ -520,9 +536,9 @@ public class MethodSetCheck
         // TODO: Check assignability...
         if (!bReturnType.toString().equals(cReturnType.toString()))
         {
-            fireDiff("Return type of Method '" + getMethodId(compatBaseline, baselineMethod)
-                    + "' has been changed to " + cReturnType,
-                    Severity.ERROR, compatBaseline, baselineMethod);
+            fireDiff(MSG_METHOD_RETURNTYPE_CHANGED,
+                    Severity.ERROR, compatBaseline, baselineMethod,
+                    new String[] {cReturnType.toString()});
         }
 
 
@@ -541,15 +557,44 @@ public class MethodSetCheck
 
         if (bIsDeprecated && !cIsDeprecated)
         {
-            fireDiff(
-                "Method '" + getMethodId(compatBaseline, baselineMethod) + "' is no longer deprecated",
-                    Severity.INFO, compatBaseline, baselineMethod);
+            fireDiff(MSG_METHOD_UNDEPRECATED,
+                    Severity.INFO, compatBaseline, baselineMethod, null);
         }
         else if (!bIsDeprecated && cIsDeprecated)
         {
-            fireDiff(
-                "Method '" + getMethodId(compatBaseline, baselineMethod) + "' has been deprecated",
-                    Severity.INFO, compatBaseline, baselineMethod);
+            fireDiff(MSG_METHOD_DEPRECATED,
+                    Severity.INFO, compatBaseline, baselineMethod, null);
+        }
+    }
+
+    /**
+     * Report changes in the declared accessability of a method
+     * (public/protected/etc).
+     */
+    private void checkVisibility(JavaClass compatBaseline, Method baselineMethod, Method currentMethod)
+    {
+        ScopeSelector.Scope bScope = ScopeSelector.getScope(baselineMethod);
+        ScopeSelector.Scope cScope = ScopeSelector.getScope(currentMethod);
+
+        if (cScope.isLessVisibleThan(bScope))
+        {
+            String[] args =
+            {
+                bScope.getDesc(),
+                cScope.getDesc()
+            };
+            fireDiff(MSG_METHOD_LESS_ACCESSABLE,
+                    Severity.ERROR, compatBaseline, baselineMethod, args);
+        }
+        else if (cScope.isMoreVisibleThan(bScope))
+        {
+            String[] args =
+            {
+                bScope.getDesc(),
+                cScope.getDesc()
+            };
+            fireDiff(MSG_METHOD_MORE_ACCESSABLE,
+                    Severity.INFO, compatBaseline, baselineMethod, args);
         }
     }
 
@@ -602,12 +647,12 @@ public class MethodSetCheck
         }
     }
 
-    private void fireDiff(String report, Severity severity, JavaClass clazz, Method method)
+    private void fireDiff(Message msg, Severity severity, JavaClass clazz, Method method, String[] args)
     {
         final String className = clazz.getClassName();
         final ApiDifference diff =
-                new ApiDifference(report + " in " + className,
-                        severity, className, getMethodId(clazz, method), null);
+                new ApiDifference(
+                    msg, severity, className, getMethodId(clazz, method), null, args);
         getApiDiffDispatcher().fireDiff(diff);
 
     }
