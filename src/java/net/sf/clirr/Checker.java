@@ -332,14 +332,14 @@ public final class Checker implements ApiDiffDispatcher
 
             if (compatBaselineClass == null)
             {
-                final String className = compatBaselineClass.getClassName();
+                final String className = currentClass.getClassName();
                 final ApiDifference diff = new ApiDifference(
                     "Added " + className, Severity.INFO, className, null, null);
                 fireDiff(diff);
             }
             else if (currentClass == null)
             {
-                final String className = currentClass.getClassName();
+                final String className = compatBaselineClass.getClassName();
                 final ApiDifference diff = new ApiDifference(
                     "Removed " + className, Severity.ERROR, className, null, null);
                 fireDiff(diff);
