@@ -1,0 +1,67 @@
+<document>
+    <properties>
+        <title>Clirr</title>
+        <author>Lars Kühne</author>
+    </properties>
+    <body>
+        <section name="What is it?">
+            <p>
+Clirr is a tool that checks Java libraries for binary compatibility
+with older releases. Basically you give it two 
+sets of jar files and Clirr dumps out a list of changes in the public api.
+The Clirr Ant task can be configured to break the build if it detects
+incompatible api changes. In a continuos integration process Clirr can
+automatically prevent accidental introduction of binary compatibility
+problems.
+            </p>
+        </section>
+        <section name="Background">
+            <p>
+To learn more about binary compatibility of Java APIs the follwing articles
+provide some detailed background material:
+                <ul>
+                    <li>
+the article
+                        <a href="http://eclipse.org/eclipse/development/java-api-evolution.html">Evolving
+Java-based APIs</a> on the Eclipse web site.
+                    </li>
+                    <li>
+the
+                        <a href="http://java.sun.com/docs/books/jls/second_edition/html/binaryComp.doc.html">Binary Compatibility</a>
+section in the Java Language specification.
+                    </li>
+                </ul>
+            </p>
+
+        </section>
+
+        <section name="Features">
+            <ul>
+                <li>Report all binary API changes (currently only partially implemented)</li>
+                <li>support plain text and XML reports</li>
+                <li>Flexible failure handling (warnings vs. errors, break the build or set error property)</li>
+            </ul>
+
+        </section>
+
+        <section name="Name">
+            <p>
+        The name clirr is derived from the binary compatibility property
+        that a new release of a library/component should have (cited from
+        the above mentioned Eclipse article):
+            </p>
+            <p>
+        Pre-existing
+                <em>C</em>lient binaries must
+                <em>li</em>nk and
+                <em>r</em>un with new
+                <em>r</em>eleases of the Component without recompiling.
+            </p>
+            <p>
+        You can also use clirr as a verb, as in
+                <cite>Last night the build clirred</cite>,
+        meaning that binary incompatibility problems were detected and broke the build.
+            </p>
+        </section>
+    </body>
+</document>

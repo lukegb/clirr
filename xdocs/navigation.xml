@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<project name="Clirr">
+    <title>Clirr</title>
+    <body>
+        <links>
+            <item name="SourceForge Project Page"
+                href="http://www.sourceforge.net/projects/clirr"/>
+            <item name="Hosted by SourceForge"
+                href="http://www.sourceforge.net/"/>
+        </links>
+        <menu name="Clirr">
+            <item name="Overview"
+                href="/index.html"/>
+            <item name="Running Clirr"
+                href="/anttask.html"/>
+            <item name="Download"
+                href="http://sourceforge.net/project/showfiles.php?group_id=89627"/>
+        </menu>
+
+    </body>
+</project>
