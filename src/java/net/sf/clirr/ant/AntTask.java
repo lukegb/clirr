@@ -21,25 +21,16 @@ package net.sf.clirr.ant;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
 
 import net.sf.clirr.Checker;
 import net.sf.clirr.event.PlainDiffListener;
 import net.sf.clirr.event.XmlDiffListener;
-import org.apache.bcel.classfile.ClassParser;
-import org.apache.bcel.classfile.JavaClass;
-import org.apache.bcel.util.ClassLoaderRepository;
-import org.apache.bcel.util.ClassSet;
-import org.apache.bcel.util.Repository;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.DirectoryScanner;
 import org.apache.tools.ant.Project;
@@ -57,6 +48,9 @@ public final class AntTask extends Task
     private static final String FORMATTER_TYPE_PLAIN = "plain";
     private static final String FORMATTER_TYPE_XML = "xml";
 
+    /**
+     * Output formater.
+     */
     public static final class Formatter
     {
         private String type = null;
@@ -195,8 +189,8 @@ public final class AntTask extends Task
         final File[] origJars = scanFileSet(origFiles);
         final File[] newJars = scanFileSet(newFiles);
 
-        final ClassSet origClasses = createClassSet(origJars, origClassPath);
-        final ClassSet newClasses = createClassSet(newJars, newClassPath);
+        final ClassLoader origThirdPartyLoader = createClasspathLoader(origClassPath);
+        final ClassLoader newThirdPartyLoader = createClasspathLoader(newClassPath);
 
         final Checker checker = new Checker();
         final ChangeCounter counter = new ChangeCounter();
@@ -234,7 +228,7 @@ public final class AntTask extends Task
         }
 
         checker.addDiffListener(counter);
-        checker.diffs(origClasses, newClasses);
+        checker.reportDiffs(origJars, newJars, origThirdPartyLoader, newThirdPartyLoader);
 
         if (counter.getWarnings() > 0 && failOnWarning || counter.getErrors() > 0 && failOnError)
         {
@@ -243,62 +237,8 @@ public final class AntTask extends Task
     }
 
 
-    private ClassSet createClassSet(File[] jarFiles, Path classpath)
+    private ClassLoader createClasspathLoader(Path classpath)
     {
-        ClassLoader classLoader = createClassLoader(jarFiles, classpath);
-
-        Repository repository = new ClassLoaderRepository(classLoader);
-
-        ClassSet ret = new ClassSet();
-
-        for (int i = 0; i < jarFiles.length; i++)
-        {
-            File jarFile = jarFiles[i];
-            ZipFile zip = null;
-            try
-            {
-                zip = new ZipFile(jarFile, ZipFile.OPEN_READ);
-            }
-            catch (IOException ex)
-            {
-                throw new BuildException("Cannot open " + jarFile + " for reading", ex);
-            }
-            Enumeration enum = zip.entries();
-            while (enum.hasMoreElements())
-            {
-                ZipEntry zipEntry = (ZipEntry) enum.nextElement();
-                if (!zipEntry.isDirectory() && zipEntry.getName().endsWith(".class"))
-                {
-                    JavaClass clazz = extractClass(zipEntry, zip, repository);
-                    if (clazz.isPublic() || clazz.isProtected())
-                    {
-                        ret.add(clazz);
-                    }
-                }
-            }
-        }
-
-        return ret;
-    }
-
-    private ClassLoader createClassLoader(File[] jarFiles, Path classpath)
-    {
-        final URL[] jarUrls = new URL[jarFiles.length];
-        for (int i = 0; i < jarFiles.length; i++)
-        {
-            File jarFile = jarFiles[i];
-            try
-            {
-                URL url = jarFile.toURL();
-                jarUrls[i] = url;
-            }
-            catch (MalformedURLException ex)
-            {
-                throw new RuntimeException("Cannot create classloader with jar file " + jarFile);
-            }
-        }
-        final URLClassLoader jarsLoader = new URLClassLoader(jarUrls);
-
         final String[] cpEntries = classpath.list();
         final URL[] cpUrls = new URL[cpEntries.length];
         for (int i = 0; i < cpEntries.length; i++)
@@ -315,43 +255,8 @@ public final class AntTask extends Task
                 throw new RuntimeException("Cannot create classLoader from classpath entry " + entry);
             }
         }
-
-        final URLClassLoader retVal = new URLClassLoader(cpUrls, jarsLoader);
-
-        return retVal;
-    }
-
-    private JavaClass extractClass(ZipEntry zipEntry, ZipFile zip, Repository repository)
-    {
-        String name = zipEntry.getName();
-        InputStream is = null;
-        try
-        {
-            is = zip.getInputStream(zipEntry);
-
-            ClassParser parser = new ClassParser(is, name);
-            JavaClass clazz = parser.parse();
-            clazz.setRepository(repository);
-            return clazz;
-        }
-        catch (IOException ex)
-        {
-            throw new BuildException("Cannot read " + zipEntry + " from " + zip, ex);
-        }
-        finally
-        {
-            if (is != null)
-            {
-                try
-                {
-                    is.close();
-                }
-                catch (IOException ex)
-                {
-                    throw new BuildException(ex);
-                }
-            }
-        }
+        final URLClassLoader classPathLoader = new URLClassLoader(cpUrls);
+        return classPathLoader;
     }
 
     private File[] scanFileSet(FileSet fs)

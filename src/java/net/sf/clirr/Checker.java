@@ -22,6 +22,15 @@ package net.sf.clirr;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Enumeration;
+import java.util.zip.ZipFile;
+import java.util.zip.ZipEntry;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.net.MalformedURLException;
+import java.net.URLClassLoader;
 
 import net.sf.clirr.checks.AddedClassCheck;
 import net.sf.clirr.checks.ClassHierarchyCheck;
@@ -35,9 +44,23 @@ import net.sf.clirr.framework.ApiDiffDispatcher;
 import net.sf.clirr.framework.ClassChangeCheck;
 import net.sf.clirr.framework.ClassSetChangeCheck;
 import org.apache.bcel.classfile.JavaClass;
+import org.apache.bcel.classfile.ClassParser;
 import org.apache.bcel.util.ClassSet;
+import org.apache.bcel.util.Repository;
+import org.apache.bcel.util.ClassLoaderRepository;
+import org.apache.tools.ant.BuildException;
 
 
+/**
+ * This is the main class to be used by Clirr frontends,
+ * it implements the checking functionality of Clirr.
+ * Frontends can create an instance of this class
+ * and register themselves as DiffListeners, they are then
+ * informed whenever an API change is detected by the
+ * reportDiffs method.
+ *
+ * @author lkuehne
+ */
 public final class Checker implements ApiDiffDispatcher
 {
 
@@ -46,6 +69,25 @@ public final class Checker implements ApiDiffDispatcher
     private List classSetChecks = new ArrayList();
     private List classChecks = new ArrayList();
 
+    /**
+     * Package visible constructor for unit testing.
+     */
+    Checker(ClassSetChangeCheck cscc)
+    {
+        classSetChecks.add(cscc);
+    }
+
+    /**
+     * Package visible constructor for unit testing.
+     */
+    Checker(ClassChangeCheck ccc)
+    {
+        classChecks.add(ccc);
+    }
+
+    /**
+     * Creates a new Checker.
+     */
     public Checker()
     {
         classSetChecks.add(new RemovedClassCheck(this));
@@ -89,15 +131,125 @@ public final class Checker implements ApiDiffDispatcher
         }
     }
 
-    public void diffs(ClassSet oldClasses, ClassSet newClasses)
+    public void reportDiffs(
+            File[] origJars, File[] newJars,
+            ClassLoader origThirdPartyLoader, ClassLoader newThirdPartyLoader)
+    {
+        final ClassSet origClasses = createClassSet(origJars, origThirdPartyLoader);
+        final ClassSet newClasses = createClassSet(newJars, newThirdPartyLoader);
+        reportDiffs(origClasses, newClasses);
+    }
+
+    private ClassSet createClassSet(File[] jarFiles, ClassLoader thirdPartyClasses)
+    {
+        ClassLoader classLoader = createClassLoader(jarFiles, thirdPartyClasses);
+
+        Repository repository = new ClassLoaderRepository(classLoader);
+
+        ClassSet ret = new ClassSet();
+
+        for (int i = 0; i < jarFiles.length; i++)
+        {
+            File jarFile = jarFiles[i];
+            ZipFile zip = null;
+            try
+            {
+                zip = new ZipFile(jarFile, ZipFile.OPEN_READ);
+            }
+            catch (IOException ex)
+            {
+                throw new BuildException("Cannot open " + jarFile + " for reading", ex);
+            }
+            Enumeration enum = zip.entries();
+            while (enum.hasMoreElements())
+            {
+                ZipEntry zipEntry = (ZipEntry) enum.nextElement();
+                if (!zipEntry.isDirectory() && zipEntry.getName().endsWith(".class"))
+                {
+                    JavaClass clazz = extractClass(zipEntry, zip, repository);
+                    if (clazz.isPublic() || clazz.isProtected())
+                    {
+                        ret.add(clazz);
+                    }
+                }
+            }
+        }
+
+        return ret;
+    }
+
+    private JavaClass extractClass(ZipEntry zipEntry, ZipFile zip, Repository repository)
+    {
+        String name = zipEntry.getName();
+        InputStream is = null;
+        try
+        {
+            is = zip.getInputStream(zipEntry);
+
+            ClassParser parser = new ClassParser(is, name);
+            JavaClass clazz = parser.parse();
+            clazz.setRepository(repository);
+            return clazz;
+        }
+        catch (IOException ex)
+        {
+            throw new BuildException("Cannot read " + zipEntry + " from " + zip, ex);
+        }
+        finally
+        {
+            if (is != null)
+            {
+                try
+                {
+                    is.close();
+                }
+                catch (IOException ex)
+                {
+                    throw new BuildException(ex);
+                }
+            }
+        }
+    }
+
+    private ClassLoader createClassLoader(File[] jarFiles, ClassLoader thirdPartyClasses)
+    {
+        final URL[] jarUrls = new URL[jarFiles.length];
+        for (int i = 0; i < jarFiles.length; i++)
+        {
+            File jarFile = jarFiles[i];
+            try
+            {
+                URL url = jarFile.toURL();
+                jarUrls[i] = url;
+            }
+            catch (MalformedURLException ex)
+            {
+                throw new RuntimeException("Cannot create classloader with jar file " + jarFile);
+            }
+        }
+        final URLClassLoader jarsLoader = new URLClassLoader(jarUrls, thirdPartyClasses);
+
+        return jarsLoader;
+    }
+
+
+    /**
+     * Checks two sets of classes for api changes and reports
+     * them to the DiffListeners.
+     * @param compatibilityBaseline the classes that form the
+     *        compatibility baseline to check against
+     * @param currentVersion the classes that are checked for
+     *        compatibility with compatibilityBaseline
+     */
+    private void reportDiffs(ClassSet compatibilityBaseline, ClassSet currentVersion)
     {
         fireStart();
         for (Iterator it = classSetChecks.iterator(); it.hasNext();)
         {
             ClassSetChangeCheck check = (ClassSetChangeCheck) it.next();
-            check.check(oldClasses, newClasses);
+            check.check(compatibilityBaseline, currentVersion);
         }
-        runClassChecks(oldClasses, newClasses);
+        runClassChecks(compatibilityBaseline, currentVersion);
         fireStop();
     }
 
