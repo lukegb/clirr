@@ -43,7 +43,7 @@ import org.apache.bcel.Constants;
 public final class ScopeSelector
 {
     /**
-     * Represents an "accessability" level for a java class, field or method.
+     * Represents an "accessibility" level for a java class, field or method.
      * <p>
      * Change of access rights from lower to higher visibility rating is a
      * binary-compatible change. Change of access rights from higher to
@@ -149,7 +149,7 @@ public final class ScopeSelector
      * base class and so are valid parameters to this method.
      * <p>
      * Note that despite JavaClass objects extending AccessFlags, the
-     * methods which determine the accessability of a JavaClass fail
+     * methods which determine the accessibility of a JavaClass fail
      * miserably (bad bcel design) for nested classes. Therefore this
      * method <i>must not</i> be passed a JavaClass object as a parameter.
      * If this is done, a RuntimeException will be thrown to indicate a
@@ -183,7 +183,7 @@ public final class ScopeSelector
      * base class and so are valid parameters to this method.
      * <p>
      * Note that despite JavaClass objects extending AccessFlags, the
-     * methods which determine the accessability of a JavaClass fail
+     * methods which determine the accessibility of a JavaClass fail
      * miserably (bad bcel design) for nested classes. Therefore this
      * method <i>must not</i> be passed a JavaClass object as a parameter.
      * If this is done, a RuntimeException will be thrown to indicate a
@@ -217,7 +217,7 @@ public final class ScopeSelector
      * base class and so are valid parameters to this method.
      * <p>
      * Note that despite JavaClass objects extending AccessFlags, the
-     * methods which determine the accessability of a JavaClass fail
+     * methods which determine the accessibility of a JavaClass fail
      * miserably (bad bcel design) for nested classes. Therefore this
      * method <i>must not</i> be passed a JavaClass object as a parameter.
      * If this is done, a RuntimeException will be thrown to indicate a
@@ -251,7 +251,7 @@ public final class ScopeSelector
      * base class and so are valid parameters to this method.
      * <p>
      * Note that despite JavaClass objects extending AccessFlags, the
-     * methods which determine the accessability of a JavaClass fail
+     * methods which determine the accessibility of a JavaClass fail
      * miserably (bad bcel design) for nested classes. Therefore this
      * method <i>must not</i> be passed a JavaClass object as a parameter.
      * If this is done, a RuntimeException will be thrown to indicate a
@@ -261,7 +261,9 @@ public final class ScopeSelector
     {
         if (object instanceof JavaClass)
         {
-            throw new RuntimeException("getScope called for JavaClass object. This is not permitted;" + " use method getClassScope for JavaClass objects.");
+            throw new RuntimeException(
+                "getScope called for JavaClass object. This is not permitted;"
+                + " use method getClassScope for JavaClass objects.");
 
         }
 
@@ -337,7 +339,9 @@ public final class ScopeSelector
 
         if (enclosingClass == null)
         {
-            throw new CheckerException("Unable to locate enclosing class " + enclosingClassName + " for nested class " + jclassName);
+            throw new CheckerException(
+                "Unable to locate enclosing class " + enclosingClassName
+                + " for nested class " + jclassName);
         }
 
         ConstantPool pool = enclosingClass.getConstantPool();
@@ -367,7 +371,9 @@ public final class ScopeSelector
         }
 
         // weird; no nested class info found
-        throw new CheckerException("Unable to find information in class " + enclosingClass.getClassName() + " referring back to nested class " + jclassName);
+        throw new CheckerException(
+            "Unable to find information in class " + enclosingClass.getClassName()
+            + " referring back to nested class " + jclassName);
 
     }
 }
