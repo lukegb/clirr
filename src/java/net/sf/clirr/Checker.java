@@ -52,8 +52,7 @@ import org.apache.bcel.classfile.ClassParser;
 import org.apache.bcel.util.ClassSet;
 import org.apache.bcel.util.Repository;
 import org.apache.bcel.util.ClassLoaderRepository;
-import org.apache.tools.ant.BuildException;
-
+import net.sf.clirr.framework.CheckerException;
 
 /**
  * This is the main class to be used by Clirr frontends,
@@ -171,6 +170,7 @@ public final class Checker implements ApiDiffDispatcher
             File[] origJars, File[] newJars,
             ClassLoader origThirdPartyLoader, ClassLoader newThirdPartyLoader,
             ClassSelector classSelector)
+            throws CheckerException
     {
         if (classSelector == null)
         {
@@ -206,6 +206,7 @@ public final class Checker implements ApiDiffDispatcher
             ClassLoader thirdPartyClasses,
             ScopeSelector scopeSelector,
             ClassSelector classSelector)
+            throws CheckerException
     {
         if (classSelector == null)
         {
@@ -229,7 +230,7 @@ public final class Checker implements ApiDiffDispatcher
             }
             catch (IOException ex)
             {
-                throw new BuildException("Cannot open " + jarFile + " for reading", ex);
+                throw new CheckerException("Cannot open " + jarFile + " for reading", ex);
             }
             Enumeration enumEntries = zip.entries();
             while (enumEntries.hasMoreElements())
@@ -249,7 +250,9 @@ public final class Checker implements ApiDiffDispatcher
         return ret;
     }
 
-    private static JavaClass extractClass(ZipEntry zipEntry, ZipFile zip, Repository repository)
+    private static JavaClass extractClass(
+                ZipEntry zipEntry, ZipFile zip, Repository repository)
+                throws CheckerException                
     {
         String name = zipEntry.getName();
         InputStream is = null;
@@ -264,7 +267,7 @@ public final class Checker implements ApiDiffDispatcher
         }
         catch (IOException ex)
         {
-            throw new BuildException("Cannot read " + zipEntry.getName() + " from " + zip.getName(), ex);
+            throw new CheckerException("Cannot read " + zipEntry.getName() + " from " + zip.getName(), ex);
         }
         finally
         {
@@ -276,7 +279,7 @@ public final class Checker implements ApiDiffDispatcher
                 }
                 catch (IOException ex)
                 {
-                    throw new BuildException("Cannot close " + zip.getName(), ex);
+                    throw new CheckerException("Cannot close " + zip.getName(), ex);
                 }
             }
         }
@@ -295,6 +298,7 @@ public final class Checker implements ApiDiffDispatcher
             }
             catch (MalformedURLException ex)
             {
+                // this should never happen
                 final IllegalArgumentException illegalArgumentException =
                         new IllegalArgumentException("Cannot create classloader with jar file " + jarFile);
                 illegalArgumentException.initCause(ex);
