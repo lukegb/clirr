@@ -75,8 +75,8 @@ public final class InterfaceSetCheck
             JavaClass compatInterface = (JavaClass) iter.getLeft();
             JavaClass currentInterface = (JavaClass) iter.getRight();
 
-            if (className.equals(compatInterface.getClassName())
-                || className.equals(currentInterface.getClassName()))
+            if (compatInterface != null && className.equals(compatInterface.getClassName())
+                || currentInterface != null && className.equals(currentInterface.getClassName()))
             {
                 // This occurs because an interface has itself in the set of all interfaces.
                 // We can't just let the test below handle this case because that won't
