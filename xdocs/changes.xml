@@ -47,6 +47,9 @@
             Note: Ant task attribute names and the output format of the XML formatter
             have changed to support this feature.
         </action>
+        <action dev="lkuehne" type="add">
+            Error messages are now localized. Initial supported languages are english and german.
+        </action>
     </release>
 
     <release version="0.3" date="2004-05-23">
