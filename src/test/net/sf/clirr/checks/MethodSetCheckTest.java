@@ -19,7 +19,7 @@ public class MethodSetCheckTest extends AbstractCheckTestCase
             // method addition and removal
             new ApiDifference("Method 'public void removedMethod(java.lang.String)' has been removed in testlib.MethodsChange",
                     Severity.ERROR, "testlib.MethodsChange", "public void removedMethod(java.lang.String)", null),
-            new ApiDifference("Method 'public int getPriv2()' has been removed in testlib.MethodsChange",
+            new ApiDifference("Accessability of method 'public int getPriv2()' has been decreased from public to private in testlib.MethodsChange",
                     Severity.ERROR, "testlib.MethodsChange", "public int getPriv2()", null),
             new ApiDifference("Method 'protected MethodsChange(int, boolean)' has been added in testlib.MethodsChange",
                     Severity.INFO, "testlib.MethodsChange", "protected MethodsChange(int, boolean)", null),
@@ -35,26 +35,26 @@ public class MethodSetCheckTest extends AbstractCheckTestCase
                     Severity.INFO, "testlib.AbstractImpl", "public void method()", null),
 
             // Constructor changes
-            new ApiDifference("Parameter 1 of 'protected MethodsChange(int)' has changed it's type to java.lang.Integer in testlib.MethodsChange",
+            new ApiDifference("Parameter 1 of 'protected MethodsChange(int)' has changed its type to java.lang.Integer in testlib.MethodsChange",
                     Severity.ERROR, "testlib.MethodsChange", "protected MethodsChange(int)", null),
 
             // return type changes
-            new ApiDifference("Return type of Method 'public java.lang.Number getPrivAsNumber()' has been changed to java.lang.Integer in testlib.MethodsChange",
+            new ApiDifference("Return type of method 'public java.lang.Number getPrivAsNumber()' has been changed to java.lang.Integer in testlib.MethodsChange",
                     Severity.ERROR, "testlib.MethodsChange", "public java.lang.Number getPrivAsNumber()", null),
             // TODO: INFO if method is final
-            new ApiDifference("Return type of Method 'public java.lang.Integer getPrivAsInteger()' has been changed to java.lang.Number in testlib.MethodsChange",
+            new ApiDifference("Return type of method 'public java.lang.Integer getPrivAsInteger()' has been changed to java.lang.Number in testlib.MethodsChange",
                     Severity.ERROR, "testlib.MethodsChange", "public java.lang.Integer getPrivAsInteger()", null),
 
             // parameter list changes
             // Note: This is the current behaviour, not necessarily the spec of the desired behaviour
             // TODO: need to check assignability of types (and check if method or class is final?)
-            new ApiDifference("In Method 'public void printPriv()' the number of arguments has changed in testlib.MethodsChange",
+            new ApiDifference("In method 'public void printPriv()' the number of arguments has changed in testlib.MethodsChange",
                     Severity.ERROR, "testlib.MethodsChange", "public void printPriv()", null),
-            new ApiDifference("Parameter 1 of 'public void strengthenParamType(java.lang.Object)' has changed it's type to java.lang.String in testlib.MethodsChange",
+            new ApiDifference("Parameter 1 of 'public void strengthenParamType(java.lang.Object)' has changed its type to java.lang.String in testlib.MethodsChange",
                     Severity.ERROR, "testlib.MethodsChange", "public void strengthenParamType(java.lang.Object)", null),
-            new ApiDifference("Parameter 1 of 'public void weakenParamType(java.lang.String)' has changed it's type to java.lang.Object in testlib.MethodsChange",
+            new ApiDifference("Parameter 1 of 'public void weakenParamType(java.lang.String)' has changed its type to java.lang.Object in testlib.MethodsChange",
                     Severity.ERROR, "testlib.MethodsChange", "public void weakenParamType(java.lang.String)", null),
-            new ApiDifference("Parameter 1 of 'public void changeParamType(java.lang.String)' has changed it's type to java.lang.Integer in testlib.MethodsChange",
+            new ApiDifference("Parameter 1 of 'public void changeParamType(java.lang.String)' has changed its type to java.lang.Integer in testlib.MethodsChange",
                     Severity.ERROR, "testlib.MethodsChange", "public void changeParamType(java.lang.String)", null),
 
             // deprecation changes
