@@ -26,6 +26,8 @@ import net.sf.clirr.event.Severity;
 import net.sf.clirr.framework.AbstractDiffReporter;
 import net.sf.clirr.framework.ApiDiffDispatcher;
 import net.sf.clirr.framework.ClassChangeCheck;
+import net.sf.clirr.framework.CoIterator;
+import net.sf.clirr.framework.JavaClassNameComparator;
 import org.apache.bcel.classfile.JavaClass;
 
 /**
@@ -71,35 +73,42 @@ public final class ClassHierarchyCheck
     /** {@inheritDoc} */
     public boolean check(JavaClass compatBaseline, JavaClass currentVersion)
     {
-        JavaClass[] compatSuper = compatBaseline.getSuperClasses();
-        JavaClass[] currentSuper = currentVersion.getSuperClasses();
+        JavaClass[] compatSupers = compatBaseline.getSuperClasses();
+        JavaClass[] currentSupers = currentVersion.getSuperClasses();
 
         boolean isThrowable = false;
-        for (int i = 0; i < compatSuper.length; i++)
+        for (int i = 0; i < compatSupers.length; i++)
         {
-            JavaClass javaClass = compatSuper[i];
+            JavaClass javaClass = compatSupers[i];
             if ("java.lang.Throwable".equals(javaClass.getClassName()))
             {
                 isThrowable = true;
             }
         }
 
-        List added = getSetDifference(currentSuper, compatSuper);
-        List removed = getSetDifference(compatSuper, currentSuper);
-
         final String className = compatBaseline.getClassName();
-        for (int i = 0; i < added.size(); i++)
-        {
-            String s = (String) added.get(i);
-            log("Added " + s + " to the list of superclasses of " + className,
-                    isThrowable ? Severity.WARNING : Severity.INFO, className, null, null);
-        }
 
-        for (int i = 0; i < removed.size(); i++)
+        CoIterator iter = new CoIterator(
+            JavaClassNameComparator.COMPARATOR, compatSupers, currentSupers);
+
+        while (iter.hasNext())
         {
-            String s = (String) removed.get(i);
-            log("Removed " + s + " from the list of superclasses of " + className,
-                    Severity.ERROR, className, null, null);
+            iter.next();
+            JavaClass baselineSuper = (JavaClass) iter.getLeft();
+            JavaClass currentSuper = (JavaClass) iter.getRight();
+
+            if (baselineSuper == null)
+            {
+                log("Added " + currentSuper.getClassName()
+                    + " to the list of superclasses of " + className,
+                        isThrowable ? Severity.WARNING : Severity.INFO, className, null, null);
+            }
+            else if (currentSuper == null)
+            {
+                log("Removed " +  baselineSuper.getClassName()
+                    + " from the list of superclasses of " + className,
+                        Severity.ERROR, className, null, null);
+            }
         }
 
         return true;
