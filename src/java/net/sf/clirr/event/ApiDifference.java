@@ -81,48 +81,11 @@ public final class ApiDifference
     private String affectedField;
 
     /**
-     * Create a new API differnce representation.
-     *
-     * @param report a human readable string describing the change that was made, must be non-null.
-     * @param severity the severity in terms of binary and source code compatibility, must be non-null.
-     * @param clazz the fully qualified class name where the change occured, must be non-null.
-     * @param method the method signature of the method that changed, <code>null</code>
-     *   if no method was affected.
-     * @param field the field name where the change occured, <code>null</code>
-     *   if no field was affected.
+     * The set of additional parameters that are available for use
+     * when building the actual message description. These vary depending
+     * upon the actual difference being reported.
      */
-    public ApiDifference(String report, Severity severity, String clazz, String method, String field)
-    {
-        this(report, severity, severity, clazz, method, field);
-    }
-
-    /**
-     * Create a new API differnce representation.
-     *
-     * @param report a human readable string describing the change that was made, must be non-null.
-     * @param binarySeverity the severity in terms of binary compatibility, must be non-null.
-     * @param sourceSeverity the severity in terms of source code compatibility, must be non-null.
-     * @param clazz the fully qualified class name where the change occured, must be non-null.
-     * @param method the method signature of the method that changed, <code>null</code>
-     *   if no method was affected.
-     * @param field the field name where the change occured, <code>null</code>
-     *   if no field was affected.
-     */
-    public ApiDifference(String report, Severity binarySeverity, Severity sourceSeverity,
-                         String clazz, String method, String field)
-    {
-        checkNonNull(report);
-        checkNonNull(binarySeverity);
-        checkNonNull(sourceSeverity);
-        checkNonNull(clazz);
-
-        this.report = report;
-        this.binaryCompatibilitySeverity = binarySeverity;
-        this.sourceCompatibilitySeverity = sourceSeverity;
-        this.affectedClass = clazz;
-        this.affectedField = field;
-        this.affectedMethod = method;
-    }
+    private String[] extraInfo;
 
     /**
      * Invokes the two-severity-level version of this constructor.
@@ -151,7 +114,7 @@ public final class ApiDifference
      * must be non-null.
      *
      * @param clazz is the fully-qualified name of the class in which the
-     * change occurred.
+     * change occurred, must be non-null.
      *
      * @param method the method signature of the method that changed,
      * <code>null</code> if no method was affected.
@@ -172,30 +135,23 @@ public final class ApiDifference
         String field,
         String[] args)
     {
-        String desc = MessageManager.getInstance().getDesc(message);
-        int nArgs = 0;
-        if (args != null)
-        {
-            nArgs = args.length;
-        }
-        String[] strings = new String[nArgs + 3];
-        strings[0] = clazz;
-        strings[1] = method;
-        strings[2] = field;
-        for (int i = 0; i < nArgs; ++i)
-        {
-            strings[i + 3] = args[i];
-        }
+        checkNonNull(message);
+        checkNonNull(binarySeverity);
+        checkNonNull(sourceSeverity);
+        checkNonNull(clazz);
 
         this.message = message;
-        this.report = java.text.MessageFormat.format(desc, strings);
         this.binaryCompatibilitySeverity = binarySeverity;
         this.sourceCompatibilitySeverity = sourceSeverity;
         this.affectedClass = clazz;
         this.affectedField = field;
         this.affectedMethod = method;
+        this.extraInfo = args;
     }
 
+    /**
+     * Trivial utility method to verify that a specific object is non-null.
+     */
     private void checkNonNull(Object o)
     {
         if (o == null)
@@ -260,9 +216,29 @@ public final class ApiDifference
      *
      * @return a human readable description of this API difference.
      */
-    public String getReport()
+    public String getReport(MessageTranslator translator)
     {
-        return report;
+        if (report != null)
+        {
+            return report;
+        }
+
+        String desc = translator.getDesc(message);
+        int nArgs = 0;
+        if (extraInfo != null)
+        {
+            nArgs = extraInfo.length;
+        }
+        String[] strings = new String[nArgs + 3];
+        strings[0] = affectedClass;
+        strings[1] = affectedMethod;
+        strings[2] = affectedField;
+        for (int i = 0; i < nArgs; ++i)
+        {
+            strings[i + 3] = extraInfo[i];
+        }
+
+        return java.text.MessageFormat.format(desc, strings);
     }
 
     /**
@@ -298,77 +274,6 @@ public final class ApiDifference
     public String toString()
     {
         return report + " (" + binaryCompatibilitySeverity + ") - "
-                + getAffectedClass() + '[' + getAffectedField() + '/' + getAffectedMethod() + ']';
+                + affectedClass + '[' + affectedField + '/' + affectedMethod + ']';
     }
-
-    /**
-     * {@inheritDoc}
-     */
-    public boolean equals(Object o)
-    {
-        if (this == o)
-        {
-            return true;
-        }
-
-        if (!(o instanceof ApiDifference))
-        {
-            return false;
-        }
-
-        final ApiDifference other = (ApiDifference) o;
-
-        if (!report.equals(other.report))
-        {
-            return false;
-        }
-
-        if (!binaryCompatibilitySeverity.equals(other.binaryCompatibilitySeverity))
-        {
-            return false;
-        }
-
-        if (!sourceCompatibilitySeverity.equals(other.sourceCompatibilitySeverity))
-        {
-            return false;
-        }
-
-
-        final String otherClass = other.affectedClass;
-        if (!affectedClass.equals(otherClass))
-        {
-            return false;
-        }
-
-        final String otherMethod = other.affectedMethod;
-        if (affectedMethod != null ? !affectedMethod.equals(otherMethod) : otherMethod != null)
-        {
-            return false;
-        }
-
-        final String otherField = other.affectedField;
-        if (affectedField != null ? !affectedField.equals(otherField) : otherField != null)
-        {
-            return false;
-        }
-
-        return true;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public int hashCode()
-    {
-        int result;
-        result = report != null ? report.hashCode() : 0;
-        result = HASHCODE_MAGIC * result + binaryCompatibilitySeverity.hashCode();
-        result = HASHCODE_MAGIC * result + sourceCompatibilitySeverity.hashCode();
-        result = HASHCODE_MAGIC * result + affectedClass.hashCode();
-        result = HASHCODE_MAGIC * result + (affectedMethod != null ? affectedMethod.hashCode() : 0);
-        result = HASHCODE_MAGIC * result + (affectedField != null ? affectedField.hashCode() : 0);
-        return result;
-    }
-
-
 }
