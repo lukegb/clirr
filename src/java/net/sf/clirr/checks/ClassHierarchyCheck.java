@@ -69,7 +69,7 @@ public final class ClassHierarchyCheck
     }
 
     /** {@inheritDoc} */
-    public void check(JavaClass compatBaseline, JavaClass currentVersion)
+    public boolean check(JavaClass compatBaseline, JavaClass currentVersion)
     {
         JavaClass[] compatSuper = compatBaseline.getSuperClasses();
         JavaClass[] currentSuper = currentVersion.getSuperClasses();
@@ -101,5 +101,7 @@ public final class ClassHierarchyCheck
             log("Removed " + s + " from the list of superclasses of " + className,
                     Severity.ERROR, className, null, null);
         }
+
+        return true;
     }
 }

@@ -23,5 +23,5 @@ import org.apache.bcel.classfile.JavaClass;
 
 public interface ClassChangeCheck
 {
-    void check(JavaClass compatBaseline, JavaClass currentVersion);
+    boolean check(JavaClass compatBaseline, JavaClass currentVersion);
 }

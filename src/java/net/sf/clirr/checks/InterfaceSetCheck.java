@@ -48,7 +48,7 @@ public final class InterfaceSetCheck
     }
 
     /** {@inheritDoc} */
-    public void check(JavaClass compatBaseline, JavaClass currentVersion)
+    public boolean check(JavaClass compatBaseline, JavaClass currentVersion)
     {
         JavaClass[] compatInterfaces = compatBaseline.getAllInterfaces();
         JavaClass[] currentInterfaces = currentVersion.getAllInterfaces();
@@ -92,6 +92,8 @@ public final class InterfaceSetCheck
                         Severity.INFO, className, null, null);
             }
         }
+
+        return true;
     }
 
     private Set createClassSet(JavaClass[] classes)

@@ -64,7 +64,7 @@ public class FieldSetCheck
         this.scopeSelector = scopeSelector;
     }
 
-    public final void check(JavaClass compatBaseline, JavaClass currentVersion)
+    public final boolean check(JavaClass compatBaseline, JavaClass currentVersion)
     {
         final Field[] baselineFields = compatBaseline.getFields();
         final Field[] currentFields = currentVersion.getFields();
@@ -76,6 +76,8 @@ public class FieldSetCheck
         final Field[] cFields = createSortedCopy(currentFields);
 
         checkForChanges(bFields, cFields, compatBaseline, currentVersion);
+
+        return true;
     }
 
     private void checkForChanges(

@@ -44,7 +44,7 @@ public final class ClassModifierCheck
     }
 
     /** {@inheritDoc} */
-    public void check(JavaClass compatBaseLine, JavaClass currentVersion)
+    public boolean check(JavaClass compatBaseLine, JavaClass currentVersion)
     {
         final boolean currentIsFinal = currentVersion.isFinal();
         final boolean compatIsFinal = compatBaseLine.isFinal();
@@ -82,6 +82,8 @@ public final class ClassModifierCheck
             log("Added abstract modifier in class " + className,
                     Severity.ERROR, className, null, null);
         }
+
+        return true;
     }
 
 }

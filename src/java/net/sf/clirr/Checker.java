@@ -351,10 +351,11 @@ public final class Checker implements ApiDiffDispatcher
             if ((compatBaselineClass != null) && (currentClass != null))
             {
                 // class is available in both releases
-                for (Iterator it = classChecks.iterator(); it.hasNext();)
+                boolean continueTesting = true;
+                for (Iterator it = classChecks.iterator(); it.hasNext() && continueTesting;)
                 {
                     ClassChangeCheck classChangeCheck = (ClassChangeCheck) it.next();
-                    classChangeCheck.check(compatBaselineClass, currentClass);
+                    continueTesting = classChangeCheck.check(compatBaselineClass, currentClass);
                 }
             }
         }

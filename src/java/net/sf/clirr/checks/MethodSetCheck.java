@@ -57,14 +57,14 @@ public class MethodSetCheck
         this.scopeSelector = scopeSelector;
     }
 
-    public final void check(JavaClass compatBaseline, JavaClass currentVersion)
+    public final boolean check(JavaClass compatBaseline, JavaClass currentVersion)
     {
         // Dont't report method problems when gender has changed, as
         // really the whole API is a pile of crap then - let GenderChange check
         // do it's job, and that's it
         if (compatBaseline.isInterface() ^ currentVersion.isInterface())
         {
-            return;
+            return true;
         }
 
         // The main problem here is to figure out which old method corresponds to which new method.
@@ -116,6 +116,8 @@ public class MethodSetCheck
                 check(compatBaseline, iMethod, jMethod);
             }
         }
+
+        return true;
     }
 
     private int[][] buildSimilarityTable(List baselineMethods, List currentMethods)

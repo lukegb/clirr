@@ -52,7 +52,7 @@ public final class GenderChangeCheck
 
 
     /** {@inheritDoc} */
-    public void check(JavaClass baseLine, JavaClass current)
+    public boolean check(JavaClass baseLine, JavaClass current)
     {
         if (baseLine.isClass() != current.isClass())
         {
@@ -61,6 +61,8 @@ public final class GenderChangeCheck
                     baseLine.getClassName(), null, null)
             );
         }
+
+        return true;
     }
 
     // TODO: This should be a method in BCEL's ClassSet !!!
