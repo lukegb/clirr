@@ -18,11 +18,13 @@ public class MembersChange extends BaseMembers
     public static final int fin5 = 1;    // changed compile time constant
     public static final boolean fin6 =
         Boolean.FALSE.booleanValue();    // removed value of compile time constant
+    // public static final int fin7 = 7;    // removed constant field
 
     public int pub1 = 0;
     public static int pub2 = 0;          // added static
     public final int pub3 = 0;           // added final
     public int pub4 = 0;
+    // public int pub5 = 0;               // removed non-constant field
 
     protected int prot1 = 0;
     protected int prot2 = 0;
