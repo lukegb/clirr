@@ -59,10 +59,12 @@ class TestDiffListener implements ApiDiffDispatcher
                 }
             }
 
-            for (Iterator it = diffs.iterator(); it.hasNext();) {
+            StringBuffer buf = null;
+            for (Iterator it = diffs.iterator(); it.hasNext();) 
+            {
                 ApiDifference actual = (ApiDifference) it.next();
 
-                // see if the generated diff is in fact in the expected set
+                // see if the actual (generated) diff is in the expected set
                 boolean found = false;
                 for(int i=0; i<expectedDiffs.length && !found; ++i)
                 {
@@ -71,8 +73,23 @@ class TestDiffListener implements ApiDiffDispatcher
 
                 if (!found)
                 {
-                    TestCase.fail("unexpected diff " + actual);
+                    if (buf == null)
+                    {
+                        buf = new StringBuffer();
+                        buf.append("Unexpected diffs: ");
+                    }
+                    else
+                    {
+                        buf.append(", ");
+                    }
+                    buf.append(actual.toString(translator));
                 }
+            }
+
+            if (buf != null)
+            {
+                // we must have found at least one unexpected diff
+                TestCase.fail(buf.toString());
             }
         }
 }
