@@ -25,7 +25,7 @@ import net.sf.clirr.event.Severity;
 import net.sf.clirr.framework.AbstractDiffReporter;
 import net.sf.clirr.framework.ApiDiffDispatcher;
 
-public abstract class AbstractClassSetChangeCheck
+abstract class AbstractClassSetChangeCheck
         extends AbstractDiffReporter
 {
     protected AbstractClassSetChangeCheck(ApiDiffDispatcher dispatcher)
