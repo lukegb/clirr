@@ -9,8 +9,8 @@ public class GenderChangeCheckTest extends AbstractCheckTestCase
     public void testGenderChangeCheckTest()
     {
         ApiDifference[] expected = new ApiDifference[] {
-            new ApiDifference("Changed Gender of testlib.ClassBecomesInterface", Severity.ERROR),
-            new ApiDifference("Changed Gender of testlib.InterfaceBecomesClass", Severity.ERROR),
+            new ApiDifference("Changed Gender of testlib.ClassBecomesInterface", Severity.ERROR, "testlib.ClassBecomesInterface", null, null),
+            new ApiDifference("Changed Gender of testlib.InterfaceBecomesClass", Severity.ERROR, "testlib.InterfaceBecomesClass", null, null),
         };
         verify(expected);
     }

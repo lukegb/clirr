@@ -43,12 +43,12 @@ abstract class FileDiffListener extends DiffListenerAdapter
     {
         if (outFile == null)
         {
-            this.outputStream = System.out;
+            outputStream = System.out;
         }
         else
         {
             final OutputStream out = new FileOutputStream(outFile);
-            this.outputStream = new PrintStream(out);
+            outputStream = new PrintStream(out);
         }
 
     }

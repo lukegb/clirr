@@ -57,7 +57,8 @@ public final class GenderChangeCheck
         if (baseLine.isClass() != current.isClass())
         {
             getApiDiffDispatcher().fireDiff(new ApiDifference(
-                    "Changed Gender of " + baseLine.getClassName(), Severity.ERROR)
+                    "Changed Gender of " + baseLine.getClassName(), Severity.ERROR,
+                    baseLine.getClassName(), null, null)
             );
         }
     }

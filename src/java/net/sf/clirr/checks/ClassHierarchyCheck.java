@@ -77,18 +77,19 @@ public final class ClassHierarchyCheck
         List added = getSetDifference(currentSuper, compatSuper);
         List removed = getSetDifference(compatSuper, currentSuper);
 
+        final String className = compatBaseline.getClassName();
         for (int i = 0; i < added.size(); i++)
         {
             String s = (String) added.get(i);
-            log("Added " + s + " to the list of superclasses of "
-                    + compatBaseline.getClassName(), Severity.INFO);
+            log("Added " + s + " to the list of superclasses of " + className,
+                    Severity.INFO, className, null, null);
         }
 
         for (int i = 0; i < removed.size(); i++)
         {
             String s = (String) removed.get(i);
-            log("Removed " + s + " from the list of superclasses of "
-                    + compatBaseline.getClassName(), Severity.ERROR);
+            log("Removed " + s + " from the list of superclasses of " + className,
+                    Severity.ERROR, className, null, null);
         }
     }
 }

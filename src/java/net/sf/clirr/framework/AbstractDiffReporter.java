@@ -21,6 +21,9 @@ package net.sf.clirr.framework;
 
 import net.sf.clirr.event.ApiDifference;
 import net.sf.clirr.event.Severity;
+import org.apache.bcel.classfile.JavaClass;
+import org.apache.bcel.classfile.Method;
+import org.apache.bcel.classfile.Field;
 
 public abstract class AbstractDiffReporter
 {
@@ -37,8 +40,9 @@ public abstract class AbstractDiffReporter
         return dispatcher;
     }
 
-    protected final void log(String msg, Severity severity)
+    protected final void log(String msg, Severity severity, String clazz, Method method, Field field)
     {
-        getApiDiffDispatcher().fireDiff(new ApiDifference(msg, severity));
+        final ApiDifference diff = new ApiDifference(msg, severity, clazz, null, null);
+        getApiDiffDispatcher().fireDiff(diff);
     }
 }

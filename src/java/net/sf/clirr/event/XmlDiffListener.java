@@ -26,7 +26,7 @@ import java.io.PrintStream;
  * A DiffListener that reports any detected difference to
  * an XML file. That file can be used by subsequent processing steps
  * to create nice looking reports in HTML, PDF, etc.
- *
+ * 
  * @author lkuehne
  */
 public final class XmlDiffListener extends FileDiffListener
@@ -44,12 +44,22 @@ public final class XmlDiffListener extends FileDiffListener
         PrintStream out = getOutputStream();
         out.print("  <" + DIFFERENCE);
         out.print(" severity=\"" + difference.getSeverity() + "\">");
+        out.print(" class=\"" + difference.getAffectedClass() + "\"");
+        if (difference.getAffectedMethod() != null)
+        {
+            out.print(" method=\"" + difference.getAffectedMethod() + "\"");
+        }
+        if (difference.getAffectedField() != null)
+        {
+            out.print(" field=\"" + difference.getAffectedField() + "\"");
+        }
         out.print(difference.getReport()); // TODO: XML escapes??
         out.println("</" + DIFFERENCE + '>');
     }
 
     /**
      * Writes an XML header and toplevel tag to the xml stream.
+     * 
      * @see DiffListener#start()
      */
     public void start()
@@ -70,6 +80,7 @@ public final class XmlDiffListener extends FileDiffListener
 
     /**
      * Closes the toplevel tag that was opened in start.
+     * 
      * @see DiffListener#stop()
      */
     protected void writeFooter()

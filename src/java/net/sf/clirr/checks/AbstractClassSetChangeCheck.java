@@ -44,7 +44,7 @@ abstract class AbstractClassSetChangeCheck
             String oldClassName = setA[i];
             if (Arrays.binarySearch(setB, oldClassName) < 0)
             {
-                log(diffPrefix + oldClassName, severity);
+                log(diffPrefix + oldClassName, severity, oldClassName, null, null);
             }
         }
     }

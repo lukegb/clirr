@@ -21,32 +21,63 @@ package net.sf.clirr.event;
 
 
 /**
- * TODO: Add structure.
- * E.g.
- * - origfile, newfile
- * - Class-/MethodName
+ * Describes an API change.
+ * 
  * @author Lars
  */
 public final class ApiDifference
 {
+    private static final int HASHCODE_MAGIC = 29;
 
+    /** human readable change report. */
     private String report;
 
+    /** severity of the change, as determined by clirr. */
     private Severity severity;
 
-    //private boolean expected;
+    /** The fully qualified class name that is affected by the API change. */
+    private String affectedClass;
+
+    /**
+     * The method that is affected, if any.
+     * <p/>
+     * The content is the method name plus the fully qualified
+     * parameter types separated by comma and space and enclosed in
+     * brackets, e.g. "doStuff(java.lang.String, int)".
+     * <p/>
+     * This value is <code>null</code> if no single method is
+     * affected, i.e. if the
+     * api change affects a field or is global
+     * (like "class is now final").
+     */
+    private String affectedMethod;
+
+    /**
+     * The field that is affected, if any.
+     * <p/>
+     * The content is the field name, e.g. "someValue".
+     * Type information for the field is not available.
+     * <p/>
+     * This value is <code>null</code> if no single field is
+     * affected, i.e. if the
+     * api change affects a method or is global
+     * (like "class is now final").
+     */
+    private String affectedField;
 
     /**
      * Create a new API differnce representation.
-     *
-     * @param report a human readable string describing the change that was made.
+     * 
+     * @param report   a human readable string describing the change that was made.
      * @param severity the severity in terms of binary API compatibility.
      */
-    public ApiDifference(String report, Severity severity /*, boolean expected*/)
+    public ApiDifference(String report, Severity severity, String clazz, String method, String field)
     {
         this.report = report;
         this.severity = severity;
-//        this.expected = expected;
+        this.affectedClass = clazz;
+        this.affectedField = field;
+        this.affectedMethod = method;
     }
 
     /**
@@ -54,7 +85,7 @@ public final class ApiDifference
      * definately break, WARNING means that clients may break, depending
      * on how they use the library. See the eclipse paper for further
      * explanation.
-     *
+     * 
      * @return the severity of the API difference.
      */
     public Severity getSeverity()
@@ -62,25 +93,42 @@ public final class ApiDifference
         return severity;
     }
 
+    /**
+     * Human readable api change description.
+     * 
+     * @return a human readable description of this API difference.
+     */
     public String getReport()
     {
         return report;
     }
 
-    /*
-    public boolean isExpected()
+    public String getAffectedClass()
     {
-        return expected;
+        return affectedClass;
     }
-    */
 
-    /** {@inheritDoc} */
+    public String getAffectedMethod()
+    {
+        return affectedMethod;
+    }
+
+    public String getAffectedField()
+    {
+        return affectedField;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public String toString()
     {
-        return report + " (" + severity + ")";
+        return report + " (" + severity + ')';
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public boolean equals(Object o)
     {
         if (this == o)
@@ -93,13 +141,25 @@ public final class ApiDifference
             return false;
         }
 
-        final ApiDifference apiDifference = (ApiDifference) o;
+        final ApiDifference other = (ApiDifference) o;
 
-        if (report != null ? !report.equals(apiDifference.report) : apiDifference.report != null)
+        if (report != null ? !report.equals(other.report) : other.report != null)
         {
             return false;
         }
-        if (severity != null ? !severity.equals(apiDifference.severity) : apiDifference.severity != null)
+        if (severity != null ? !severity.equals(other.severity) : other.severity != null)
+        {
+            return false;
+        }
+        if (affectedClass != null ? !affectedClass.equals(other.affectedClass) : other.affectedClass != null)
+        {
+            return false;
+        }
+        if (affectedMethod != null ? !affectedMethod.equals(other.affectedMethod) : other.affectedMethod != null)
+        {
+            return false;
+        }
+        if (affectedField != null ? !affectedField.equals(other.affectedField) : other.affectedField != null)
         {
             return false;
         }
@@ -110,8 +170,11 @@ public final class ApiDifference
     public int hashCode()
     {
         int result;
-        result = (report != null ? report.hashCode() : 0);
-        result = 29 * result + (severity != null ? severity.hashCode() : 0);
+        result = report != null ? report.hashCode() : 0;
+        result = HASHCODE_MAGIC * result + (severity != null ? severity.hashCode() : 0);
+        result = HASHCODE_MAGIC * result + (affectedClass != null ? affectedClass.hashCode() : 0);
+        result = HASHCODE_MAGIC * result + (affectedMethod != null ? affectedMethod.hashCode() : 0);
+        result = HASHCODE_MAGIC * result + (affectedField != null ? affectedField.hashCode() : 0);
         return result;
     }
 }

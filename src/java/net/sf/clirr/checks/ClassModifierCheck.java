@@ -62,21 +62,25 @@ public final class ClassModifierCheck
 
         if (compatIsFinal && !currentIsFinal)
         {
-            log("Removed final modifier in class " + className, Severity.INFO);
+            log("Removed final modifier in class " + className,
+                    Severity.INFO, className, null, null);
         }
         else if (!compatIsFinal && currentIsFinal)
         {
-            log("Added final modifier in class " + className, Severity.ERROR);
+            log("Added final modifier in class " + className,
+                    Severity.ERROR, className, null, null);
         }
 
         // interfaces are always abstract, don't report gender change here
         if (compatIsAbstract && !currentIsAbstract && !compatIsInterface)
         {
-            log("Removed abstract modifier in class " + className, Severity.INFO);
+            log("Removed abstract modifier in class " + className,
+                    Severity.INFO, className, null, null);
         }
         else if (!compatIsAbstract && currentIsAbstract && !currentIsInterface)
         {
-            log("Added abstract modifier in class " + className, Severity.ERROR);
+            log("Added abstract modifier in class " + className,
+                    Severity.ERROR, className, null, null);
         }
     }
 

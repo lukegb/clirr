@@ -73,7 +73,7 @@ public final class InterfaceSetCheck
                 log("Removed " + compatInterface
                         + " from the set of interfaces implemented by "
                         + className,
-                        Severity.ERROR);
+                        Severity.ERROR, className, null, null);
             }
             else
             {
@@ -89,7 +89,7 @@ public final class InterfaceSetCheck
                 log("Added " + name
                         + " to the set of implemented interfaces implemented by "
                         + className,
-                        Severity.INFO);
+                        Severity.INFO, className, null, null);
             }
         }
     }
