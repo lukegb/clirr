@@ -36,7 +36,9 @@ import org.apache.bcel.classfile.JavaClass;
  *
  * @author lkuehne
  */
-public final class InterfaceSetCheck extends AbstractDiffReporter implements ClassChangeCheck
+public final class InterfaceSetCheck
+    extends AbstractDiffReporter
+    implements ClassChangeCheck
 {
     private static final Message MSG_IFACE_ADDED = new Message(4000);
     private static final Message MSG_IFACE_REMOVED = new Message(4001);
@@ -63,7 +65,8 @@ public final class InterfaceSetCheck extends AbstractDiffReporter implements Cla
 
         final String className = compatBaseline.getClassName();
 
-        CoIterator iter = new CoIterator(JavaClassNameComparator.COMPARATOR, compat, current);
+        CoIterator iter = new CoIterator(
+            JavaClassNameComparator.COMPARATOR, compat, current);
 
         while (iter.hasNext())
         {
@@ -72,7 +75,8 @@ public final class InterfaceSetCheck extends AbstractDiffReporter implements Cla
             JavaClass compatInterface = (JavaClass) iter.getLeft();
             JavaClass currentInterface = (JavaClass) iter.getRight();
 
-            if (className.equals(compatInterface.getClassName()) || className.equals(currentInterface.getClassName()))
+            if (className.equals(compatInterface.getClassName())
+                || className.equals(currentInterface.getClassName()))
             {
                 // This occurs because an interface has itself in the set of all interfaces.
                 // We can't just let the test below handle this case because that won't
@@ -82,11 +86,24 @@ public final class InterfaceSetCheck extends AbstractDiffReporter implements Cla
 
             if (compatInterface == null)
             {
-                log(MSG_IFACE_ADDED, Severity.INFO, className, null, null, new String[]{currentInterface.getClassName()});
+                // TODO: check whether the class already implements
+                // throwable. If so, this should probably be a warning,
+                // because the presence of this extra interface could
+                // change exception-catching behaviour.
+                //
+                // Actually, it could also change code which uses
+                // "instance-of" and similar methods too, even when not
+                // a throwable. However this is fairly low probability..
+                log(MSG_IFACE_ADDED,
+                        Severity.INFO, className, null, null,
+                        new String[] {currentInterface.getClassName()});
             }
             else if (currentInterface == null)
             {
-                log(MSG_IFACE_REMOVED, Severity.ERROR, className, null, null, new String[]{compatInterface.getClassName()});
+                log(MSG_IFACE_REMOVED,
+                        getSeverity(compatBaseline, Severity.ERROR),
+                        className, null, null,
+                        new String[] {compatInterface.getClassName()});
             }
         }
 
