@@ -123,12 +123,6 @@ public class FieldSetCheck
     {
         final String bSig = bField.getType().toString();
         final String cSig = cField.getType().toString();
-        System.out.println("=====================================");
-        System.out.println("bField = " + bField);
-        System.out.println("bSig = " + bSig);
-        System.out.println("cField = " + cField);
-        System.out.println("cSig = " + cSig);
-        System.out.println("=====================================");
         if (!bSig.equals(cSig))
         {
             fireDiff("Changed type of field " + bField.getName() + " from " + bSig + " to " + cSig,
