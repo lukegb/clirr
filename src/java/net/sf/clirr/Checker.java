@@ -34,6 +34,7 @@ import java.net.URLClassLoader;
 
 import net.sf.clirr.checks.AddedClassCheck;
 import net.sf.clirr.checks.ClassHierarchyCheck;
+import net.sf.clirr.checks.ClassScopeCheck;
 import net.sf.clirr.checks.ClassModifierCheck;
 import net.sf.clirr.checks.GenderChangeCheck;
 import net.sf.clirr.checks.InterfaceSetCheck;
@@ -101,6 +102,7 @@ public final class Checker implements ApiDiffDispatcher
         classSetChecks.add(new RemovedClassCheck(this));
         classSetChecks.add(new AddedClassCheck(this));
 
+        classChecks.add(new ClassScopeCheck(this, scopeSelector));
         classChecks.add(new GenderChangeCheck(this));
         classChecks.add(new ClassModifierCheck(this));
         classChecks.add(new InterfaceSetCheck(this));
@@ -242,6 +244,7 @@ public final class Checker implements ApiDiffDispatcher
                     if (classSelector.isSelected(clazz))
                     {
                         ret.add(clazz);
+                        repository.storeClass(clazz);
                     }
                 }
             }
