@@ -41,7 +41,7 @@ public class MessageTest extends TestCase
 
         // check the english locale
         MessageTranslator translator = new MessageTranslator();
-        translator.setLocale(new Locale("en"));
+        translator.setLocale(Locale.ENGLISH);
         translator.checkComplete(messages);
     }
 }
