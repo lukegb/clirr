@@ -38,7 +38,24 @@ class TestDiffListener implements ApiDiffDispatcher
 
                 if (!found)
                 {
-                    TestCase.fail("expected diff " + expected + " was not generated: " + diffs);
+                    // build a useful failure message
+                    MessageTranslator translator = new MessageTranslator();
+
+                    StringBuffer buf = new StringBuffer();
+                    buf.append("Expected diff " + expected + " was not generated.");
+                    buf.append(" Actual diffs generated were: ");
+                    for(Iterator diffIter = diffs.iterator(); diffIter.hasNext();)
+                    {
+                        ApiDifference diff = (ApiDifference) diffIter.next();
+
+                        buf.append(diff.toString(translator));
+                        if (diffIter.hasNext())
+                        {
+                            buf.append(", ");
+                        }
+                    }
+
+                    TestCase.fail(buf.toString());
                 }
             }
 
