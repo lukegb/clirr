@@ -533,15 +533,15 @@ public class MethodSetCheck
         Type bReturnType = baselineMethod.getReturnType();
         Type cReturnType = currentMethod.getReturnType();
 
-        // TODO: Check assignability...
+        // TODO: Check assignability. If the new return type is
+        // assignable to the old type, then the code is source-code
+        // compatible even when binary-incompatible.
         if (!bReturnType.toString().equals(cReturnType.toString()))
         {
             fireDiff(MSG_METHOD_RETURNTYPE_CHANGED,
                     Severity.ERROR, compatBaseline, baselineMethod,
                     new String[] {cReturnType.toString()});
         }
-
-
     }
 
     private void checkDeclaredExceptions(
