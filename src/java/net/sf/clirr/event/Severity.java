@@ -19,6 +19,11 @@
 
 package net.sf.clirr.event;
 
+/**
+ * Enumeration type for severity of an Api difference.
+ *
+ * @author lkuehne
+ */
 public final class Severity
 {
 
@@ -29,10 +34,16 @@ public final class Severity
         this.representation = representation;
     }
 
+    /** marks an api difference that is binary compatible. */
     public static final Severity INFO = new Severity("INFO");
+
+    /** marks an api difference that might be binary incompatible. */
     public static final Severity WARNING = new Severity("WARNING");
+
+    /** marks an api difference that is binary incompatible. */
     public static final Severity ERROR = new Severity("ERROR");
 
+    /** @see Object#toString() */
     public String toString()
     {
         return representation;
