@@ -18,7 +18,18 @@
 //////////////////////////////////////////////////////////////////////////////
 package net.sf.clirr.event;
 
+import org.apache.bcel.classfile.JavaClass;
 import org.apache.bcel.classfile.AccessFlags;
+import org.apache.bcel.classfile.Attribute;
+import org.apache.bcel.classfile.InnerClasses;
+import org.apache.bcel.classfile.InnerClass;
+import org.apache.bcel.classfile.ConstantPool;
+import org.apache.bcel.classfile.Constant;
+import org.apache.bcel.classfile.ConstantUtf8;
+import org.apache.bcel.util.Repository;
+import org.apache.bcel.Constants;
+
+import net.sf.clirr.framework.CheckerException;
 
 /**
  * Selects zero or more java scope values (public, protected, package,
@@ -33,10 +44,62 @@ import org.apache.bcel.classfile.AccessFlags;
  */
 public final class ScopeSelector
 {
-    private boolean selectPublic;
-    private boolean selectProtected;
-    private boolean selectPrivate;
-    private boolean selectPackage;
+    /**
+     * Represents an "accessability" level for a java class, field or method.
+     * <p>
+     * Change of access rights from lower to higher visibility rating is a
+     * binary-compatible change. Change of access rights from higher to
+     * lower is a binary-incompatible change.
+     * <p>
+     * Public > Protected > Package > Private
+     */
+    public static final class Scope
+    {
+        private int vis;
+        private String desc;
+        private String decl;
+
+        private Scope(int vis, String desc, String decl)
+        {
+            this.vis = vis;
+            this.desc = desc;
+            this.decl = decl;
+        }
+
+        public boolean isMoreVisibleThan(Scope v)
+        {
+            return this.vis > v.vis;
+        }
+
+        public boolean isLessVisibleThan(Scope v)
+        {
+            return this.vis < v.vis;
+        }
+
+        public String getDesc()
+        {
+            return desc;
+        }
+
+        public String getDecl()
+        {
+            return decl;
+        }
+    }
+
+    /** Object representing private scoped objects. */
+    public static final Scope SCOPE_PRIVATE = new Scope(0, "private", "private");
+
+    /** Object representing package scoped objects. */
+    public static final Scope SCOPE_PACKAGE = new Scope(1, "package", "");
+
+    /** Object representing protected scoped objects. */
+    public static final Scope SCOPE_PROTECTED = new Scope(2, "protected", "protected");
+
+    /** Object representing public scoped objects. */
+    public static final Scope SCOPE_PUBLIC = new Scope(3, "public", "public");
+
+    private Scope scope = SCOPE_PROTECTED;
 
     /**
      * Construct an instance which selects public and protected objects and
@@ -45,32 +108,30 @@ public final class ScopeSelector
      */
     public ScopeSelector()
     {
-        selectPublic = true;
-        selectProtected = true;
     }
 
-    /** Enable/disable selection of public-scope objects. */
-    public void selectPublic(boolean selected)
+    /**
+     * Construct an instance which selects public and protected objects and
+     * ignores package and private objects. The selectXXX methods can later
+     * be used to adjust this default behaviour.
+     */
+    public ScopeSelector(Scope scope)
     {
-        selectPublic = selected;
+        this.scope = scope;
     }
 
-    /** Enable/disable selection of protected-scope objects. */
-    public void selectProtected(boolean selected)
+    /** Specify which scope objects are of interest. */
+    public void setScope(Scope scope)
     {
-        selectProtected = selected;
+        this.scope = scope;
     }
 
-    /** Enable/disable selection of package-scope objects. */
-    public void selectPackage(boolean selected)
+    /**
+     * Get the scope that this object is configured with.
+     */
+    public Scope getScope()
     {
-        selectPackage = selected;
-    }
-
-    /** Enable/disable selection of private-scope objects. */
-    public void selectPrivate(boolean selected)
-    {
-        selectPrivate = selected;
+        return scope;
     }
 
     /**
@@ -79,172 +140,243 @@ public final class ScopeSelector
      */
     public String toString()
     {
-        StringBuffer buf = new StringBuffer();
-
-        if (selectPublic)
-        {
-            buf.append("public");
-        }
-
-        if (selectProtected)
-        {
-            if (buf.length() != 0)
-            {
-                buf.append("+");
-            }
-
-            buf.append("protected");
-        }
-
-        if (selectPackage)
-        {
-            if (buf.length() != 0)
-            {
-                buf.append("+");
-            }
-
-            buf.append("package");
-        }
-
-        if (selectPrivate)
-        {
-            if (buf.length() != 0)
-            {
-                buf.append("+");
-            }
-
-            buf.append("private");
-        }
-
-        if (buf.length() == 0)
-        {
-
-            return "none";
-        }
-        else
-        {
-
-            return buf.toString();
-        }
+        return scope.getDesc();
     }
 
     /**
-     * Given a BCEL object, return true if ths object's scope is one of the
+     * Given a BCEL object, return true if this object's scope is one of the
      * values this object is configured to match.
      * <p>
-     * Note that BCEL classes JavaClass, Field and Method all inherit from
-     * the AccessFlags base class and so are valid parameters to this
-     * method.
+     * Note that BCEL classes Field and Method inherit from the AccessFlags
+     * base class and so are valid parameters to this method.
+     * <p>
+     * Note that despite JavaClass objects extending AccessFlags, the
+     * methods which determine the accessability of a JavaClass fail
+     * miserably (bad bcel design) for nested classes. Therefore this
+     * method <i>must not</i> be passed a JavaClass object as a parameter.
+     * If this is done, a RuntimeException will be thrown to indicate a
+     * programmer error.
      *
      * @param object is the object whose scope is to be checked.
      * @return true if the object is selected.
      */
     public boolean isSelected(AccessFlags object)
     {
-        if (object.isPublic())
-        {
-            return selectPublic;
-        }
+        return !getScope(object).isLessVisibleThan(scope);
+    }
 
-        if (object.isProtected())
-        {
-            return selectProtected;
-        }
-
-        if (object.isPrivate())
-        {
-            return selectPrivate;
-        }
-
-        return selectPackage;
+    /**
+     * Return true if objects of the specified scope, or more visible,
+     * are selected by this selector.
+     *
+     * @param scope is the scope being checked
+     * @return true if objects of the specified scope are selected.
+     */
+    public boolean isSelected(Scope scope)
+    {
+        return !scope.isLessVisibleThan(this.scope);
     }
 
     /**
      * Given a BCEL object, return the string which would be used in java
      * source code to declare that object's scope. <p>
-     *
-     * Note that BCEL classes JavaClass, Field and Method all inherit from
-     * the AccessFlags base class and so are valid parameters to this
-     * method.
+     * <p>
+     * Note that BCEL classes Field and Method inherit from the AccessFlags
+     * base class and so are valid parameters to this method.
+     * <p>
+     * Note that despite JavaClass objects extending AccessFlags, the
+     * methods which determine the accessability of a JavaClass fail
+     * miserably (bad bcel design) for nested classes. Therefore this
+     * method <i>must not</i> be passed a JavaClass object as a parameter.
+     * If this is done, a RuntimeException will be thrown to indicate a
+     * programmer error.
      */
     public static String getScopeDecl(AccessFlags object)
     {
-        if (object.isPublic())
-        {
-            return "public";
-        }
+        return getScope(object).getDecl();
+    }
 
-        if (object.isProtected())
-        {
-            return "protected";
-        }
-
-        if (object.isPrivate())
-        {
-            return "private";
-        }
-
-        return "";
+    /**
+     * Given an integer representing an object's access flags, return the
+     * string which would be used in java source code to declare that object's
+     * scope.
+     * <p>
+     * Note that this method gives the wrong results for JavaClass objects
+     * which are nested classes. Use getClassScope(jclass).getDecl() instead.
+     */
+    public static String getScopeDecl(int accessFlags)
+    {
+        return getScope(accessFlags).getDecl();
     }
 
     /**
      * Given a BCEL object, return a string indicating whether the object is
      * public/protected/private/package scope. This is similar to
      * getScopeName, except for package-scope objects where this method
-     * returns the string "package". <p>
-     *
-     * Note that BCEL classes JavaClass, Field and Method all inherit from
-     * the AccessFlags base class and so are valid parameters to this
-     * method.
+     * returns the string "package".
+     * <p>
+     * Note that BCEL classes Field and Method inherit from the AccessFlags
+     * base class and so are valid parameters to this method.
+     * <p>
+     * Note that despite JavaClass objects extending AccessFlags, the
+     * methods which determine the accessability of a JavaClass fail
+     * miserably (bad bcel design) for nested classes. Therefore this
+     * method <i>must not</i> be passed a JavaClass object as a parameter.
+     * If this is done, a RuntimeException will be thrown to indicate a
+     * programmer error.
      */
     public static String getScopeDesc(AccessFlags object)
     {
-        if (object.isPublic())
-        {
-            return "public";
-        }
-
-        if (object.isProtected())
-        {
-            return "protected";
-        }
-
-        if (object.isPrivate())
-        {
-            return "private";
-        }
-
-        return "package";
+        return getScope(object).getDesc();
     }
 
     /**
-     * Given a BCEL access flag field, return a rating indicating the
-     * "visibility" of the security of that access right. Change of access
-     * rights from lower to higher visibility rating is a binary-compatible
-     * change. Public = 3 Protected = 2 Package = 1 private = 0 <p>
-     *
-     * Note that BCEL classes JavaClass, Field and Method all inherit from
-     * the AccessFlags base class and so are valid parameters to this
-     * method.
+     * Given an integer representing the object's access flags, return a string
+     * indicating whether the object is public/protected/private/package scope.
+     * <p>
+     * This is similar to getScopeName, except for package-scope objects where
+     * this method returns the string "package".
+     * <p>
+     * Note that this method gives the wrong results for JavaClass objects
+     * which are nested classes. Use getClassScope(jclass).getDesc() instead.
      */
-    public static int getVisibilityRating(AccessFlags object)
+    public static String getScopeDesc(int accessFlags)
     {
-        if (object.isPublic())
+        return getScope(accessFlags).getDesc();
+    }
+
+    /**
+     * Get a Scope object representing the accessibility of the specified
+     * object.
+     * <p>
+     * Note that BCEL classes Field and Method inherit from the AccessFlags
+     * base class and so are valid parameters to this method.
+     * <p>
+     * Note that despite JavaClass objects extending AccessFlags, the
+     * methods which determine the accessability of a JavaClass fail
+     * miserably (bad bcel design) for nested classes. Therefore this
+     * method <i>must not</i> be passed a JavaClass object as a parameter.
+     * If this is done, a RuntimeException will be thrown to indicate a
+     * programmer error. Use getClassScope instead.
+     */
+    public static Scope getScope(AccessFlags object)
+    {
+        if (object instanceof JavaClass)
         {
-            return 3;
+            throw new RuntimeException(
+                "getScope called for JavaClass object. This is not permitted;"
+                + " use method getClassScope for JavaClass objects.");
+
         }
 
-        if (object.isProtected())
+        return getScope(object.getAccessFlags());
+    }
+
+    /**
+     * Get a Scope object representing the accessibility of the specified
+     * object.
+     * <p>
+     * Note that this method gives the wrong results for JavaClass objects
+     * which are nested classes. Use getClassScope(jclass) instead.
+     */
+    public static Scope getScope(int accessFlags)
+    {
+        if ((accessFlags & Constants.ACC_PUBLIC) > 0)
         {
-            return 2;
+            return SCOPE_PUBLIC;
         }
 
-        if (object.isPrivate())
+        if ((accessFlags & Constants.ACC_PROTECTED) > 0)
         {
-            return 0;
+            return SCOPE_PROTECTED;
         }
 
-        return 1;
+        if ((accessFlags & Constants.ACC_PRIVATE) > 0)
+        {
+            return SCOPE_PRIVATE;
+        }
+
+        return SCOPE_PACKAGE;
+    }
+
+    /**
+     * Java class files only ever contain scope specifiers of "public" or
+     * "package". For top-level classes, this is expected: it is not possible
+     * to have a top-level protected or private class.
+     * <p>
+     * However nested classes <i>can</i> be declared as protected or private. The
+     * way to tell the real scope of a nested class is to ignore the scope in
+     * the actual class file itself, and instead look in the "InnerClasses"
+     * attribute stored on the enclosing class. This is exactly what the java
+     * compiler does when compiling, and what the jvm does when verifying class
+     * linkage at runtime.
+     * <p>
+     * For a "top-level" class, this method just returns the access scope for
+     * the class itself. For nested classes, the enclosing class of the
+     * specified class is retrieved and its InnerClasses attribute checked to
+     * find the true scope for the specified class.
+     * <p>
+     * @throws CheckerException if the specified class is a nested class and
+     * the enclosing class could not be found, or if the supposedly enclosing
+     * class has no reference to the nested class. This exception is not
+     * expected to occur in practice, unless a truly screwed-up jar file is
+     * passed to clirr for inspection.
+     */
+    public static Scope getClassScope(JavaClass jclass) throws CheckerException
+    {
+        int dollarPos = jclass.getClassName().indexOf('$');
+        if (dollarPos == -1)
+        {
+            // not a nested class
+            return getScope(jclass.getAccessFlags());
+        }
+
+        // ok this is a nested class
+        String jclassName = jclass.getClassName();
+        String enclosingClassName = jclassName.substring(0, dollarPos);
+        String jclassNestedName = jclassName.substring(dollarPos + 1);
+
+        Repository repo = jclass.getRepository();
+        JavaClass enclosingClass = repo.findClass(enclosingClassName);
+
+        if (enclosingClass == null)
+        {
+            throw new CheckerException(
+                "Unable to locate enclosing class " + enclosingClassName
+                + " for nested class " + jclassName);
+        }
+
+        ConstantPool pool = enclosingClass.getConstantPool();
+        Attribute[] attrs = enclosingClass.getAttributes();
+        for (int i = 0; i < attrs.length; ++i)
+        {
+            if (attrs[i] instanceof InnerClasses)
+            {
+                InnerClasses ics = (InnerClasses) attrs[i];
+                InnerClass[] icarray = ics.getInnerClasses();
+                for (int j = 0; j < icarray.length; ++j)
+                {
+                    InnerClass ic = icarray[j];
+                    int nameIndex = ic.getInnerNameIndex();
+
+                    Constant nameconst = pool.getConstant(nameIndex);
+                    if (nameconst instanceof ConstantUtf8)
+                    {
+                        String classname = ((ConstantUtf8) nameconst).getBytes();
+                        if (jclassNestedName.equals(classname))
+                        {
+                            return getScope(ic.getInnerAccessFlags());
+                        }
+                    }
+                }
+            }
+        }
+
+        // weird; no nested class info found
+        throw new CheckerException(
+            "Unable to find information in class " + enclosingClass.getClassName()
+            + " referring back to nested class " + jclassName);
+
     }
 }
 
