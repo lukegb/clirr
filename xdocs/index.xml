@@ -8,10 +8,10 @@
         <section name="What is it?">
             <p>
 Clirr is a tool that checks Java libraries for binary compatibility
-with older releases. Basically you give it two 
+with older releases. Basically you give it two
 sets of jar files and Clirr dumps out a list of changes in the public api.
 The Clirr Ant task can be configured to break the build if it detects
-incompatible api changes. In a continuos integration process Clirr can
+incompatible api changes. In a continuous integration process Clirr can
 automatically prevent accidental introduction of binary compatibility
 problems.
             </p>
