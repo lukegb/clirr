@@ -93,4 +93,18 @@ public class MethodsChange
     public void throwNoException()
     {
     }
+
+    /** This method will be deprecated in the later version. */
+    public void becomesDeprecated()
+    {
+    }
+
+    /**
+     * This method will be "undeprecated" in the later version.
+     *
+     * @deprecated this is a bad method.
+     */
+    public void becomesUndeprecated()
+    {
+    }
 }

@@ -92,4 +92,18 @@ public class MethodsChange
     {
 	throw new Exception();
     }
+
+    /**
+     * @deprecated this is a bad method.
+     */
+    public void becomesDeprecated()
+    {
+    }
+
+    /** 
+     * This method was previously deprecated.
+     */
+    public void becomesUndeprecated()
+    {
+    }
 }
