@@ -56,17 +56,17 @@ public final class InterfaceSetCheck
         // Note: an interface has itself in the set of all interfaces
         // we have to consider that below to avoid funny messages for gender changes
 
-        Set current = new HashSet();
-        for (int i = 0; i < currentInterfaces.length; i++)
-        {
-            String currentInterface = currentInterfaces[i].getClassName();
-            current.add(currentInterface);
-        }
+        // Note: getAllInterfaces might return multiple array entries with the same
+        // interface, so we need to use sets to remove duplicates...
+        Set compat = createClassSet(compatInterfaces);
+        Set current = createClassSet(currentInterfaces);
 
         final String className = compatBaseline.getClassName();
-        for (int i = 0; i < compatInterfaces.length; i++)
+
+        for (Iterator it = compat.iterator(); it.hasNext();)
         {
-            String compatInterface = compatInterfaces[i].getClassName();
+            String compatInterface = (String) it.next();
+
             if (!current.contains(compatInterface)
                     && !compatInterface.equals(className))
             {
@@ -92,5 +92,16 @@ public final class InterfaceSetCheck
                         Severity.INFO, className, null, null);
             }
         }
+    }
+
+    private Set createClassSet(JavaClass[] classes)
+    {
+        Set current = new HashSet();
+        for (int i = 0; i < classes.length; i++)
+        {
+            String currentInterface = classes[i].getClassName();
+            current.add(currentInterface);
+        }
+        return current;
     }
 }
