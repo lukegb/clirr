@@ -12,7 +12,7 @@ import net.sf.clirr.event.ScopeSelector;
  */
 public class MethodSetCheckTest extends AbstractCheckTestCase
 {
-    public void testMethodCheck()
+    public void testMethodCheck() throws Exception
     {
         ApiDifference[] expected = new ApiDifference[] {
 

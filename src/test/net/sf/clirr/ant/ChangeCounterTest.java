@@ -15,8 +15,8 @@ public class ChangeCounterTest extends TestCase
       counter.reportDiff(new ApiDifference("blah", Severity.ERROR, "Test", null, null));
       counter.reportDiff(new ApiDifference("blah", Severity.ERROR, "Test", null, null));
       counter.reportDiff(new ApiDifference("blah", Severity.WARNING, "Test", null, null));
-      assertEquals("number of expected errors", 3, counter.getErrors());
-      assertEquals("number of expected warnings", 2, counter.getWarnings());
-      assertEquals("number of expected infos", 1, counter.getInfos());
+      assertEquals("number of expected errors", 3, counter.getBinErrors());
+      assertEquals("number of expected warnings", 2, counter.getBinWarnings());
+      assertEquals("number of expected infos", 1, counter.getBinInfos());
   }
 }

@@ -61,14 +61,30 @@
                     <td>Default</td>
                 </tr>
                 <tr>
-                    <td>failOnWarning</td>
-                    <td>Whether task execution should fail (break the build) on warnings</td>
+                    <td>failOnBinWarning</td>
+                    <td>Whether task execution should fail (break the build) on warnings
+                        about binary compatibility issues</td>
                     <td>No</td>
                     <td>No</td>
                 </tr>
                 <tr>
-                    <td>failOnError</td>
-                    <td>Whether task execution should fail (break the build) on errors</td>
+                    <td>failOnBinError</td>
+                    <td>Whether task execution should fail (break the build) on binary
+                        compatibility errors</td>
+                    <td>No</td>
+                    <td>Yes</td>
+                </tr>
+                <tr>
+                    <td>failOnSrcWarning</td>
+                    <td>Whether task execution should fail (break the build) on warnings
+                        about source code compatibility issues</td>
+                    <td>No</td>
+                    <td>No</td>
+                </tr>
+                <tr>
+                    <td>failOnSrcError</td>
+                    <td>Whether task execution should fail (break the build) on source
+                        compatibility errors</td>
                     <td>No</td>
                     <td>Yes</td>
                 </tr>

@@ -32,8 +32,17 @@ public final class ApiDifference
     /** human readable change report. */
     private String report;
 
-    /** severity of the change, as determined by clirr. */
-    private Severity severity;
+    /**
+     * severity of the change in terms of binary compatibility,
+     * as determined by clirr.
+     */
+    private Severity binaryCompatibilitySeverity;
+
+    /**
+     * severity of the change in terms of source compatibility,
+     * as determined by clirr.
+     */
+    private Severity sourceCompatibilitySeverity;
 
     /** The fully qualified class name that is affected by the API change. */
     private String affectedClass;
@@ -68,9 +77,9 @@ public final class ApiDifference
     /**
      * Create a new API differnce representation.
      *
-     * @param report a human readable string describing the change that was made.
-     * @param severity the severity in terms of binary API compatibility.
-     * @param clazz the fully qualified class name where the change occured
+     * @param report a human readable string describing the change that was made, must be non-null.
+     * @param severity the severity in terms of binary and source code compatibility, must be non-null.
+     * @param clazz the fully qualified class name where the change occured, must be non-null.
      * @param method the method signature of the method that changed, <code>null</code>
      *   if no method was affected.
      * @param field the field name where the change occured, <code>null</code>
@@ -78,24 +87,80 @@ public final class ApiDifference
      */
     public ApiDifference(String report, Severity severity, String clazz, String method, String field)
     {
+        this(report, severity, severity, clazz, method, field);
+    }
+
+    /**
+     * Create a new API differnce representation.
+     *
+     * @param report a human readable string describing the change that was made, must be non-null.
+     * @param binarySeverity the severity in terms of binary compatibility, must be non-null.
+     * @param sourceSeverity the severity in terms of source code compatibility, must be non-null.
+     * @param clazz the fully qualified class name where the change occured, must be non-null.
+     * @param method the method signature of the method that changed, <code>null</code>
+     *   if no method was affected.
+     * @param field the field name where the change occured, <code>null</code>
+     *   if no field was affected.
+     */
+    public ApiDifference(String report, Severity binarySeverity, Severity sourceSeverity,
+                         String clazz, String method, String field)
+    {
+        checkNonNull(report);
+        checkNonNull(binarySeverity);
+        checkNonNull(sourceSeverity);
+        checkNonNull(clazz);
+
         this.report = report;
-        this.severity = severity;
+        this.binaryCompatibilitySeverity = binarySeverity;
+        this.sourceCompatibilitySeverity = sourceSeverity;
         this.affectedClass = clazz;
         this.affectedField = field;
         this.affectedMethod = method;
     }
 
-    /**
-     * The Severity of the API difference. ERROR means that clients will
-     * definately break, WARNING means that clients may break, depending
-     * on how they use the library. See the eclipse paper for further
-     * explanation.
-     *
-     * @return the severity of the API difference.
-     */
-    public Severity getSeverity()
+    private void checkNonNull(Object o)
     {
-        return severity;
+        if (o == null)
+        {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    /**
+     * The Severity of the API difference in terms of binary compatibility.
+     * ERROR means that clients will definitely break, WARNING means that
+     * clients may break, depending on how they use the library.
+     * See the eclipse paper for further explanation.
+     *
+     * @return the severity of the API difference in terms of binary compatibility.
+     */
+    public Severity getBinaryCompatibilitySeverity()
+    {
+        return binaryCompatibilitySeverity;
+    }
+
+    /**
+     * The Severity of the API difference in terms of source compatibility.
+     * Sometimes this is different than {@link #getBinaryCompatibilitySeverity
+     * binary compatibility severity}, for example adding a checked exception
+     * to a method signature is binary compatible but not source compatible.
+     * ERROR means that clients will definitely break, WARNING means that
+     * clients may break, depending on how they use the library.
+     * See the eclipse paper for further explanation.
+     *
+     * @return the severity of the API difference in terms of source code
+     * compatibility.
+     */
+    public Severity getSourceCompatibilitySeverity()
+    {
+        return sourceCompatibilitySeverity;
+    }
+
+    public Severity getMaximumSeverity()
+    {
+        final Severity src = getSourceCompatibilitySeverity();
+        final Severity bin = getBinaryCompatibilitySeverity();
+        return src.compareTo(bin) < 0 ? bin : src;
     }
 
     /**
@@ -140,7 +205,7 @@ public final class ApiDifference
      */
     public String toString()
     {
-        return report + " (" + severity + ") - "
+        return report + " (" + binaryCompatibilitySeverity + ") - "
                 + getAffectedClass() + '[' + getAffectedField() + '/' + getAffectedMethod() + ']';
     }
 
@@ -161,18 +226,24 @@ public final class ApiDifference
 
         final ApiDifference other = (ApiDifference) o;
 
-        if (report != null ? !report.equals(other.report) : other.report != null)
+        if (!report.equals(other.report))
         {
             return false;
         }
 
-        if (severity != null ? !severity.equals(other.severity) : other.severity != null)
+        if (!binaryCompatibilitySeverity.equals(other.binaryCompatibilitySeverity))
         {
             return false;
         }
+
+        if (!sourceCompatibilitySeverity.equals(other.sourceCompatibilitySeverity))
+        {
+            return false;
+        }
+
 
         final String otherClass = other.affectedClass;
-        if (affectedClass != null ? !affectedClass.equals(otherClass) : otherClass != null)
+        if (!affectedClass.equals(otherClass))
         {
             return false;
         }
@@ -199,10 +270,13 @@ public final class ApiDifference
     {
         int result;
         result = report != null ? report.hashCode() : 0;
-        result = HASHCODE_MAGIC * result + (severity != null ? severity.hashCode() : 0);
-        result = HASHCODE_MAGIC * result + (affectedClass != null ? affectedClass.hashCode() : 0);
+        result = HASHCODE_MAGIC * result + binaryCompatibilitySeverity.hashCode();
+        result = HASHCODE_MAGIC * result + sourceCompatibilitySeverity.hashCode();
+        result = HASHCODE_MAGIC * result + affectedClass.hashCode();
         result = HASHCODE_MAGIC * result + (affectedMethod != null ? affectedMethod.hashCode() : 0);
         result = HASHCODE_MAGIC * result + (affectedField != null ? affectedField.hashCode() : 0);
         return result;
     }
+
+
 }

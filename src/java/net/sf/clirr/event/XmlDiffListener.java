@@ -43,7 +43,8 @@ public final class XmlDiffListener extends FileDiffListener
     {
         PrintStream out = getOutputStream();
         out.print("  <" + DIFFERENCE);
-        out.print(" severity=\"" + difference.getSeverity() + "\"");
+        out.print(" binseverity=\"" + difference.getBinaryCompatibilitySeverity() + "\"");
+        out.print(" srcseverity=\"" + difference.getSourceCompatibilitySeverity() + "\"");
         out.print(" class=\"" + difference.getAffectedClass() + "\"");
         if (difference.getAffectedMethod() != null)
         {

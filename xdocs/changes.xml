@@ -42,6 +42,11 @@
             which has no public or protected constructors, as it was always
             impossible to derive subclasses from it anyway.
         </action>
+        <action dev="lkuehne" type="add">
+            Clirr now analyses code changes for source code compatibility problems as well.
+            Note: Ant task attribute names and the output format of the XML formatter
+            have changed to support this feature.
+        </action>
     </release>
 
     <release version="0.3" date="2004-05-23">

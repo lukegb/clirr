@@ -34,7 +34,7 @@ public final class PlainDiffListener extends FileDiffListener
     public void reportDiff(ApiDifference difference)
     {
         PrintStream out = getOutputStream();
-        out.print(difference.getSeverity().toString());
+        out.print(difference.getMaximumSeverity().toString());
         out.print(": ");
         out.println(difference.getReport());
     }

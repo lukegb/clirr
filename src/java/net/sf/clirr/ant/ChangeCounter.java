@@ -25,43 +25,79 @@ import net.sf.clirr.event.Severity;
 
 final class ChangeCounter extends DiffListenerAdapter
 {
-    private int infos = 0;
-    private int warnings = 0;
-    private int errors = 0;
+    private int binInfos = 0;
+    private int binWarnings = 0;
+    private int binErrors = 0;
+
+    private int srcInfos = 0;
+    private int srcWarnings = 0;
+    private int srcErrors = 0;
+
 
     public ChangeCounter()
     {
     }
 
-    public int getInfos()
+    public int getBinInfos()
     {
-        return infos;
+        return binInfos;
     }
 
-    public int getWarnings()
+    public int getBinWarnings()
     {
-        return warnings;
+        return binWarnings;
     }
 
-    public int getErrors()
+    public int getBinErrors()
     {
-        return errors;
+        return binErrors;
+    }
+
+    public int getSrcInfos()
+    {
+        return srcInfos;
+    }
+
+    public int getSrcWarnings()
+    {
+        return srcWarnings;
+    }
+
+    public int getSrcErrors()
+    {
+        return srcErrors;
     }
 
     public void reportDiff(ApiDifference difference)
     {
-        if (Severity.ERROR.equals(difference.getSeverity()))
+        final Severity binSeverity = difference.getBinaryCompatibilitySeverity();
+        if (Severity.ERROR.equals(binSeverity))
         {
-            errors += 1;
+            binErrors += 1;
         }
-        else if (Severity.WARNING.equals(difference.getSeverity()))
+        else if (Severity.WARNING.equals(binSeverity))
         {
-            warnings += 1;
+            binWarnings += 1;
         }
-        else if (Severity.INFO.equals(difference.getSeverity()))
+        else if (Severity.INFO.equals(binSeverity))
         {
-            infos += 1;
+            binInfos += 1;
         }
+
+        final Severity srcSeverity = difference.getSourceCompatibilitySeverity();
+        if (Severity.ERROR.equals(srcSeverity))
+        {
+            srcErrors += 1;
+        }
+        else if (Severity.WARNING.equals(srcSeverity))
+        {
+            srcWarnings += 1;
+        }
+        else if (Severity.INFO.equals(srcSeverity))
+        {
+            srcInfos += 1;
+        }
+
     }
 
 }

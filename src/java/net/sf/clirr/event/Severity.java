@@ -24,28 +24,37 @@ package net.sf.clirr.event;
  *
  * @author lkuehne
  */
-public final class Severity
+public final class Severity implements Comparable
 {
 
     private String representation;
+    private int value;
 
-    private Severity(String representation)
+    private Severity(String representation, int value)
     {
         this.representation = representation;
+        this.value = value;
     }
 
     /** marks an api difference that is binary compatible. */
-    public static final Severity INFO = new Severity("INFO");
+    public static final Severity INFO = new Severity("INFO", 0);
 
     /** marks an api difference that might be binary incompatible. */
-    public static final Severity WARNING = new Severity("WARNING");
+    public static final Severity WARNING = new Severity("WARNING", 1);
 
     /** marks an api difference that is binary incompatible. */
-    public static final Severity ERROR = new Severity("ERROR");
+    public static final Severity ERROR = new Severity("ERROR", 2);
 
     /** @see Object#toString() */
     public String toString()
     {
         return representation;
+    }
+
+    /** {@inheritDoc} */
+    public int compareTo(Object o)
+    {
+        Severity other = (Severity) o;
+        return this.value - other.value;
     }
 }

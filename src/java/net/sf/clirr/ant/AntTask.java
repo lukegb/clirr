@@ -91,8 +91,10 @@ public final class AntTask extends Task
     private Path newClassPath = null;
     private Path origClassPath = null;
 
-    private boolean failOnError = true;
-    private boolean failOnWarning = false;
+    private boolean failOnBinError = true;
+    private boolean failOnBinWarning = false;
+    private boolean failOnSrcError = true;
+    private boolean failOnSrcWarning = false;
     private List formatters = new LinkedList();
 
 
@@ -156,14 +158,24 @@ public final class AntTask extends Task
         this.newFiles = newFiles;
     }
 
-    public void setFailOnError(boolean failOnError)
+    public void setFailOnBinError(boolean failOnBinError)
     {
-        this.failOnError = failOnError;
+        this.failOnBinError = failOnBinError;
     }
 
-    public void setFailOnWarning(boolean failOnWarning)
+    public void setFailOnBinWarning(boolean failOnBinWarning)
     {
-        this.failOnWarning = failOnWarning;
+        this.failOnBinWarning = failOnBinWarning;
+    }
+
+    public void setFailOnSrcError(boolean failOnSrcError)
+    {
+        this.failOnSrcError = failOnSrcError;
+    }
+
+    public void setFailOnSrcWarning(boolean failOnSrcWarning)
+    {
+        this.failOnSrcWarning = failOnSrcWarning;
     }
 
     public void addFormatter(Formatter formatter)
@@ -253,9 +265,14 @@ public final class AntTask extends Task
             throw new BuildException(ex.getMessage());
         }
 
-        if (counter.getWarnings() > 0 && failOnWarning || counter.getErrors() > 0 && failOnError)
+        if (counter.getBinWarnings() > 0 && failOnBinWarning || counter.getBinErrors() > 0 && failOnBinError)
         {
-            throw new BuildException("detected incompatible API changes");
+            throw new BuildException("detected binary incompatible API changes");
+        }
+
+        if (counter.getSrcWarnings() > 0 && failOnSrcWarning || counter.getSrcErrors() > 0 && failOnSrcError)
+        {
+            throw new BuildException("detected source incompatible API changes");
         }
     }
 
