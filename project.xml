@@ -101,6 +101,21 @@
 
   </developers>
 
+    <contributors>
+        <contributor>
+            <name>Stephen Colebourne</name>
+            <email/>
+            <organization>Apache Software Foundation</organization>
+            <roles>
+                <role>Feedback</role>
+                <role>Bug reports</role>
+                <role>Usability testing</role>
+            </roles>
+            <url/>
+            <timezone/>
+        </contributor>
+    </contributors>
+
   <!-- jar files the project is dependent on -->
   <dependencies>
     <dependency>
