@@ -32,6 +32,16 @@
             Removed abstract methods that are specified by an implemented interface
             are no longer reported as a compatibility problem.
         </action>
+        <action dev="s_kitching" type="add">
+            Report on classes changing accessability (top-level classes changing
+            between public and package, or nested classes changing between any
+            of public/protected/package/private).
+        </action>
+        <action dev="s_kitching" type="add">
+            It is no longer an error to add a "final" attribute to a class
+            which has no public or protected constructors, as it was always
+            impossible to derive subclasses from it anyway.
+        </action>
     </release>
 
     <release version="0.3" date="2004-05-23">
