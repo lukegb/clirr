@@ -28,6 +28,7 @@ import net.sf.clirr.framework.CoIterator;
 import net.sf.clirr.event.ApiDifference;
 import net.sf.clirr.event.Severity;
 import net.sf.clirr.event.ScopeSelector;
+import net.sf.clirr.event.Message;
 import org.apache.bcel.classfile.JavaClass;
 import org.apache.bcel.classfile.Field;
 import org.apache.bcel.classfile.ConstantValue;
@@ -41,6 +42,18 @@ public class FieldSetCheck
         extends AbstractDiffReporter
         implements ClassChangeCheck
 {
+    private static final Message MSG_FIELD_ADDED = new Message(6000);
+    private static final Message MSG_FIELD_REMOVED = new Message(6001);
+    private static final Message MSG_FIELD_NOT_CONSTANT = new Message(6002);
+    private static final Message MSG_FIELD_CONSTANT_CHANGED = new Message(6003);
+    private static final Message MSG_FIELD_TYPE_CHANGED = new Message(6004);
+    private static final Message MSG_FIELD_NOW_NON_FINAL = new Message(6005);
+    private static final Message MSG_FIELD_NOW_FINAL = new Message(6006);
+    private static final Message MSG_FIELD_NOW_NON_STATIC = new Message(6007);
+    private static final Message MSG_FIELD_NOW_STATIC = new Message(6008);
+    private static final Message MSG_FIELD_MORE_ACCESSABLE = new Message(6009);
+    private static final Message MSG_FIELD_LESS_ACCESSABLE = new Message(6010);
+
     private static final class FieldNameComparator implements Comparator
     {
         public int compare(Object o1, Object o2)
@@ -85,7 +98,9 @@ public class FieldSetCheck
                 {
                     final String name = cField.getName();
                     String scope = ScopeSelector.getScopeDesc(cField);
-                    fireDiff("Added " + scope + " field " + name, Severity.INFO, currentClass, cField);
+                    fireDiff(MSG_FIELD_ADDED,
+                        Severity.INFO, currentClass, cField,
+                        new String[] {scope});
                 }
             }
             else if (cField == null)
@@ -93,7 +108,8 @@ public class FieldSetCheck
                 if (scopeSelector.isSelected(bField))
                 {
                     final String name = bField.getName();
-                    fireDiff("Field " + name + " has been removed", Severity.ERROR, baselineClass, bField);
+                    fireDiff(MSG_FIELD_REMOVED,
+                        Severity.ERROR, baselineClass, bField, null);
                 }
             }
             else if (scopeSelector.isSelected(bField) || scopeSelector.isSelected(cField))
@@ -123,9 +139,8 @@ public class FieldSetCheck
             final ConstantValue cVal = cField.getConstantValue();
             if (cVal == null)
             {
-                fireDiff("Value of " + bField.getName()
-                        + " is no longer a compile time constant",
-                        Severity.WARNING, currentClass, cField);
+                fireDiff(MSG_FIELD_NOT_CONSTANT,
+                        Severity.WARNING, currentClass, cField, null);
                 return;
             }
 
@@ -134,9 +149,8 @@ public class FieldSetCheck
             {
                 // TODO: print out old and new value
                 // How can that be done with BCEL, esp. for boolean values?
-                fireDiff("Value of compile time constant " + bField.getName()
-                        + " has been changed",
-                        Severity.WARNING, currentClass, cField);
+                fireDiff(MSG_FIELD_CONSTANT_CHANGED,
+                        Severity.WARNING, currentClass, cField, null);
             }
         }
     }
@@ -147,8 +161,9 @@ public class FieldSetCheck
         final String cSig = cField.getType().toString();
         if (!bSig.equals(cSig))
         {
-            fireDiff("Changed type of field " + bField.getName() + " from " + bSig + " to " + cSig,
-                    Severity.ERROR, currentClass, bField);
+            fireDiff(MSG_FIELD_TYPE_CHANGED,
+                    Severity.ERROR, currentClass, bField,
+                    new String[] {bSig, cSig});
         }
     }
 
@@ -156,22 +171,22 @@ public class FieldSetCheck
     {
         if (bField.isFinal() && !cField.isFinal())
         {
-            fireDiff("Field " + bField.getName() + " is now non-final", Severity.INFO, clazz, cField);
+            fireDiff(MSG_FIELD_NOW_NON_FINAL, Severity.INFO, clazz, cField, null);
         }
 
         if (!bField.isFinal() && cField.isFinal())
         {
-            fireDiff("Field " + bField.getName() + " is now final", Severity.ERROR, clazz, cField);
+            fireDiff(MSG_FIELD_NOW_FINAL, Severity.ERROR, clazz, cField, null);
         }
 
         if (bField.isStatic() && !cField.isStatic())
         {
-            fireDiff("Field " + bField.getName() + " is now non-static", Severity.ERROR, clazz, cField);
+            fireDiff(MSG_FIELD_NOW_NON_STATIC, Severity.ERROR, clazz, cField, null);
         }
 
         if (!bField.isStatic() && cField.isStatic())
         {
-            fireDiff("Field " + bField.getName() + " is now static", Severity.ERROR, clazz, cField);
+            fireDiff(MSG_FIELD_NOW_STATIC, Severity.ERROR, clazz, cField, null);
         }
 
         // JLS, 13.4.10: Adding or deleting a transient modifier of a field
@@ -187,30 +202,26 @@ public class FieldSetCheck
 
         if (cScope.isMoreVisibleThan(bScope))
         {
-            fireDiff(
-                "Accessability of field " + bField.getName()
-                + " has been increased"
-                + " from " + bScope.getDesc()
-                + " to " + cScope.getDesc(),
-                Severity.INFO, clazz, cField);
+            fireDiff(MSG_FIELD_MORE_ACCESSABLE,
+                Severity.INFO, clazz, cField,
+                new String[] {bScope.getDesc(), cScope.getDesc()});
         }
         else if (cScope.isLessVisibleThan(bScope))
         {
-            fireDiff(
-                "Accessibility of field " + bField.getName()
-                + " has been weakened"
-                + " from " + bScope.getDesc()
-                + " to " + cScope.getDesc(),
-                Severity.ERROR, clazz, cField);
+            fireDiff(MSG_FIELD_LESS_ACCESSABLE,
+                Severity.ERROR, clazz, cField,
+                new String[] {bScope.getDesc(), cScope.getDesc()});
         }
     }
 
-    private void fireDiff(String report, Severity severity, JavaClass clazz, Field field)
+    private void fireDiff(
+        Message msg,
+        Severity severity, JavaClass clazz, Field field,
+        String[] args)
     {
         final String className = clazz.getClassName();
         final ApiDifference diff =
-                new ApiDifference(report + " in " + className,
-                        severity, className, null, field.getName());
+                new ApiDifference(msg, severity, className, null, field.getName(), args);
         getApiDiffDispatcher().fireDiff(diff);
 
     }
