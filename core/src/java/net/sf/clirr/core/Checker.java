@@ -153,7 +153,11 @@ public final class Checker implements ApiDiffDispatcher
      * old and new jars are to be compared. This parameter may be null, in
      * which case all classes in the old and new jars are compared.
      */
-    public void reportDiffs(File[] origJars, File[] newJars, ClassLoader origThirdPartyLoader, ClassLoader newThirdPartyLoader, ClassSelector classSelector) throws CheckerException
+    public void reportDiffs(
+        File[] origJars, File[] newJars,
+        ClassLoader origThirdPartyLoader, ClassLoader newThirdPartyLoader,
+        ClassSelector classSelector)
+        throws CheckerException
     {
         if (classSelector == null)
         {
@@ -161,9 +165,11 @@ public final class Checker implements ApiDiffDispatcher
             classSelector = new ClassSelector(ClassSelector.MODE_UNLESS);
         }
 
-        final ClassSet origClasses = createClassSet(origJars, origThirdPartyLoader, classSelector);
+        final ClassSet origClasses =
+            createClassSet(origJars, origThirdPartyLoader, classSelector);
 
-        final ClassSet newClasses = createClassSet(newJars, newThirdPartyLoader, classSelector);
+        final ClassSet newClasses =
+            createClassSet(newJars, newThirdPartyLoader, classSelector);
 
         reportDiffs(origClasses, newClasses);
     }
@@ -180,7 +186,9 @@ public final class Checker implements ApiDiffDispatcher
      * old and new jars are to be compared. This parameter may be null, in
      * which case all classes in the old and new jars are compared.
      */
-    private static ClassSet createClassSet(File[] jarFiles, ClassLoader thirdPartyClasses, ClassSelector classSelector) throws CheckerException
+    private static ClassSet createClassSet(
+        File[] jarFiles, ClassLoader thirdPartyClasses, ClassSelector classSelector)
+        throws CheckerException
     {
         if (classSelector == null)
         {
@@ -204,7 +212,8 @@ public final class Checker implements ApiDiffDispatcher
             }
             catch (IOException ex)
             {
-                throw new CheckerException("Cannot open " + jarFile + " for reading", ex);
+                throw new CheckerException(
+                    "Cannot open " + jarFile + " for reading", ex);
             }
             Enumeration enumEntries = zip.entries();
             while (enumEntries.hasMoreElements())
@@ -225,7 +234,9 @@ public final class Checker implements ApiDiffDispatcher
         return ret;
     }
 
-    private static JavaClass extractClass(ZipEntry zipEntry, ZipFile zip, Repository repository) throws CheckerException
+    private static JavaClass extractClass(
+        ZipEntry zipEntry, ZipFile zip, Repository repository)
+        throws CheckerException
     {
         String name = zipEntry.getName();
         InputStream is = null;
@@ -240,7 +251,9 @@ public final class Checker implements ApiDiffDispatcher
         }
         catch (IOException ex)
         {
-            throw new CheckerException("Cannot read " + zipEntry.getName() + " from " + zip.getName(), ex);
+            throw new CheckerException(
+                "Cannot read " + zipEntry.getName() + " from " + zip.getName(),
+                ex);
         }
         finally
         {
@@ -258,7 +271,8 @@ public final class Checker implements ApiDiffDispatcher
         }
     }
 
-    private static ClassLoader createClassLoader(File[] jarFiles, ClassLoader thirdPartyClasses)
+    private static ClassLoader createClassLoader(
+        File[] jarFiles, ClassLoader thirdPartyClasses)
     {
         final URL[] jarUrls = new URL[jarFiles.length];
         for (int i = 0; i < jarFiles.length; i++)
@@ -272,7 +286,9 @@ public final class Checker implements ApiDiffDispatcher
             catch (MalformedURLException ex)
             {
                 // this should never happen
-                final IllegalArgumentException illegalArgumentException = new IllegalArgumentException("Cannot create classloader with jar file " + jarFile);
+                final IllegalArgumentException illegalArgumentException =
+                    new IllegalArgumentException(
+                        "Cannot create classloader with jar file " + jarFile);
                 illegalArgumentException.initCause(ex);
                 throw illegalArgumentException;
             }
@@ -291,19 +307,24 @@ public final class Checker implements ApiDiffDispatcher
      * @param currentVersion the classes that are checked for
      *        compatibility with compatibilityBaseline
      */
-    private void reportDiffs(ClassSet compatibilityBaseline, ClassSet currentVersion) throws CheckerException
+    private void reportDiffs(
+        ClassSet compatibilityBaseline, ClassSet currentVersion)
+        throws CheckerException
     {
         fireStart();
         runClassChecks(compatibilityBaseline, currentVersion);
         fireStop();
     }
 
-    private void runClassChecks(ClassSet compatBaseline, ClassSet currentVersion) throws CheckerException
+    private void runClassChecks(
+        ClassSet compatBaseline, ClassSet currentVersion)
+        throws CheckerException
     {
         JavaClass[] compat = compatBaseline.toArray();
         JavaClass[] current = currentVersion.toArray();
 
-        CoIterator iter = new CoIterator(JavaClassNameComparator.COMPARATOR, compat, current);
+        CoIterator iter = new CoIterator(
+            JavaClassNameComparator.COMPARATOR, compat, current);
 
         while (iter.hasNext())
         {
@@ -315,13 +336,19 @@ public final class Checker implements ApiDiffDispatcher
             if (compatBaselineClass == null)
             {
                 final String className = currentClass.getClassName();
-                final ApiDifference diff = new ApiDifference(MSG_CLASS_ADDED, Severity.INFO, className, null, null, null);
+                final ApiDifference diff =
+                    new ApiDifference(
+                        MSG_CLASS_ADDED, Severity.INFO, className,
+                        null, null, null);
                 fireDiff(diff);
             }
             else if (currentClass == null)
             {
                 final String className = compatBaselineClass.getClassName();
-                final ApiDifference diff = new ApiDifference(MSG_CLASS_REMOVED, Severity.ERROR, className, null, null, null);
+                final ApiDifference diff =
+                    new ApiDifference(
+                        MSG_CLASS_REMOVED, Severity.ERROR, className,
+                        null, null, null);
                 fireDiff(diff);
             }
             else
@@ -331,7 +358,8 @@ public final class Checker implements ApiDiffDispatcher
                 for (Iterator it = classChecks.iterator(); it.hasNext() && continueTesting;)
                 {
                     ClassChangeCheck classChangeCheck = (ClassChangeCheck) it.next();
-                    continueTesting = classChangeCheck.check(compatBaselineClass, currentClass);
+                    continueTesting = classChangeCheck.check(
+                        compatBaselineClass, currentClass);
                 }
             }
         }
