@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<document>
+  <properties>
+    <title>Plugin changes</title>
+    <author>Vincent Massol</author>
+  </properties>
+
+  <body>
+
+    <release version="0.4-SNAPSHOT" date="in CVS">
+      <action dev="vmassol" type="add">
+        Initial release. See the plugin's web page for the features 
+        list.
+      </action>
+    </release>
+
+  </body>
+</document>
+

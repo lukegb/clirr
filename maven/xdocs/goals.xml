@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<document>
+  <properties>
+    <title>Maven Clirr plugin goals</title>
+    <author>Vincent Massol</author>
+  </properties>
+  <body>
+    <goals>
+      <goal>
+        <name>clirr</name>
+        <description>
+          Default goal (does the same as <code>clirr:check</code>).
+        </description>
+      </goal>
+      <goal>
+        <name>clirr:check</name>
+        <description>
+          Run binary compatibility checks.
+        </description>
+      </goal>
+    </goals>
+  </body>
+</document>

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<document>
+  <properties>
+    <title>Maven plugin for Clirr</title>
+    <author>Vincent Massol</author>
+  </properties>
+  <body>
+    <section name="What is it?">
+      <p>
+        The Maven plugin for Clirr allows easily running the Clirr 
+        framework on Maven projects. It supports the following 
+        features:
+      </p>
+      <ul>
+        <li>
+          Execution of Clirr framework on the current project.
+        </li>
+        <li>
+          Automatic download of project baseline jars with which the
+          current development source are compared with.
+        </li>
+        <li>
+          Automatically try to guess the latest release version of the
+          current project by looking at the POM's <code>&lt;version&gt;</code>
+          tag.
+        </li>
+      </ul>
+    </section>
+  </body>
+</document>

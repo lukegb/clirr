@@ -1,0 +1,122 @@
+<?xml version="1.0"?>
+
+<!--
+  =============================================================================
+    Maven plugin for Clirr.
+  =============================================================================
+-->
+
+<project 
+  xmlns:j="jelly:core" 
+  xmlns:util="jelly:util"
+  xmlns:ant="jelly:ant"
+  xmlns:x="jelly:xml">
+
+  <!--
+     ========================================================================
+       Default goal.
+     ========================================================================
+  -->
+  <goal name="clirr" description="Run binary compatibility check"
+      prereqs="clirr:check"/>
+
+  <!--
+     ========================================================================
+       Initializations.
+     ========================================================================
+  -->
+  <goal name="clirr:init">
+
+    <ant:path id="clirr.classpath">
+      <ant:pathelement location="${plugin.getDependencyPath('clirr:clirr-core')}"/>
+      <ant:pathelement location="${plugin.getDependencyPath('bcel:bcel')}"/>
+    </ant:path>
+
+    <ant:taskdef resource="clirrtask.properties" classpathref="clirr.classpath"/>
+
+  </goal>
+
+  <!--
+     ========================================================================
+       Download baseline version
+     ========================================================================
+  -->
+  <goal name="clirr:download-baseline" prereqs="clirr:init">
+
+    <!-- If the clirr.baseline.version property is not defined, we get
+         the last released version from the POM using the <versions> tag. We
+         assume the latest version is the last one in the <version> list. -->
+    <j:invokeStatic var="latestVersion" method="getLatestVersion" 
+        className="net.sf.clirr.maven.ClirrUtils">
+      <j:arg type="java.util.List" value="${pom.versions}"/>
+    </j:invokeStatic>
+
+    <j:if test="${latestVersion == null}">
+      <ant:fail>No released version found in the POM. Please specify a baseline version using the clirr.baseline.version property.</ant:fail>
+    </j:if>
+
+    <!-- Compute baseline jar name/url -->
+    <j:set var="clirr.baseline.jar"
+      value="${pom.artifactId}-${latestVersion}.${clirr.baseline.type}"/>
+    <j:set var="clirr.baseline.url"
+      value="${clirr.baseline.url}/${clirr.baseline.jar}"/>
+
+    <!-- Location where to put downloaded baseline jar -->
+    <j:set var="clirr.baseline.destination"
+      value="${maven.repo.local}/${pom.groupId}/${clirr.baseline.type}s/${clirr.baseline.jar}"/>
+    
+    <!-- Download baseline jar if online -->
+    <j:choose>
+      <j:when test="${maven.mode.online}">
+
+        <!-- TODO: Improve error reporting when working offline or when an
+             error occurs in the call to HttpUtils.getFile() -->
+        <j:invokeStatic method="getBaselineJar" 
+            className="net.sf.clirr.maven.ClirrUtils">
+          <j:arg type="org.apache.maven.jelly.MavenJellyContext" value="${context}"/>
+        </j:invokeStatic>
+
+      </j:when>
+      <j:otherwise>
+
+        <ant:available property="baselineJarPresent" file="${clirr.baseline.destination}"/>
+        <j:if test="${baselineJarPresent == null}">
+          <ant:fail>Cannot find file [${clirr.baseline.destination}]</ant:fail>
+        </j:if>
+
+      </j:otherwise>
+    </j:choose>
+
+  </goal>
+
+  <!--
+     ========================================================================
+       Run binary compatibility checks.
+     ========================================================================
+  -->
+  <goal name="clirr:check" prereqs="clirr:init"
+      description="Run binary compatibility check">
+
+    <j:if test="${context.getVariable('clirr.baseline.download') == true 
+        and context.getVariable('clirr.baseline.destination') == null}">
+      <attainGoal name="clirr:download-baseline"/>
+    </j:if>
+    
+    <attainGoal name="jar:jar"/>
+    
+    <ant:dirname property="clirr.baseline.destination.dir" 
+        file="${clirr.baseline.destination}"/>
+    <ant:basename property="clirr.baseline.destination.basename" 
+        file="${clirr.baseline.destination}"/>
+    
+    <clirr failOnWarning="${clirr.fail.on.warning}"
+        failOnError="${clirr.fail.on.error}">
+      <origFiles dir="${clirr.baseline.destination.dir}" 
+          includes="${clirr.baseline.destination.basename}"/>
+      <newFiles dir="${maven.build.dir}" includes="${maven.final.name}.jar"/>
+      <formatter type="xml" outfile="${clirr.report.file}"/>
+    </clirr>  
+  
+  </goal>
+
+</project>

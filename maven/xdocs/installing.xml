@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<document>
+
+  <properties>
+    <title>Installing the Maven Clirr plugin</title>
+    <author>Vincent Massol</author>
+  </properties>
+
+  <body>
+    <section name="Installing the Clirr plugin">
+      <p>
+        There are 2 options to install the Clirr plugin in an existing Maven
+        installation:
+      </p>
+      <ul>
+        <li>
+          <strong>Automatic install</strong>: Call 
+          <code>maven plugin:download -DgroupId=clirr -DartifactId=clirr-maven -Dversion={version}</code>
+          where <code>{version}</code> is the version to use. Maven will 
+          automatically download the plugin and install it, uninstalling any
+          other version you may already have.
+        </li>
+        <li>
+          <strong>Manual install</strong>: 
+          <a href="http://www.ibiblio.org/maven/clirr/plugins/">Download</a>
+          the Clirr plugin jar and copy it in 
+          <code>{MAVEN_HOME}/plugins</code> where <code>{MAVEN_HOME}</code> is
+          the location where you have installed Maven. Make sure you also
+          remove any previous Clirr plugin from 
+          <code>{MAVEN_HOME}/plugins</code> and delete your 
+          <code>{USER_HOME}/.maven/plugins</code> directory.
+        </li>
+      </ul>
+    </section>
+
+ </body>
+</document>

@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project>
+  <extend>${basedir}/../project.xml</extend>
+  <id>clirr-maven</id>
+  <name>Clirr Maven plugin</name>
+
+  <!-- Note: Although we inherit from project.xml, we still cannot 
+  	   remove the <currentVersion> tag as this project.xml is parsed at 
+  	   runtime whenever our plugin is called. -->
+  <currentVersion>0.4-SNAPSHOT</currentVersion>
+
+  <package>net.sf.clirr.maven</package>
+  <description>Maven plugin for Clirr</description>
+  <shortDescription>Maven plugin for Clirr</shortDescription>
+  <siteDirectory>/home/groups/c/cl/clirr/htdocs/maven</siteDirectory>
+  <repository>
+    <connection>scm:cvs:pserver:anonymous@cvs.sourceforge.net:/cvsroot/clirr/maven:clirr</connection>
+    <url>http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/clirr/maven</url>
+  </repository>
+  <dependencies>
+    <dependency>
+      <groupId>clirr</groupId>
+      <artifactId>clirr-core</artifactId>
+      <version>${pom.currentVersion}</version>
+    </dependency>
+    <dependency>
+      <groupId>bcel</groupId>
+      <artifactId>bcel</artifactId>
+      <version>5.1</version>
+      <url>http://jakarta.apache.org/bcel</url>
+    </dependency>
+    <dependency>
+      <groupId>maven</groupId>
+      <artifactId>maven</artifactId>
+      <version>1.0-rc2</version>
+    </dependency>
+    <dependency>
+      <groupId>commons-jelly</groupId>
+      <artifactId>commons-jelly</artifactId>
+      <version>20030902.160215</version>
+    </dependency>
+   
+    <!-- Required only for the plugin's unit tests! -->
+    <dependency>
+      <groupId>commons-lang</groupId>
+      <artifactId>commons-lang</artifactId>
+      <version>2.0</version>
+    </dependency>
+
+  </dependencies>
+  <build>
+    <sourceDirectory>src/main</sourceDirectory>
+    <resources>
+      <resource>
+        <directory>src/plugin-resources</directory>
+        <targetPath>plugin-resources</targetPath>
+      </resource>
+      <resource>
+        <directory>.</directory>
+        <includes>
+          <include>plugin.jelly</include>
+          <include>plugin.properties</include>
+          <include>project.properties</include>
+          <include>project.xml</include>
+        </includes>
+      </resource>
+    </resources>
+  </build>
+  <reports>
+    <report>maven-changes-plugin</report>
+    <report>maven-changelog-plugin</report>
+    <report>maven-file-activity-plugin</report>
+    <report>maven-developer-activity-plugin</report>
+    <report>maven-file-activity-plugin</report>
+    <report>maven-license-plugin</report>
+    <report>maven-linkcheck-plugin</report>
+  </reports>
+</project>
