@@ -27,6 +27,7 @@ import net.sf.clirr.framework.ApiDiffDispatcher;
 import net.sf.clirr.framework.ClassChangeCheck;
 import org.apache.bcel.classfile.JavaClass;
 import org.apache.bcel.classfile.Method;
+import org.apache.bcel.classfile.Attribute;
 import org.apache.bcel.generic.Type;
 
 import java.util.ArrayList;
@@ -296,6 +297,7 @@ public class MethodSetCheck
         checkParameterTypes(compatBaseline, baselineMethod, currentMethod);
         checkReturnType(compatBaseline, baselineMethod, currentMethod);
         checkDeclaredExceptions(compatBaseline, baselineMethod, currentMethod);
+        checkDeprecated(compatBaseline, baselineMethod, currentMethod);
     }
 
     private void checkParameterTypes(JavaClass compatBaseline, Method baselineMethod, Method currentMethod)
@@ -349,6 +351,25 @@ public class MethodSetCheck
             JavaClass compatBaseline, Method baselineMethod, Method currentMethod)
     {
         // TODO
+    }
+
+    private void checkDeprecated(JavaClass compatBaseline, Method baselineMethod, Method currentMethod)
+    {
+        boolean bIsDeprecated = isDeprecated(baselineMethod);
+        boolean cIsDeprecated = isDeprecated(currentMethod);
+       
+        if (bIsDeprecated && !cIsDeprecated)
+        {
+            fireDiff(
+                "Method '" + getMethodId(compatBaseline, baselineMethod) + "' is no longer deprecated",
+                    Severity.INFO, compatBaseline, baselineMethod);
+        }
+        else if (!bIsDeprecated && cIsDeprecated)
+        {
+            fireDiff(
+                "Method '" + getMethodId(compatBaseline, baselineMethod) + "' has been deprecated",
+                    Severity.INFO, compatBaseline, baselineMethod);
+        }
     }
 
     /**
@@ -410,4 +431,17 @@ public class MethodSetCheck
 
     }
 
+    private boolean isDeprecated(Method method)
+    {
+        Attribute[] attrs = method.getAttributes();
+        for(int i=0; i<attrs.length; ++i) 
+        {
+            if (attrs[i] instanceof org.apache.bcel.classfile.Deprecated)
+            {
+                return true;
+            }
+        }
+        
+        return false;
+    }
 }
