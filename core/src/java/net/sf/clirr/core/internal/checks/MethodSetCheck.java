@@ -50,7 +50,7 @@ public class MethodSetCheck
     private static final Message MSG_METHOD_NOW_IN_SUPERCLASS = new Message(7000);
     private static final Message MSG_METHOD_NOW_IN_INTERFACE = new Message(7001);
     private static final Message MSG_METHOD_REMOVED = new Message(7002);
-    // 7003 unused
+    private static final Message MSG_METHOD_OVERRIDE_REMOVED = new Message(7003);
     private static final Message MSG_METHOD_ARGCOUNT_CHANGED = new Message(7004);
     private static final Message MSG_METHOD_PARAMTYPE_CHANGED = new Message(7005);
     private static final Message MSG_METHOD_RETURNTYPE_CHANGED = new Message(7006);
@@ -310,7 +310,7 @@ public class MethodSetCheck
     }
 
     /**
-     * Searches the class hierarchy for a method that has a certtain signature.
+     * Searches the class hierarchy for a method that has a certain signature.
      * @param methodSignature the sig we're looking for
      * @param clazz class where search starts
      * @return class name of a superclass of clazz, might be null
@@ -394,28 +394,64 @@ public class MethodSetCheck
             return;
         }
 
-        String methodSignature = getMethodId(oldClass, oldMethod);
-        String superClassName = findSuperClassWithSignature(methodSignature, currentClass);
-        String superInterfaceName = null;
-        if (oldMethod.isAbstract())
-        {
-            superInterfaceName = findSuperInterfaceWithSignature(methodSignature, currentClass);
-        }
+        String signature = getMethodId(oldClass, oldMethod);
 
-        if (superClassName != null)
+        String oldBaseClassForMethod = findSuperClassWithSignature(signature, oldClass);
+        String oldInterfaceForMethod = findSuperInterfaceWithSignature(signature, oldClass);
+
+        String newBaseClassForMethod = findSuperClassWithSignature(signature, currentClass);
+        String newInterfaceForMethod = findSuperInterfaceWithSignature(signature, currentClass);
+
+        boolean oldInheritedMethod = (oldBaseClassForMethod != null) || (oldInterfaceForMethod != null);
+        boolean newInheritedMethod = (newBaseClassForMethod != null) || (newInterfaceForMethod != null);
+
+        if (oldInheritedMethod && newInheritedMethod)
         {
+            // Previously, this method overrode an inherited definition.
+            // The current version of the class doesn't have this
+            // method, but a parent class or interface still does, so this
+            // does not cause an incompatibility.
+            fireDiff(MSG_METHOD_OVERRIDE_REMOVED,
+                    Severity.INFO,
+                    oldClass, oldMethod, null);
+        }
+        else if (oldInheritedMethod)
+        {
+            // Previously, this method override an inherited definition.
+            // It isn't present in the current class, though, and neither is
+            // it present in the new class' ancestors. Best to just
+            // report it as removed...
+            fireDiff(MSG_METHOD_REMOVED,
+                    getSeverity(oldClass, oldMethod, Severity.ERROR),
+                    oldClass, oldMethod, null);
+        }
+        else if (newBaseClassForMethod != null)
+        {
+            // Previously, this method didn't override anything. The current
+            // version of this class doesn't have this method any more,
+            // but an ancestor class now *does*. This is an instance
+            // of the pull-up refactoring pattern, where a method is moved
+            // to an ancestor class.
             fireDiff(MSG_METHOD_NOW_IN_SUPERCLASS,
                     Severity.INFO, oldClass, oldMethod,
-                    new String[] {superClassName});
+                    new String[] {newBaseClassForMethod});
         }
-        else if (superInterfaceName != null)
+        else if (newInterfaceForMethod != null)
         {
+            // Previously, this method didn't override anything. The current
+            // version of this class doesn't have this method any more,
+            // but one of the implemented interfaces now *does*. This is an
+            // instance of the pull-up refactoring pattern, where a method is
+            // moved to an interface.
             fireDiff(MSG_METHOD_NOW_IN_INTERFACE,
                     Severity.INFO, oldClass, oldMethod,
-                    new String[] {superInterfaceName});
+                    new String[] {newInterfaceForMethod});
         }
         else
         {
+            // This method wasn't anything special in the old class, and
+            // it isn't present in the new class either directly or via
+            // inheritance.
             fireDiff(MSG_METHOD_REMOVED,
                     getSeverity(oldClass, oldMethod, Severity.ERROR),
                     oldClass, oldMethod, null);
