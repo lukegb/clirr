@@ -61,12 +61,14 @@ public class Clirr
 
     private void run(String[] args)
     {
-        System.out.println("reporting diffs..");
         BasicParser parser = new BasicParser();
         Options options = new Options();
-        options.addOption("o", "oldversion", true, "jar files of old version");
-        options.addOption("n", "newversion", true, "jar files of new version");
-        options.addOption("s", "style", true, "output style");
+        options.addOption("o", "old-version", true, "jar files of old version");
+        options.addOption("n", "new-version", true, "jar files of new version");
+        options.addOption("s", "style", true, "output style [text|xml]");
+        options.addOption("i", "include-pkg", true,
+            "include only classes from this package and its subpackages");
+        options.addOption("p", "show-pkg-scope", false, "show package scope classes");
         options.addOption("a", "show-all-scopes", false, "show private and package classes");
         options.addOption("f", "output-file", true, "output file name");
 
@@ -82,16 +84,13 @@ public class Clirr
             System.exit(-1);
         }
 
-        // TODO: provide commandline options that allow the user to
-        // specify which packages/classes should be checked
-        //
-        ClassSelector classSelector = new ClassSelector(ClassSelector.MODE_UNLESS);
-
         String oldPath = cmdline.getOptionValue('o');
         String newPath = cmdline.getOptionValue('n');
         String style = cmdline.getOptionValue('s', "text");
         String outputFileName = cmdline.getOptionValue('f');
+        String[] includePkgs = cmdline.getOptionValues('i');
         boolean showAll = cmdline.hasOption('a');
+        boolean showPkg = cmdline.hasOption('p');
 
         if ((oldPath == null) || (newPath == null))
         {
@@ -103,6 +102,25 @@ public class Clirr
         if (showAll)
         {
             checker.getScopeSelector().setScope(ScopeSelector.SCOPE_PRIVATE);
+        }
+        else if (showPkg)
+        {
+            checker.getScopeSelector().setScope(ScopeSelector.SCOPE_PACKAGE);
+        }
+
+        ClassSelector classSelector;
+        if ((includePkgs != null) && (includePkgs.length > 0))
+        {
+            classSelector = new ClassSelector(ClassSelector.MODE_IF);
+            for (int i = 0; i < includePkgs.length; ++i)
+            {
+                classSelector.addPackageTree(includePkgs[i]);
+            }
+        }
+        else
+        {
+            // a selector that selects everything
+            classSelector = new ClassSelector(ClassSelector.MODE_UNLESS);
         }
 
         DiffListener diffListener = null;
