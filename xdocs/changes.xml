@@ -7,7 +7,7 @@
   </properties>
   <body>
 
-    <release version="0.3" date="in CVS">
+    <release version="0.3" date="2004-05-23">
         <action dev="lkuehne" due-to="Stephen Colebourne" type="fix">
             Fixed a copy + paste error in field modifier comparison logic
             that would lead to false alarms and undetected compatibility
