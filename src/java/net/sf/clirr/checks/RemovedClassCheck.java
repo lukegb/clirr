@@ -24,6 +24,11 @@ import net.sf.clirr.framework.ApiDiffDispatcher;
 import net.sf.clirr.framework.ClassSetChangeCheck;
 import org.apache.bcel.util.ClassSet;
 
+/**
+ * Checks whether a class/interface has been removed from the public API.
+ *
+ * @author lkuehne
+ */
 public final class RemovedClassCheck
         extends AbstractClassSetChangeCheck
         implements ClassSetChangeCheck
