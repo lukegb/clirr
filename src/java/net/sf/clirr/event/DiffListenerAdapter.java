@@ -1,6 +1,6 @@
 //////////////////////////////////////////////////////////////////////////////
 // Clirr: compares two versions of a java library for binary compatibility
-// Copyright (C) 2003  Lars Kühne
+// Copyright (C) 2003 - 2004  Lars Kühne
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
