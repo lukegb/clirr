@@ -290,20 +290,20 @@ public final class ApiDifference
 
     /**
      * Build a string containing a string representation of most of the
-     * fields in this object, but not the message-id or the string 
+     * fields in this object, but not the message-id or the string
      * translation thereof.
      */
     private void appendCommonData(StringBuffer buf)
     {
         buf.append(" (");
         buf.append(binaryCompatibilitySeverity);
-        
+
         if (sourceCompatibilitySeverity != binaryCompatibilitySeverity)
         {
             buf.append(",");
             buf.append(sourceCompatibilitySeverity);
         }
-        
+
         buf.append(") - ");
         buf.append(affectedClass);
         buf.append("[");
