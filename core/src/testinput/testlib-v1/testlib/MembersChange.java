@@ -16,11 +16,13 @@ public class MembersChange extends BaseMembers
     public static final int fin4 = 0;
     public static final int fin5 = 0;
     public static final boolean fin6 = false;
+    public static final int fin7 = 7;
 
     public int pub1 = 0;
     public int pub2 = 0;
     public int pub3 = 0;
     public int pub4 = 0;
+    public int pub5 = 0;
 
     protected int prot1 = 0;
     protected int prot2 = 0;
