@@ -50,12 +50,19 @@ public abstract class AbstractCheckTestCase extends TestCase
         TestDiffListener tdl = new TestDiffListener();
         Checker checker = CheckerFactory.createChecker(createCheck(tdl));
         ClassSelector classSelector = createClassSelector();
-
-        checker.reportDiffs(
-            getBaseLine(), getCurrent(), 
-            new URLClassLoader(new URL[]{}), 
-            new URLClassLoader(new URL[]{}),
-            classSelector);
+        
+        try
+        {
+            checker.reportDiffs(
+                getBaseLine(), getCurrent(), 
+                new URLClassLoader(new URL[]{}), 
+                new URLClassLoader(new URL[]{}),
+                classSelector);
+        }
+        catch(Exception ex)
+        {
+            fail("Exception generated:" + ex.getMessage());
+        }
             
         tdl.checkExpected(expected);
     }
