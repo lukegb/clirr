@@ -30,40 +30,34 @@
                 a person (like Lars) or an organisation (like Apache).
             </p>
             <p>
-                Assigning Copyright to Lars allows easy re-licensing of the
-                code. For example Lars could re-license Clirr under
-                the Apache license for commercial development without having
-                to contact everybody who has ever contributed. Note that
-                you would not lose any of the work you (and others) have done
-                as it would still be licensed under LGPL - <em>noone can ever take
-                these rights away from you</em>!
-            </p>
-            <p>
-                Another reason why the Clirr project insists on assigning copyright
-                to one person is to put that person in a position to sucessfully
-                take legal action against potential copyright infringements.
-                This means that should someone use <em>your</em> code without
-                accepting the terms of the LGPL, that someone risks getting sued
-                by the copyright owner and has a good chance of loosing.
-            </p>
-            <p>
                 Some people feel that handing over copyright to Lars
                 limits their rights in the code they contribute.
             </p>
             <p>
                 In fact it doesn't. Think about it: You give copyright to Lars,
                 Lars immediately gives you the right to use the code under LGPL.
-                What have you lost? Nothing! For example you can still
+                What have you lost? You can still
             </p>
             <ul>
                 <li>claim authorship in the Javadoc or other comments,
-                    so credit goes where it should</li>
+                    so credit goes where it should.</li>
                 <li>redistribute the code in source or binary form
-                    (provided the terms of the LGPL are met)</li>
-                <li>use the code in a commercial environment or link it into IDEs</li>
+                    (provided the terms of the LGPL are met).</li>
+                <li>use the code in a commercial environment or link it into IDEs.</li>
                 <li>fork the codebase if you are not happy with the way
-                    Lars is running the project</li>
+                    Lars is running the project.</li>
             </ul>
+            <p>
+                Because the code is licensed under the LGPL,
+                the only thing you give up by assigning copyright to Lars
+                is the right to veto a re-licensing of the code.
+                For example Lars could re-license Clirr under
+                the Apache license without having to contact
+                everybody who has ever contributed.
+                Note that you would not lose any of the work you (and others)
+                have done as it would still be licensed under LGPL - <em>noone
+                can ever take these rights away from you</em>!
+            </p>
         </section>
     </body>
 </document>
