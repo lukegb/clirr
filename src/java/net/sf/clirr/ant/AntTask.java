@@ -242,7 +242,7 @@ public final class AntTask extends Task
         }
 
         checker.addDiffListener(counter);
-        checker.reportDiffs(origJars, newJars, origThirdPartyLoader, newThirdPartyLoader);
+        checker.reportDiffs(origJars, newJars, origThirdPartyLoader, newThirdPartyLoader, null);
 
         if (counter.getWarnings() > 0 && failOnWarning || counter.getErrors() > 0 && failOnError)
         {

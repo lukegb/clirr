@@ -42,8 +42,10 @@ import net.sf.clirr.checks.FieldSetCheck;
 import net.sf.clirr.checks.MethodSetCheck;
 import net.sf.clirr.event.ApiDifference;
 import net.sf.clirr.event.DiffListener;
+import net.sf.clirr.event.ScopeSelector;
 import net.sf.clirr.framework.ApiDiffDispatcher;
 import net.sf.clirr.framework.ClassChangeCheck;
+import net.sf.clirr.framework.ClassSelector;
 import net.sf.clirr.framework.ClassSetChangeCheck;
 import org.apache.bcel.classfile.JavaClass;
 import org.apache.bcel.classfile.ClassParser;
@@ -70,6 +72,8 @@ public final class Checker implements ApiDiffDispatcher
 
     private List classSetChecks = new ArrayList();
     private List classChecks = new ArrayList();
+
+    private ScopeSelector scopeSelector = new ScopeSelector();
 
     /**
      * Package visible constructor for unit testing.
@@ -99,8 +103,13 @@ public final class Checker implements ApiDiffDispatcher
         classChecks.add(new ClassModifierCheck(this));
         classChecks.add(new InterfaceSetCheck(this));
         classChecks.add(new ClassHierarchyCheck(this));
-        classChecks.add(new FieldSetCheck(this));
-        classChecks.add(new MethodSetCheck(this));
+        classChecks.add(new FieldSetCheck(this, scopeSelector));
+        classChecks.add(new MethodSetCheck(this, scopeSelector));
+    }
+
+    public ScopeSelector getScopeSelector()
+    {
+        return scopeSelector;
     }
 
     public void addDiffListener(DiffListener listener)
@@ -135,17 +144,75 @@ public final class Checker implements ApiDiffDispatcher
         }
     }
 
+    /**
+     * Compare the classes in the two sets of jars and report any differences
+     * to this object's DiffListener object. If the classes in those jars reference
+     * third party classes (e.g. as base class, implemented interface or method param),
+     * such third party classes must be made available via the xyzThirdPartyLoader
+     * classloaders.
+     *
+     * @param origJars is a set of jars containing the "original" versions of
+     * the classes to be compared.
+     *
+     * @param newJars is a set of jars containing the new versions of the
+     * classes to be compared.
+     *
+     * @param origThirdPartyLoader is a classloader that provides third party classes
+     * which are referenced by origJars.
+     *
+     * @param newThirdPartyLoader is a classloader that provides third party classes
+     * which are referenced by newJars.
+     *
+     * @param classSelector is an object which determines which classes from the
+     * old and new jars are to be compared. This parameter may be null, in
+     * which case all classes in the old and new jars are compared.
+     */
     public void reportDiffs(
             File[] origJars, File[] newJars,
-            ClassLoader origThirdPartyLoader, ClassLoader newThirdPartyLoader)
+            ClassLoader origThirdPartyLoader, ClassLoader newThirdPartyLoader,
+            ClassSelector classSelector)
     {
-        final ClassSet origClasses = createClassSet(origJars, origThirdPartyLoader);
-        final ClassSet newClasses = createClassSet(newJars, newThirdPartyLoader);
+        if (classSelector == null)
+        {
+            // create a class selector that selects all classes
+            classSelector = new ClassSelector(ClassSelector.MODE_UNLESS);
+        }
+
+        final ClassSet origClasses = createClassSet(
+            origJars, origThirdPartyLoader, scopeSelector, classSelector);
+
+        final ClassSet newClasses = createClassSet(
+            newJars, newThirdPartyLoader, scopeSelector, classSelector);
+
         reportDiffs(origClasses, newClasses);
     }
 
-    private ClassSet createClassSet(File[] jarFiles, ClassLoader thirdPartyClasses)
+    /**
+     * Creates a set of classes to check.
+     *
+     * @param jarFiles a set of jar filed to scan for class files.
+     *
+     * @param thirdPartyClasses loads classes that are referenced
+     * by the classes in the jarFiles
+     *
+     * @param scopeSelector scope of classes that should be included
+     *
+     * @param classSelector is an object which determines which classes from the
+     * old and new jars are to be compared. This parameter may be null, in
+     * which case all classes in the old and new jars are compared.
+     */
+    private static ClassSet createClassSet(
+            File[] jarFiles,
+            ClassLoader thirdPartyClasses,
+            ScopeSelector scopeSelector,
+            ClassSelector classSelector)
     {
+        if (classSelector == null)
+        {
+            // create a class selector that selects all classes
+            classSelector = new ClassSelector(ClassSelector.MODE_UNLESS);
+        }
+
         ClassLoader classLoader = createClassLoader(jarFiles, thirdPartyClasses);
 
         Repository repository = new ClassLoaderRepository(classLoader);
@@ -164,14 +231,14 @@ public final class Checker implements ApiDiffDispatcher
             {
                 throw new BuildException("Cannot open " + jarFile + " for reading", ex);
             }
-            Enumeration enum = zip.entries();
-            while (enum.hasMoreElements())
+            Enumeration enumEntries = zip.entries();
+            while (enumEntries.hasMoreElements())
             {
-                ZipEntry zipEntry = (ZipEntry) enum.nextElement();
+                ZipEntry zipEntry = (ZipEntry) enumEntries.nextElement();
                 if (!zipEntry.isDirectory() && zipEntry.getName().endsWith(".class"))
                 {
                     JavaClass clazz = extractClass(zipEntry, zip, repository);
-                    if (clazz.isPublic() || clazz.isProtected())
+                    if (scopeSelector.isSelected(clazz))
                     {
                         ret.add(clazz);
                     }
@@ -182,7 +249,7 @@ public final class Checker implements ApiDiffDispatcher
         return ret;
     }
 
-    private JavaClass extractClass(ZipEntry zipEntry, ZipFile zip, Repository repository)
+    private static JavaClass extractClass(ZipEntry zipEntry, ZipFile zip, Repository repository)
     {
         String name = zipEntry.getName();
         InputStream is = null;
@@ -215,7 +282,7 @@ public final class Checker implements ApiDiffDispatcher
         }
     }
 
-    private ClassLoader createClassLoader(File[] jarFiles, ClassLoader thirdPartyClasses)
+    private static ClassLoader createClassLoader(File[] jarFiles, ClassLoader thirdPartyClasses)
     {
         final URL[] jarUrls = new URL[jarFiles.length];
         for (int i = 0; i < jarFiles.length; i++)
