@@ -38,7 +38,9 @@ import org.apache.bcel.classfile.ConstantValue;
  *
  * @author lkuehne
  */
-public class FieldSetCheck extends AbstractDiffReporter implements ClassChangeCheck
+public class FieldSetCheck 
+    extends AbstractDiffReporter 
+    implements ClassChangeCheck
 {
     private static final Message MSG_FIELD_ADDED = new Message(6000);
     private static final Message MSG_FIELD_REMOVED = new Message(6001);
@@ -49,8 +51,8 @@ public class FieldSetCheck extends AbstractDiffReporter implements ClassChangeCh
     private static final Message MSG_FIELD_NOW_FINAL = new Message(6006);
     private static final Message MSG_FIELD_NOW_NON_STATIC = new Message(6007);
     private static final Message MSG_FIELD_NOW_STATIC = new Message(6008);
-    private static final Message MSG_FIELD_MORE_ACCESSABLE = new Message(6009);
-    private static final Message MSG_FIELD_LESS_ACCESSABLE = new Message(6010);
+    private static final Message MSG_FIELD_MORE_ACCESSIBLE = new Message(6009);
+    private static final Message MSG_FIELD_LESS_ACCESSIBLE = new Message(6010);
 
     private static final class FieldNameComparator implements Comparator
     {
@@ -80,7 +82,8 @@ public class FieldSetCheck extends AbstractDiffReporter implements ClassChangeCh
         final Field[] baselineFields = baselineClass.getFields();
         final Field[] currentFields = currentClass.getFields();
 
-        CoIterator iter = new CoIterator(COMPARATOR, baselineFields, currentFields);
+        CoIterator iter = new CoIterator(
+            COMPARATOR, baselineFields, currentFields);
 
         while (iter.hasNext())
         {
@@ -95,15 +98,25 @@ public class FieldSetCheck extends AbstractDiffReporter implements ClassChangeCh
                 {
                     final String name = cField.getName();
                     String scope = ScopeSelector.getScopeDesc(cField);
-                    fireDiff(MSG_FIELD_ADDED, Severity.INFO, currentClass, cField, new String[]{scope});
+                    fireDiff(MSG_FIELD_ADDED, 
+                        Severity.INFO, currentClass, cField, 
+                        new String[]{scope});
                 }
             }
             else if (cField == null)
             {
                 if (scopeSelector.isSelected(bField))
                 {
+                    // TODO: This is not an error if the field is a
+                    // compile-time constant, because the value will
+                    // have been inlined into callers [Q: is this
+                    // mandatory, or only allowed by the java spec?].
+                    // See bugtracker #961222
+
                     final String name = bField.getName();
-                    fireDiff(MSG_FIELD_REMOVED, Severity.ERROR, baselineClass, bField, null);
+                    fireDiff(MSG_FIELD_REMOVED,
+                        getSeverity(baselineClass, bField, Severity.ERROR),
+                        baselineClass, bField, null);
                 }
             }
             else if (scopeSelector.isSelected(bField) || scopeSelector.isSelected(cField))
@@ -133,7 +146,15 @@ public class FieldSetCheck extends AbstractDiffReporter implements ClassChangeCh
             final ConstantValue cVal = cField.getConstantValue();
             if (cVal == null)
             {
-                fireDiff(MSG_FIELD_NOT_CONSTANT, Severity.WARNING, currentClass, cField, null);
+                // TODO: also check whether old field is final. If it's not
+                // final, then external code cannot have inlined the
+                // constant, and therefore we can issue an INFO instead
+                // of a warning. Actually, may be better to introduce a
+                // different message code rather than issue this code with
+                // two different severity levels..
+                fireDiff(MSG_FIELD_NOT_CONSTANT,
+                        getSeverity(currentClass, bField, Severity.WARNING),
+                        currentClass, cField, null);
                 return;
             }
 
@@ -142,7 +163,11 @@ public class FieldSetCheck extends AbstractDiffReporter implements ClassChangeCh
             {
                 // TODO: print out old and new value
                 // How can that be done with BCEL, esp. for boolean values?
-                fireDiff(MSG_FIELD_CONSTANT_CHANGED, Severity.WARNING, currentClass, cField, null);
+                //
+                // TODO: also check whether field is final (see above).
+                fireDiff(MSG_FIELD_CONSTANT_CHANGED,
+                        getSeverity(currentClass, bField, Severity.WARNING),
+                        currentClass, cField, null);
             }
         }
     }
@@ -153,7 +178,10 @@ public class FieldSetCheck extends AbstractDiffReporter implements ClassChangeCh
         final String cSig = cField.getType().toString();
         if (!bSig.equals(cSig))
         {
-            fireDiff(MSG_FIELD_TYPE_CHANGED, Severity.ERROR, currentClass, bField, new String[]{bSig, cSig});
+            fireDiff(MSG_FIELD_TYPE_CHANGED,
+                    getSeverity(currentClass, bField, Severity.ERROR),
+                    currentClass, bField,
+                    new String[] {bSig, cSig});
         }
     }
 
@@ -161,7 +189,8 @@ public class FieldSetCheck extends AbstractDiffReporter implements ClassChangeCh
     {
         if (bField.isFinal() && !cField.isFinal())
         {
-            fireDiff(MSG_FIELD_NOW_NON_FINAL, Severity.INFO, clazz, cField, null);
+            fireDiff(MSG_FIELD_NOW_NON_FINAL,
+                Severity.INFO, clazz, cField, null);
         }
 
         if (!bField.isFinal() && cField.isFinal())
@@ -171,12 +200,16 @@ public class FieldSetCheck extends AbstractDiffReporter implements ClassChangeCh
 
         if (bField.isStatic() && !cField.isStatic())
         {
-            fireDiff(MSG_FIELD_NOW_NON_STATIC, Severity.ERROR, clazz, cField, null);
+            fireDiff(MSG_FIELD_NOW_NON_STATIC,
+                getSeverity(clazz, bField, Severity.ERROR),
+                clazz, cField, null);
         }
 
         if (!bField.isStatic() && cField.isStatic())
         {
-            fireDiff(MSG_FIELD_NOW_STATIC, Severity.ERROR, clazz, cField, null);
+            fireDiff(MSG_FIELD_NOW_STATIC,
+                getSeverity(clazz, bField, Severity.ERROR),
+                clazz, cField, null);
         }
 
         // JLS, 13.4.10: Adding or deleting a transient modifier of a field
@@ -192,19 +225,30 @@ public class FieldSetCheck extends AbstractDiffReporter implements ClassChangeCh
 
         if (cScope.isMoreVisibleThan(bScope))
         {
-            fireDiff(MSG_FIELD_MORE_ACCESSABLE, Severity.INFO, clazz, cField, new String[]{bScope.getDesc(), cScope.getDesc()});
+            fireDiff(MSG_FIELD_MORE_ACCESSIBLE,
+                Severity.INFO, clazz, cField,
+                new String[] {bScope.getDesc(), cScope.getDesc()});
         }
         else if (cScope.isLessVisibleThan(bScope))
         {
-            fireDiff(MSG_FIELD_LESS_ACCESSABLE, Severity.ERROR, clazz, cField, new String[]{bScope.getDesc(), cScope.getDesc()});
+            fireDiff(MSG_FIELD_LESS_ACCESSIBLE,
+                getSeverity(clazz, bField, Severity.ERROR),
+                clazz, cField,
+                new String[] {bScope.getDesc(), cScope.getDesc()});
         }
     }
 
-    private void fireDiff(Message msg, Severity severity, JavaClass clazz, Field field, String[] args)
+    private void fireDiff(
+        Message msg, 
+        Severity severity, 
+        JavaClass clazz, 
+        Field field, 
+        String[] args)
     {
         final String className = clazz.getClassName();
-        final ApiDifference diff = new ApiDifference(msg, severity, className, null, field.getName(), args);
+        final ApiDifference diff =
+            new ApiDifference(
+                msg, severity, className, null, field.getName(), args);
         getApiDiffDispatcher().fireDiff(diff);
-
     }
 }
