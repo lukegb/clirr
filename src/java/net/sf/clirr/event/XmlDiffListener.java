@@ -43,8 +43,8 @@ public final class XmlDiffListener extends FileDiffListener
     {
         PrintStream out = getOutputStream();
         out.print("  <" + DIFFERENCE);
-        out.print(" severity=\"" + difference.getSeverity() + "\">");
-        out.print(" class=\"" + difference.getAffectedClass() + "\"");
+        out.print(" severity=\"" + difference.getSeverity() + "\"");
+        out.print(" class=\"" + difference.getAffectedClass() + "\">");
         if (difference.getAffectedMethod() != null)
         {
             out.print(" method=\"" + difference.getAffectedMethod() + "\"");
@@ -67,14 +67,6 @@ public final class XmlDiffListener extends FileDiffListener
         PrintStream out = getOutputStream();
         out.println("<?xml version=\"1.0\"?>");
         out.println('<' + DIFFREPORT + '>');
-        out.println("<!--");
-        out.println("  In future versions the differences will have more attributes, e.g.");
-        out.println("  - affected package");
-        out.println("  - affected class/interface");
-        out.println("  - affected method, if any");
-        out.println("  - change type (ADD/REMOVE/CHANGE)");
-        out.println("  - ... anything else you need?");
-        out.println("-->");
     }
 
 
