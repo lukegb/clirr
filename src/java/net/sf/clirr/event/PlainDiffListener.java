@@ -35,6 +35,15 @@ public final class PlainDiffListener extends FileDiffListener
     {
         PrintStream out = getOutputStream();
         out.print(difference.getMaximumSeverity().toString());
+
+        Message m = difference.getMessage();
+        if (m != null)
+        {
+            out.print(": ");
+            out.print(m.getId());
+        }
+        out.print(": ");
+        out.print(difference.getAffectedClass());
         out.print(": ");
         out.println(difference.getReport());
     }
