@@ -20,13 +20,15 @@
 package net.sf.clirr.checks;
 
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
 
 import net.sf.clirr.event.Severity;
+import net.sf.clirr.event.Message;
 import net.sf.clirr.framework.AbstractDiffReporter;
 import net.sf.clirr.framework.ApiDiffDispatcher;
 import net.sf.clirr.framework.ClassChangeCheck;
+import net.sf.clirr.framework.CoIterator;
+import net.sf.clirr.framework.JavaClassNameComparator;
 import org.apache.bcel.classfile.JavaClass;
 
 /**
@@ -38,6 +40,9 @@ public final class InterfaceSetCheck
         extends AbstractDiffReporter
         implements ClassChangeCheck
 {
+    private static final Message MSG_IFACE_ADDED = new Message(4000);
+    private static final Message MSG_IFACE_REMOVED = new Message(4001);
+
     /**
      * Create a new instance of this check.
      * @param dispatcher the diff dispatcher that distributes the detected changes to the listeners.
@@ -53,9 +58,6 @@ public final class InterfaceSetCheck
         JavaClass[] compatInterfaces = compatBaseline.getAllInterfaces();
         JavaClass[] currentInterfaces = currentVersion.getAllInterfaces();
 
-        // Note: an interface has itself in the set of all interfaces
-        // we have to consider that below to avoid funny messages for gender changes
-
         // Note: getAllInterfaces might return multiple array entries with the same
         // interface, so we need to use sets to remove duplicates...
         Set compat = createClassSet(compatInterfaces);
@@ -63,33 +65,36 @@ public final class InterfaceSetCheck
 
         final String className = compatBaseline.getClassName();
 
-        for (Iterator it = compat.iterator(); it.hasNext();)
-        {
-            String compatInterface = (String) it.next();
+        CoIterator iter = new CoIterator(
+            JavaClassNameComparator.COMPARATOR, compat, current);
 
-            if (!current.contains(compatInterface)
-                    && !compatInterface.equals(className))
-            {
-                log("Removed " + compatInterface
-                        + " from the set of interfaces implemented by "
-                        + className,
-                        Severity.ERROR, className, null, null);
-            }
-            else
-            {
-                current.remove(compatInterface);
-            }
-        }
-
-        for (Iterator it = current.iterator(); it.hasNext();)
+        while (iter.hasNext())
         {
-            String name = (String) it.next();
-            if (!name.equals(className))
+            iter.next();
+
+            JavaClass compatInterface = (JavaClass) iter.getLeft();
+            JavaClass currentInterface = (JavaClass) iter.getRight();
+
+            if (className.equals(compatInterface.getClassName())
+                || className.equals(currentInterface.getClassName()))
             {
-                log("Added " + name
-                        + " to the set of implemented interfaces implemented by "
-                        + className,
-                        Severity.INFO, className, null, null);
+                // This occurs because an interface has itself in the set of all interfaces.
+                // We can't just let the test below handle this case because that won't
+                // work when a gender change has occurred.
+                continue;
+            }
+
+            if (compatInterface == null)
+            {
+                log(MSG_IFACE_ADDED,
+                        Severity.INFO, className, null, null,
+                        new String[] {currentInterface.getClassName()});
+            }
+            else if (currentInterface == null)
+            {
+                log(MSG_IFACE_REMOVED,
+                        Severity.ERROR, className, null, null,
+                        new String[] {compatInterface.getClassName()});
             }
         }
 
