@@ -70,6 +70,11 @@ public final class ApiDifference
      *
      * @param report a human readable string describing the change that was made.
      * @param severity the severity in terms of binary API compatibility.
+     * @param clazz the fully qualified class name where the change occured
+     * @param method the method signature of the method that changed, <code>null</code>
+     *   if no method was affected.
+     * @param field the field name where the change occured, <code>null</code>
+     *   if no field was affected.
      */
     public ApiDifference(String report, Severity severity, String clazz, String method, String field)
     {
@@ -103,16 +108,28 @@ public final class ApiDifference
         return report;
     }
 
+    /**
+     * The fully qualified class name of the class that has changed.
+     * @return fully qualified class name of the class that has changed.
+     */
     public String getAffectedClass()
     {
         return affectedClass;
     }
 
+    /**
+     * Method signature of the method that has changed, if any.
+     * @return method signature or <code>null</code> if no method is affected.
+     */
     public String getAffectedMethod()
     {
         return affectedMethod;
     }
 
+    /**
+     * Field name of the field that has changed, if any.
+     * @return field name or <code>null</code> if no field is affected.
+     */
     public String getAffectedField()
     {
         return affectedField;
@@ -175,6 +192,9 @@ public final class ApiDifference
         return true;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public int hashCode()
     {
         int result;
