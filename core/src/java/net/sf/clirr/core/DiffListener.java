@@ -19,8 +19,6 @@
 
 package net.sf.clirr.core;
 
-import net.sf.clirr.core.ApiDifference;
-
 /**
  * Listener for API differences.
  *
