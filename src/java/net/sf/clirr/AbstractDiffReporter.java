@@ -22,7 +22,8 @@ package net.sf.clirr;
 import net.sf.clirr.event.ApiDifference;
 import net.sf.clirr.event.Severity;
 
-public abstract class AbstractDiffReporter {
+public abstract class AbstractDiffReporter
+{
 
     private ApiDiffDispatcher dispatcher;
 

@@ -19,7 +19,7 @@
 
 package net.sf.clirr.event;
 
-import net.sf.clirr.event.DiffListener;
+
 
 public class DiffListenerAdapter implements DiffListener
 {

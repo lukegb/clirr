@@ -48,12 +48,16 @@ import org.apache.tools.ant.types.FileSet;
 import org.apache.tools.ant.types.Path;
 
 
-public class AntTask extends Task
+/**
+ * Implements the Clirr ant task.
+ * @author lkuehne
+ */
+public final class AntTask extends Task
 {
     private static final String FORMATTER_TYPE_PLAIN = "plain";
     private static final String FORMATTER_TYPE_XML = "xml";
 
-    public static class Formatter
+    public static final class Formatter
     {
         private String type = null;
         private String outFile = null;
@@ -171,7 +175,7 @@ public class AntTask extends Task
         formatters.add(formatter);
     }
 
-    public void execute() throws BuildException
+    public void execute()
     {
         if (origFiles == null || newFiles == null)
         {

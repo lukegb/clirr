@@ -28,7 +28,7 @@ import net.sf.clirr.event.Severity;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.Task;
 
-class AntLogger extends DiffListenerAdapter
+final class AntLogger extends DiffListenerAdapter
 {
     private Task task;
 

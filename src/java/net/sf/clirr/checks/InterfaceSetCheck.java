@@ -19,17 +19,17 @@
 
 package net.sf.clirr.checks;
 
-import java.util.Set;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Set;
 
 import net.sf.clirr.AbstractDiffReporter;
-import net.sf.clirr.ClassChangeCheck;
 import net.sf.clirr.ApiDiffDispatcher;
+import net.sf.clirr.ClassChangeCheck;
 import net.sf.clirr.event.Severity;
 import org.apache.bcel.classfile.JavaClass;
 
-public class InterfaceSetCheck
+public final class InterfaceSetCheck
         extends AbstractDiffReporter
         implements ClassChangeCheck
 {
@@ -60,7 +60,10 @@ public class InterfaceSetCheck
             if (!current.contains(compatInterface)
                     && !compatInterface.equals(className))
             {
-                log("Removed " + compatInterface + " from the set of interfaces implemented by " + className, Severity.ERROR);
+                log("Removed " + compatInterface
+                        + " from the set of interfaces implemented by "
+                        + className,
+                        Severity.ERROR);
             }
             else
             {
@@ -71,8 +74,12 @@ public class InterfaceSetCheck
         for (Iterator it = current.iterator(); it.hasNext();)
         {
             String name = (String) it.next();
-            if (!name.equals(className)) {
-                log("Added " + name + " to the set of implemented interfaces implemented by " + className, Severity.INFO);
+            if (!name.equals(className))
+            {
+                log("Added " + name
+                        + " to the set of implemented interfaces implemented by "
+                        + className,
+                        Severity.INFO);
             }
         }
     }

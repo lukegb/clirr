@@ -27,7 +27,8 @@ package net.sf.clirr.event;
  * - Class-/MethodName
  * @author Lars
  */
-public class ApiDifference {
+public final class ApiDifference
+{
 
     private String report;
 
@@ -35,25 +36,30 @@ public class ApiDifference {
 
     private boolean expected;
 
-    public ApiDifference(String report, Severity severity /*, boolean expected*/) {
+    public ApiDifference(String report, Severity severity /*, boolean expected*/)
+    {
         this.report = report;
         this.severity = severity;
         this.expected = expected;
     }
 
-    public Severity getSeverity() {
+    public Severity getSeverity()
+    {
         return severity;
     }
 
-    public String getReport() {
+    public String getReport()
+    {
         return report;
     }
 
-    public boolean isExpected() {
+    public boolean isExpected()
+    {
         return expected;
     }
 
-    public String toString() {
+    public String toString()
+    {
         return report;
     }
 }

@@ -25,6 +25,8 @@ package net.sf.clirr.event;
 public interface DiffListener
 {
     void start();
+
     void reportDiff(ApiDifference difference);
+
     void stop();
 }

@@ -28,7 +28,7 @@ import net.sf.clirr.ClassChangeCheck;
 import net.sf.clirr.event.Severity;
 import org.apache.bcel.classfile.JavaClass;
 
-public class ClassHierarchyCheck
+public final class ClassHierarchyCheck
         extends AbstractDiffReporter
         implements ClassChangeCheck
 {

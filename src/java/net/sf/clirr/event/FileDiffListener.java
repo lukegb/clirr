@@ -19,10 +19,10 @@
 
 package net.sf.clirr.event;
 
-import java.io.PrintStream;
-import java.io.OutputStream;
-import java.io.FileOutputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
+import java.io.PrintStream;
 
 /**
  * Created by IntelliJ IDEA.
@@ -32,7 +32,7 @@ import java.io.FileNotFoundException;
  * To change this template use Options | File Templates.
  */
 public class FileDiffListener extends DiffListenerAdapter
- {
+{
     private PrintStream outputStream;
 
     FileDiffListener(String outFile) throws FileNotFoundException
@@ -54,7 +54,7 @@ public class FileDiffListener extends DiffListenerAdapter
         return outputStream;
     }
 
-    public void stop()
+    public final void stop()
     {
 
         // TODO: duplicate code in XML

@@ -1,4 +1,4 @@
-///////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////
 // Clirr: compares two versions of a java library for binary compatibility
 // Copyright (C) 2003  Lars Kühne
 //
@@ -15,17 +15,24 @@
 // You should have received a copy of the GNU Lesser General Public
 // License along with this library; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-///////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////
 
 package net.sf.clirr;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
-import org.apache.bcel.util.ClassSet;
-import org.apache.bcel.classfile.JavaClass;
-import net.sf.clirr.event.DiffListener;
+import net.sf.clirr.checks.AddedClassCheck;
+import net.sf.clirr.checks.ClassHierarchyCheck;
+import net.sf.clirr.checks.ClassModifierCheck;
+import net.sf.clirr.checks.GenderChangeCheck;
+import net.sf.clirr.checks.InterfaceSetCheck;
+import net.sf.clirr.checks.RemovedClassCheck;
 import net.sf.clirr.event.ApiDifference;
-import net.sf.clirr.checks.*;
+import net.sf.clirr.event.DiffListener;
+import org.apache.bcel.classfile.JavaClass;
+import org.apache.bcel.util.ClassSet;
 
 
 public final class Checker implements ApiDiffDispatcher

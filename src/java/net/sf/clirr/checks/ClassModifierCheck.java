@@ -20,13 +20,12 @@
 package net.sf.clirr.checks;
 
 import net.sf.clirr.AbstractDiffReporter;
-import net.sf.clirr.event.Severity;
 import net.sf.clirr.ApiDiffDispatcher;
 import net.sf.clirr.ClassChangeCheck;
+import net.sf.clirr.event.Severity;
 import org.apache.bcel.classfile.JavaClass;
-import org.apache.bcel.util.ClassSet;
 
-public class ClassModifierCheck
+public final class ClassModifierCheck
         extends AbstractDiffReporter
         implements ClassChangeCheck
 {

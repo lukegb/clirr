@@ -19,13 +19,12 @@
 
 package net.sf.clirr.event;
 
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.io.PrintStream;
 
 
-public class PlainDiffListener extends FileDiffListener {
+public final class PlainDiffListener extends FileDiffListener
+{
 
     public PlainDiffListener(String outFile) throws IOException
     {

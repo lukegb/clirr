@@ -19,12 +19,12 @@
 
 package net.sf.clirr.checks;
 
-import org.apache.bcel.util.ClassSet;
-import net.sf.clirr.event.Severity;
-import net.sf.clirr.ClassSetChangeCheck;
 import net.sf.clirr.ApiDiffDispatcher;
+import net.sf.clirr.ClassSetChangeCheck;
+import net.sf.clirr.event.Severity;
+import org.apache.bcel.util.ClassSet;
 
-public class RemovedClassCheck
+public final class RemovedClassCheck
         extends AbstractClassSetChangeCheck
         implements ClassSetChangeCheck
 {

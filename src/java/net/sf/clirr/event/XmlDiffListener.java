@@ -19,12 +19,12 @@
 
 package net.sf.clirr.event;
 
-import java.io.PrintStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.FileOutputStream;
+import java.io.PrintStream;
 
-public class XmlDiffListener extends DiffListenerAdapter
+public final class XmlDiffListener extends DiffListenerAdapter
 {
     private static final String DIFFREPORT = "diffreport";
     private static final String DIFFERENCE = "difference";

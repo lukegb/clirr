@@ -23,13 +23,15 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import net.sf.clirr.*;
+import net.sf.clirr.AbstractDiffReporter;
+import net.sf.clirr.ApiDiffDispatcher;
+import net.sf.clirr.ClassChangeCheck;
 import net.sf.clirr.event.ApiDifference;
 import net.sf.clirr.event.Severity;
 import org.apache.bcel.classfile.JavaClass;
 import org.apache.bcel.util.ClassSet;
 
-public class GenderChangeCheck
+public final class GenderChangeCheck
         extends AbstractDiffReporter
         implements ClassChangeCheck
 {
@@ -51,11 +53,14 @@ public class GenderChangeCheck
     }
 
     // TODO: This should be a method in BCEL's ClassSet !!!
-    private JavaClass findClass(String className, ClassSet classSet) {
+    private JavaClass findClass(String className, ClassSet classSet)
+    {
         JavaClass[] classes = classSet.toArray();
-        for (int i = 0; i < classes.length; i++) {
+        for (int i = 0; i < classes.length; i++)
+        {
             JavaClass clazz = classes[i];
-            if (clazz.getClassName().equals(className)){
+            if (clazz.getClassName().equals(className))
+            {
                 return clazz;
             }
         }
@@ -71,7 +76,8 @@ public class GenderChangeCheck
 
         List helper = new ArrayList();
 
-        for (int i = 0; i < aNames.length; i++) {
+        for (int i = 0; i < aNames.length; i++)
+        {
             String aName = aNames[i];
             if (Arrays.binarySearch(bNames, aName) >= 0)
             {

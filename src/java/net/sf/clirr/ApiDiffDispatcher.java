@@ -21,6 +21,7 @@ package net.sf.clirr;
 
 import net.sf.clirr.event.ApiDifference;
 
-public interface ApiDiffDispatcher {
+public interface ApiDiffDispatcher
+{
     void fireDiff(ApiDifference diff);
 }

@@ -23,7 +23,7 @@ import net.sf.clirr.event.ApiDifference;
 import net.sf.clirr.event.DiffListenerAdapter;
 import net.sf.clirr.event.Severity;
 
-class ChangeCounter extends DiffListenerAdapter
+final class ChangeCounter extends DiffListenerAdapter
 {
     private int infos = 0;
     private int warnings = 0;

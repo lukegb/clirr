@@ -38,9 +38,11 @@ public abstract class AbstractClassSetChangeCheck
         Arrays.sort(setA);
         Arrays.sort(setB);
 
-        for (int i = 0; i < setA.length; i++) {
+        for (int i = 0; i < setA.length; i++)
+        {
             String oldClassName = setA[i];
-            if (Arrays.binarySearch(setB, oldClassName) < 0) {
+            if (Arrays.binarySearch(setB, oldClassName) < 0)
+            {
                 log(diffPrefix + oldClassName, severity);
             }
         }
