@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+
+<project default="java:jar"
+        xmlns:u="jelly:util"
+  	xmlns:j="jelly:core">
+  
+    <preGoal name="test:test">
+        <attainGoal name="clirr:compiletestlibs"/>
+    </preGoal>
+
+    <goal name="clirr:compiletestlibs">
+      <u:tokenize var="testlibs" delim=", ">${clirr.testlibs}</u:tokenize>
+      <j:forEach items="${testlibs}" var="testlib" indexVar="testlibIdx">
+Compiling test input ${testlib}
+        <j:set var="testlibclassdir" value="${maven.build.dir}/testinput/${testlib}/classes"/>
+        <mkdir dir="${testlibclassdir}"/>
+        <javac 
+          srcdir="${basedir}/src/testinput/${testlib}"
+          destdir="${testlibclassdir}"/>
+        <jar 
+          basedir="${testlibclassdir}" 
+          jarfile="${maven.build.dir}/testinput/${testlib}.jar" />
+      </j:forEach>
+    </goal>
+    
+    
+ </project>
