@@ -12,7 +12,7 @@
 
   <!-- The version of the project under development, e.g.
        1.1, 1.2, 2.0-dev -->
-  <currentVersion>0.3</currentVersion>
+  <currentVersion>0.4-SNAPSHOT</currentVersion>
 
   <!-- details about the organization that 'owns' the project -->
   <organization>
@@ -26,10 +26,6 @@
   <package>net.sf.clirr</package>
   <logo>/images/clirr.png</logo>
   <description>
-    Checks Java libraries for binary compatibility with older releases.
-  </description>
-  <!-- a short description of what the project does -->
-  <shortDescription>
     Clirr is a tool that checks Java libraries for binary
     compatibility with older releases. Basically you give it two sets
     of jar files and Clirr dumps out a list of changes in the public
@@ -37,15 +33,16 @@
     the build if it detects incompatible api changes. In a continuous
     integration process Clirr can automatically prevent accidental
     introduction of binary compatibility problems in Java libraries.
+  </description>
+  <!-- a short description of what the project does -->
+  <shortDescription>
+    Java binary compatibility checker
   </shortDescription>
 
   <!-- the project home page -->
   <url>http://clirr.sourceforge.net/</url>
   <issueTrackingUrl>https://sourceforge.net/tracker/?group_id=89627&amp;atid=590799</issueTrackingUrl>
   <siteAddress>shell.sourceforge.net</siteAddress>
-<!--
-  <siteDirectory>/home/lk/rmdir</siteDirectory>
--->
   <siteDirectory>/home/groups/c/cl/clirr/htdocs/</siteDirectory>
   <distributionSite>shell.sourceforge.net</distributionSite>
   <distributionDirectory>/home/groups/c/cl/clirr/htdocs/builds/</distributionDirectory>
@@ -56,6 +53,24 @@
     <connection>scm:cvs:pserver:anonymous@cvs.sourceforge.net:/cvsroot/clirr:clirr</connection>
     <url>http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/clirr</url>
   </repository>
+
+  <versions>
+    <version>
+      <id>0.2</id>
+      <name>0.2</name>
+      <tag>RELEASE_CLIRR_0_2</tag>
+    </version>
+    <version>
+      <id>0.3</id>
+      <name>0.3</name>
+      <tag>RELEASE_CLIRR_0_3</tag>
+    </version>
+    <version>
+      <id>0.4</id>
+      <name>0.4</name>
+      <tag>HEAD</tag>
+    </version>
+  </versions>
 
   <!-- any mailing lists for the project -->
   <mailingLists>
@@ -91,6 +106,7 @@
           <id>vmassol</id>
           <email></email>
           <organization>Apache Software Foundation</organization>
+          <timezone>+1</timezone>
           <url>http://blogs.codehaus.org/people/vmassol</url>
           <roles>
               <role>Initial Inspiration and Feedback</role>
