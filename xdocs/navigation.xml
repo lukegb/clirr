@@ -14,13 +14,11 @@
             <item name="Download"
                 href="/download.html"/>
             <item name="Running Clirr">
-              <item name="From Ant"
-                href="/anttask.html"/>
-              <item name="From a command-line"
-                href="/runcli.html"/>
+              <item name="Ant"
+                href="/clirr-core/anttask.html"/>
+              <item name="Command-line"
+                href="/clirr-core/runcli.html"/>
             </item>
-            <item name="Message Explanations"
-                href="/exegesis.html"/>
             <item name="Contributing"
                 href="/contributing.html"/>
             <item name="Related tools"
