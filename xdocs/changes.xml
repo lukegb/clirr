@@ -22,6 +22,11 @@
         <action dev="s_kitching" type="add">
             Report on methods being deprecated or undeprecated.
         </action>
+        <action dev="s_kitching" type="add">
+            Added a command-line interface, net.sf.clirr.cli.Clirr,
+            for running checks and generating reports from the
+            command-line.
+        </action>
     </release>
 
     <release version="0.3" date="2004-05-23">
