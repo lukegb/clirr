@@ -140,7 +140,7 @@
         <p>
           Section 13.4.3 of the java language specification states explicitly 
           that an IllegalAccessError should occur if a pre-existing binary tries
-          to access a type when the type accessability has been changed to
+          to access a type when the type accessibility has been changed to
           something that would cause a compile-time error. However this does
           not appear to be enforced in practice, at least in current JVMs. 
           Nevertheless this <i>should</i> be an error, and so clirr reports 
@@ -577,7 +577,7 @@
         </p>
       </section>
 
-      <section name="7009 - Method is now Less Accessable">
+      <section name="7009 - Method is now Less Accessible">
         <p>Severity: <code>ERROR</code></p>
         <p>
           The access permissions associated with the specified method have
@@ -597,7 +597,7 @@
         </p>
       </section>
 
-      <section name="7010 - Method is now More Accessable">
+      <section name="7010 - Method is now More Accessible">
         <p>Severity: <code>INFO</code></p>
         <p>
           The access permissions associated with the specified method have
