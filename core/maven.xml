@@ -1,9 +1,11 @@
 <?xml version="1.0"?>
 
-<project default="java:jar"
+<project default="dist"
         xmlns:u="jelly:util"
   	xmlns:j="jelly:core">
   
+    <goal name="dist" prereqs="jar:install,uberjar:uberjar"/>
+
     <preGoal name="test:test">
         <attainGoal name="clirr:compiletestlibs"/>
     </preGoal>

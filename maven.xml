@@ -5,9 +5,12 @@
   	xmlns:j="jelly:core">
   
   <goal name="dist">
+    <!-- call the dist target of each sub-project -->
     <j:set var="goal" value="dist"/>
     <attainGoal name="multiproject:goal"/>
   </goal>
+
+  <goal name="dist-site" prereqs="dist,multiproject:site"/>
 
   <preGoal name="clean">
     <attainGoal name="multiproject:clean"/>

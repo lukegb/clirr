@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+
+<project default="dist"
+    xmlns:u="jelly:util"
+    xmlns:j="jelly:core">
+  
+  <goal name="dist" prereqs="plugin:install"/>
+   
+</project>
