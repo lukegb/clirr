@@ -14,10 +14,39 @@
           <th>Description</th>
         </tr>
         <tr>
-          <td>xxx</td>
-          <td>xxx</td>
+          <td>clirr.baseline.download</td>
+          <td>yes</td>
           <td>
-            xxxx
+            Decide whether the plugin will try to download the baseline
+            jar or not. Default is true</td>
+        </tr>
+<!-- from looking at plugin.jelly I'm not sure this actually works
+        <tr>
+          <td>clirr.baseline.version</td>
+          <td>yes</td>
+          <td>
+            Baseline version to check binary compatibility with.
+            If the property is not defined, the clirr plugin will use
+            the last released version from the POM using the &lt;versions&gt;
+            tag. We assume the latest version is the last one in the
+            &lt;version&gt; list.
+          </td>
+        </tr>
+-->
+        <tr>
+          <td>clirr.fail.on.warning</td>
+          <td>yes</td>
+          <td>
+            Decide whether to fail the build on Clirr-detected warnings.
+            Default is false.
+          </td>
+        </tr>
+        <tr>
+          <td>clirr.fail.on.error</td>
+          <td>yes</td>
+          <td>
+            Decide whether to fail the build on Clirr-detected errors.
+            Default is true.
           </td>
         </tr>
       </table>
