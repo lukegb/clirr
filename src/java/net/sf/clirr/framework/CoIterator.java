@@ -25,8 +25,8 @@ import java.util.Arrays;
 import java.util.NoSuchElementException;
 
 /**
- * This is an iterator that walks a pair of collections, returning 
- * matching pairs from the set. 
+ * This is an iterator that walks a pair of collections, returning
+ * matching pairs from the set.
  * <p>
  * When an element is present in the left set but there is no equal object
  * in the right set, the pair (leftobj, null) is returned.
@@ -49,17 +49,17 @@ import java.util.NoSuchElementException;
  * @author Simon Kitching.
  */
 
-public class CoIterator
+public final class CoIterator
 {
     private Object[] left;
     private Object[] right;
-    
+
     private int leftIndex;
     private int rightIndex;
-    
+
     private Object currLeft;
     private Object currRight;
-    
+
     private Comparator comparator;
 
     /**
@@ -76,7 +76,7 @@ public class CoIterator
         this.comparator = comparator;
         this.left = left.toArray();
         this.right = right.toArray();
-        
+
         Arrays.sort(this.left, comparator);
         Arrays.sort(this.right, comparator);
     }
@@ -97,7 +97,7 @@ public class CoIterator
         this.comparator = comparator;
         this.left = (Object[]) left.clone();
         this.right = (Object[]) right.clone();
-        
+
         Arrays.sort(this.left, comparator);
         Arrays.sort(this.right, comparator);
     }
@@ -109,7 +109,7 @@ public class CoIterator
     {
         return (leftIndex < left.length) || (rightIndex < right.length);
     }
-    
+
     /**
      * Moves this iterator object to refer to the next "pair" of objects.
      * <p>
@@ -124,16 +124,16 @@ public class CoIterator
     {
         boolean haveLeft = leftIndex < left.length;
         boolean haveRight = rightIndex < right.length;
-        
+
         if (!haveLeft && !haveRight)
         {
             currLeft = null;
             currRight = null;
             throw new NoSuchElementException();
         }
-        
+
         int order;
-        
+
         if (haveLeft && !haveRight)
         {
             order = -1;
@@ -151,8 +151,8 @@ public class CoIterator
             Comparable c1 = (Comparable) left[leftIndex];
             order = c1.compareTo(right[rightIndex]);
         }
-        
-        if (order < 0) 
+
+        if (order < 0)
         {
             currLeft = left[leftIndex];
             currRight = null;
@@ -172,11 +172,11 @@ public class CoIterator
             ++rightIndex;
         }
     }
-    
+
     /**
      * Return an object from the "left" collection specified to this object's
      * constructor. When the iterator has selected an element in the "right"
-     * collection for which there is no corresponding element in the left 
+     * collection for which there is no corresponding element in the left
      * collection, then this will return null.
      */
     public Object getLeft()
