@@ -1,5 +1,5 @@
 package testlib;
 
-public class ApplicationException extends Exception
+public class ApplicationException extends RuntimeException
 {
 }

@@ -1,5 +1,5 @@
 package testlib;
 
-public class ApplicationException extends RuntimeException
+public class ApplicationException extends java.util.NoSuchElementException
 {
 }
