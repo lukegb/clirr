@@ -63,4 +63,9 @@ public final class Message
     {
         return id;
     }
+
+    public String toString()
+    {
+        return "Message#" + id;
+    }
 }
