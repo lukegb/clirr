@@ -32,6 +32,7 @@ import net.sf.clirr.core.Checker;
 import net.sf.clirr.core.CheckerException;
 import net.sf.clirr.core.PlainDiffListener;
 import net.sf.clirr.core.XmlDiffListener;
+import net.sf.clirr.core.internal.ExceptionUtil;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.DirectoryScanner;
@@ -304,7 +305,7 @@ public final class AntTask extends Task
                 final IllegalArgumentException illegalArgEx =
                     new IllegalArgumentException(
                         "Cannot create classLoader from classpath entry " + entry);
-                illegalArgEx.initCause(ex);
+                ExceptionUtil.initCause(illegalArgEx, ex);
                 throw illegalArgEx;
             }
         }

@@ -19,6 +19,8 @@
 
 package net.sf.clirr.core;
 
+import net.sf.clirr.core.internal.ExceptionUtil;
+
 /**
  * An exception class representing a failure during checking of the
  * specified jar files.
@@ -35,8 +37,9 @@ public class CheckerException extends Exception
         super(msg);
     }
 
-    public CheckerException(String msg, Throwable t)
+    public CheckerException(String msg, Throwable cause)
     {
-        super(msg, t);
+        super(msg);
+        ExceptionUtil.initCause(this, cause);
     }
 }

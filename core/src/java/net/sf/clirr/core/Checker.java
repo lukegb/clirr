@@ -43,6 +43,7 @@ import net.sf.clirr.core.internal.ApiDiffDispatcher;
 import net.sf.clirr.core.internal.ClassChangeCheck;
 import net.sf.clirr.core.internal.CoIterator;
 import net.sf.clirr.core.internal.JavaClassNameComparator;
+import net.sf.clirr.core.internal.ExceptionUtil;
 
 import org.apache.bcel.classfile.JavaClass;
 import org.apache.bcel.classfile.ClassParser;
@@ -289,7 +290,7 @@ public final class Checker implements ApiDiffDispatcher
                 final IllegalArgumentException illegalArgumentException =
                     new IllegalArgumentException(
                         "Cannot create classloader with jar file " + jarFile);
-                illegalArgumentException.initCause(ex);
+                ExceptionUtil.initCause(illegalArgumentException, ex);
                 throw illegalArgumentException;
             }
         }
