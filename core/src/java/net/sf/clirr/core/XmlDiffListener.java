@@ -68,7 +68,7 @@ public final class XmlDiffListener extends FileDiffListener
     /**
      * Writes an XML header and toplevel tag to the xml stream.
      *
-     * @see net.sf.clirr.core.DiffListener#start()
+     * @see DiffListener#start()
      */
     public void start()
     {
@@ -81,7 +81,7 @@ public final class XmlDiffListener extends FileDiffListener
     /**
      * Closes the toplevel tag that was opened in start.
      *
-     * @see net.sf.clirr.core.DiffListener#stop()
+     * @see DiffListener#stop()
      */
     protected void writeFooter()
     {

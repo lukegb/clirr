@@ -33,7 +33,7 @@ public class DiffListenerAdapter implements DiffListener
 {
     /**
      * Does nothing
-     * @see net.sf.clirr.core.DiffListener#reportDiff(net.sf.clirr.core.ApiDifference)
+     * @see DiffListener#reportDiff(net.sf.clirr.core.ApiDifference)
      */
     public void reportDiff(ApiDifference difference)
     {
@@ -41,7 +41,7 @@ public class DiffListenerAdapter implements DiffListener
 
     /**
      * Does nothing
-     * @see net.sf.clirr.core.DiffListener#start()
+     * @see DiffListener#start()
      */
     public void start()
     {
@@ -49,7 +49,7 @@ public class DiffListenerAdapter implements DiffListener
 
     /**
      * Does nothing
-     * @see net.sf.clirr.core.DiffListener#stop()
+     * @see DiffListener#stop()
      */
     public void stop()
     {

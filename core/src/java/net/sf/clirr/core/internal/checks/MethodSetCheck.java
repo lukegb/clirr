@@ -21,6 +21,8 @@ package net.sf.clirr.core.internal.checks;
 
 import net.sf.clirr.core.ApiDifference;
 import net.sf.clirr.core.Message;
+import net.sf.clirr.core.Severity;
+import net.sf.clirr.core.ScopeSelector;
 import net.sf.clirr.core.internal.AbstractDiffReporter;
 import net.sf.clirr.core.internal.ApiDiffDispatcher;
 import net.sf.clirr.core.internal.ClassChangeCheck;
@@ -58,10 +60,10 @@ public class MethodSetCheck extends AbstractDiffReporter implements ClassChangeC
     private static final Message MSG_METHOD_ADDED_TO_INTERFACE = new Message(7012);
     private static final Message MSG_ABSTRACT_METHOD_ADDED = new Message(7013);
 
-    private net.sf.clirr.core.ScopeSelector scopeSelector;
+    private ScopeSelector scopeSelector;
 
     /** {@inheritDoc} */
-    public MethodSetCheck(ApiDiffDispatcher dispatcher, net.sf.clirr.core.ScopeSelector scopeSelector)
+    public MethodSetCheck(ApiDiffDispatcher dispatcher, ScopeSelector scopeSelector)
     {
         super(dispatcher);
         this.scopeSelector = scopeSelector;
@@ -375,15 +377,15 @@ public class MethodSetCheck extends AbstractDiffReporter implements ClassChangeC
 
         if (superClassName != null)
         {
-            fireDiff(MSG_METHOD_NOW_IN_SUPERCLASS, net.sf.clirr.core.Severity.INFO, oldClass, oldMethod, new String[]{superClassName});
+            fireDiff(MSG_METHOD_NOW_IN_SUPERCLASS, Severity.INFO, oldClass, oldMethod, new String[]{superClassName});
         }
         else if (superInterfaceName != null)
         {
-            fireDiff(MSG_METHOD_NOW_IN_INTERFACE, net.sf.clirr.core.Severity.INFO, oldClass, oldMethod, new String[]{superInterfaceName});
+            fireDiff(MSG_METHOD_NOW_IN_INTERFACE, Severity.INFO, oldClass, oldMethod, new String[]{superInterfaceName});
         }
         else
         {
-            fireDiff(MSG_METHOD_REMOVED, net.sf.clirr.core.Severity.ERROR, oldClass, oldMethod, null);
+            fireDiff(MSG_METHOD_REMOVED, Severity.ERROR, oldClass, oldMethod, null);
         }
     }
 
@@ -411,15 +413,15 @@ public class MethodSetCheck extends AbstractDiffReporter implements ClassChangeC
 
         if (newClass.isInterface())
         {
-            fireDiff(MSG_METHOD_ADDED_TO_INTERFACE, net.sf.clirr.core.Severity.ERROR, newClass, newMethod, null);
+            fireDiff(MSG_METHOD_ADDED_TO_INTERFACE, Severity.ERROR, newClass, newMethod, null);
         }
         else if (newMethod.isAbstract())
         {
-            fireDiff(MSG_ABSTRACT_METHOD_ADDED, net.sf.clirr.core.Severity.ERROR, newClass, newMethod, null);
+            fireDiff(MSG_ABSTRACT_METHOD_ADDED, Severity.ERROR, newClass, newMethod, null);
         }
         else
         {
-            fireDiff(MSG_METHOD_ADDED, net.sf.clirr.core.Severity.INFO, newClass, newMethod, null);
+            fireDiff(MSG_METHOD_ADDED, Severity.INFO, newClass, newMethod, null);
         }
     }
 
@@ -467,7 +469,7 @@ public class MethodSetCheck extends AbstractDiffReporter implements ClassChangeC
 
         if (bArgs.length != cArgs.length)
         {
-            fireDiff(MSG_METHOD_ARGCOUNT_CHANGED, net.sf.clirr.core.Severity.ERROR, compatBaseline, baselineMethod, null);
+            fireDiff(MSG_METHOD_ARGCOUNT_CHANGED, Severity.ERROR, compatBaseline, baselineMethod, null);
             return;
         }
 
@@ -484,7 +486,7 @@ public class MethodSetCheck extends AbstractDiffReporter implements ClassChangeC
 
             // TODO: Check assignability...
             String[] args = {"" + (i + 1), cArg.toString()};
-            fireDiff(MSG_METHOD_PARAMTYPE_CHANGED, net.sf.clirr.core.Severity.ERROR, compatBaseline, baselineMethod, args);
+            fireDiff(MSG_METHOD_PARAMTYPE_CHANGED, Severity.ERROR, compatBaseline, baselineMethod, args);
         }
     }
 
@@ -498,7 +500,7 @@ public class MethodSetCheck extends AbstractDiffReporter implements ClassChangeC
         // compatible even when binary-incompatible.
         if (!bReturnType.toString().equals(cReturnType.toString()))
         {
-            fireDiff(MSG_METHOD_RETURNTYPE_CHANGED, net.sf.clirr.core.Severity.ERROR, compatBaseline, baselineMethod, new String[]{cReturnType.toString()});
+            fireDiff(MSG_METHOD_RETURNTYPE_CHANGED, Severity.ERROR, compatBaseline, baselineMethod, new String[]{cReturnType.toString()});
         }
     }
 
@@ -514,11 +516,11 @@ public class MethodSetCheck extends AbstractDiffReporter implements ClassChangeC
 
         if (bIsDeprecated && !cIsDeprecated)
         {
-            fireDiff(MSG_METHOD_UNDEPRECATED, net.sf.clirr.core.Severity.INFO, compatBaseline, baselineMethod, null);
+            fireDiff(MSG_METHOD_UNDEPRECATED, Severity.INFO, compatBaseline, baselineMethod, null);
         }
         else if (!bIsDeprecated && cIsDeprecated)
         {
-            fireDiff(MSG_METHOD_DEPRECATED, net.sf.clirr.core.Severity.INFO, compatBaseline, baselineMethod, null);
+            fireDiff(MSG_METHOD_DEPRECATED, Severity.INFO, compatBaseline, baselineMethod, null);
         }
     }
 
@@ -528,18 +530,18 @@ public class MethodSetCheck extends AbstractDiffReporter implements ClassChangeC
      */
     private void checkVisibility(JavaClass compatBaseline, Method baselineMethod, Method currentMethod)
     {
-        net.sf.clirr.core.ScopeSelector.Scope bScope = net.sf.clirr.core.ScopeSelector.getScope(baselineMethod);
-        net.sf.clirr.core.ScopeSelector.Scope cScope = net.sf.clirr.core.ScopeSelector.getScope(currentMethod);
+        ScopeSelector.Scope bScope = ScopeSelector.getScope(baselineMethod);
+        ScopeSelector.Scope cScope = ScopeSelector.getScope(currentMethod);
 
         if (cScope.isLessVisibleThan(bScope))
         {
             String[] args = {bScope.getDesc(), cScope.getDesc()};
-            fireDiff(MSG_METHOD_LESS_ACCESSABLE, net.sf.clirr.core.Severity.ERROR, compatBaseline, baselineMethod, args);
+            fireDiff(MSG_METHOD_LESS_ACCESSABLE, Severity.ERROR, compatBaseline, baselineMethod, args);
         }
         else if (cScope.isMoreVisibleThan(bScope))
         {
             String[] args = {bScope.getDesc(), cScope.getDesc()};
-            fireDiff(MSG_METHOD_MORE_ACCESSABLE, net.sf.clirr.core.Severity.INFO, compatBaseline, baselineMethod, args);
+            fireDiff(MSG_METHOD_MORE_ACCESSABLE, Severity.INFO, compatBaseline, baselineMethod, args);
         }
     }
 
@@ -554,7 +556,7 @@ public class MethodSetCheck extends AbstractDiffReporter implements ClassChangeC
     {
         StringBuffer buf = new StringBuffer();
 
-        final String scopeDecl = net.sf.clirr.core.ScopeSelector.getScopeDecl(method);
+        final String scopeDecl = ScopeSelector.getScopeDecl(method);
         if (scopeDecl.length() > 0)
         {
             buf.append(scopeDecl);
@@ -592,7 +594,7 @@ public class MethodSetCheck extends AbstractDiffReporter implements ClassChangeC
         }
     }
 
-    private void fireDiff(net.sf.clirr.core.Message msg, net.sf.clirr.core.Severity severity, JavaClass clazz, Method method, String[] args)
+    private void fireDiff(Message msg, Severity severity, JavaClass clazz, Method method, String[] args)
     {
         final String className = clazz.getClassName();
         final ApiDifference diff = new ApiDifference(msg, severity, className, getMethodId(clazz, method), null, args);

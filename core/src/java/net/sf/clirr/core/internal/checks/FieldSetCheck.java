@@ -40,17 +40,17 @@ import org.apache.bcel.classfile.ConstantValue;
  */
 public class FieldSetCheck extends AbstractDiffReporter implements ClassChangeCheck
 {
-    private static final net.sf.clirr.core.Message MSG_FIELD_ADDED = new Message(6000);
-    private static final net.sf.clirr.core.Message MSG_FIELD_REMOVED = new Message(6001);
-    private static final net.sf.clirr.core.Message MSG_FIELD_NOT_CONSTANT = new Message(6002);
-    private static final net.sf.clirr.core.Message MSG_FIELD_CONSTANT_CHANGED = new Message(6003);
-    private static final net.sf.clirr.core.Message MSG_FIELD_TYPE_CHANGED = new Message(6004);
-    private static final net.sf.clirr.core.Message MSG_FIELD_NOW_NON_FINAL = new Message(6005);
-    private static final net.sf.clirr.core.Message MSG_FIELD_NOW_FINAL = new Message(6006);
-    private static final net.sf.clirr.core.Message MSG_FIELD_NOW_NON_STATIC = new Message(6007);
-    private static final net.sf.clirr.core.Message MSG_FIELD_NOW_STATIC = new Message(6008);
-    private static final net.sf.clirr.core.Message MSG_FIELD_MORE_ACCESSABLE = new Message(6009);
-    private static final net.sf.clirr.core.Message MSG_FIELD_LESS_ACCESSABLE = new Message(6010);
+    private static final Message MSG_FIELD_ADDED = new Message(6000);
+    private static final Message MSG_FIELD_REMOVED = new Message(6001);
+    private static final Message MSG_FIELD_NOT_CONSTANT = new Message(6002);
+    private static final Message MSG_FIELD_CONSTANT_CHANGED = new Message(6003);
+    private static final Message MSG_FIELD_TYPE_CHANGED = new Message(6004);
+    private static final Message MSG_FIELD_NOW_NON_FINAL = new Message(6005);
+    private static final Message MSG_FIELD_NOW_FINAL = new Message(6006);
+    private static final Message MSG_FIELD_NOW_NON_STATIC = new Message(6007);
+    private static final Message MSG_FIELD_NOW_STATIC = new Message(6008);
+    private static final Message MSG_FIELD_MORE_ACCESSABLE = new Message(6009);
+    private static final Message MSG_FIELD_LESS_ACCESSABLE = new Message(6010);
 
     private static final class FieldNameComparator implements Comparator
     {
@@ -67,9 +67,9 @@ public class FieldSetCheck extends AbstractDiffReporter implements ClassChangeCh
     }
 
     private static final Comparator COMPARATOR = new FieldNameComparator();
-    private net.sf.clirr.core.ScopeSelector scopeSelector;
+    private ScopeSelector scopeSelector;
 
-    public FieldSetCheck(ApiDiffDispatcher dispatcher, net.sf.clirr.core.ScopeSelector scopeSelector)
+    public FieldSetCheck(ApiDiffDispatcher dispatcher, ScopeSelector scopeSelector)
     {
         super(dispatcher);
         this.scopeSelector = scopeSelector;
@@ -94,8 +94,8 @@ public class FieldSetCheck extends AbstractDiffReporter implements ClassChangeCh
                 if (scopeSelector.isSelected(cField))
                 {
                     final String name = cField.getName();
-                    String scope = net.sf.clirr.core.ScopeSelector.getScopeDesc(cField);
-                    fireDiff(MSG_FIELD_ADDED, net.sf.clirr.core.Severity.INFO, currentClass, cField, new String[]{scope});
+                    String scope = ScopeSelector.getScopeDesc(cField);
+                    fireDiff(MSG_FIELD_ADDED, Severity.INFO, currentClass, cField, new String[]{scope});
                 }
             }
             else if (cField == null)
@@ -103,7 +103,7 @@ public class FieldSetCheck extends AbstractDiffReporter implements ClassChangeCh
                 if (scopeSelector.isSelected(bField))
                 {
                     final String name = bField.getName();
-                    fireDiff(MSG_FIELD_REMOVED, net.sf.clirr.core.Severity.ERROR, baselineClass, bField, null);
+                    fireDiff(MSG_FIELD_REMOVED, Severity.ERROR, baselineClass, bField, null);
                 }
             }
             else if (scopeSelector.isSelected(bField) || scopeSelector.isSelected(cField))
@@ -133,7 +133,7 @@ public class FieldSetCheck extends AbstractDiffReporter implements ClassChangeCh
             final ConstantValue cVal = cField.getConstantValue();
             if (cVal == null)
             {
-                fireDiff(MSG_FIELD_NOT_CONSTANT, net.sf.clirr.core.Severity.WARNING, currentClass, cField, null);
+                fireDiff(MSG_FIELD_NOT_CONSTANT, Severity.WARNING, currentClass, cField, null);
                 return;
             }
 
@@ -142,7 +142,7 @@ public class FieldSetCheck extends AbstractDiffReporter implements ClassChangeCh
             {
                 // TODO: print out old and new value
                 // How can that be done with BCEL, esp. for boolean values?
-                fireDiff(MSG_FIELD_CONSTANT_CHANGED, net.sf.clirr.core.Severity.WARNING, currentClass, cField, null);
+                fireDiff(MSG_FIELD_CONSTANT_CHANGED, Severity.WARNING, currentClass, cField, null);
             }
         }
     }
@@ -153,7 +153,7 @@ public class FieldSetCheck extends AbstractDiffReporter implements ClassChangeCh
         final String cSig = cField.getType().toString();
         if (!bSig.equals(cSig))
         {
-            fireDiff(MSG_FIELD_TYPE_CHANGED, net.sf.clirr.core.Severity.ERROR, currentClass, bField, new String[]{bSig, cSig});
+            fireDiff(MSG_FIELD_TYPE_CHANGED, Severity.ERROR, currentClass, bField, new String[]{bSig, cSig});
         }
     }
 
@@ -161,22 +161,22 @@ public class FieldSetCheck extends AbstractDiffReporter implements ClassChangeCh
     {
         if (bField.isFinal() && !cField.isFinal())
         {
-            fireDiff(MSG_FIELD_NOW_NON_FINAL, net.sf.clirr.core.Severity.INFO, clazz, cField, null);
+            fireDiff(MSG_FIELD_NOW_NON_FINAL, Severity.INFO, clazz, cField, null);
         }
 
         if (!bField.isFinal() && cField.isFinal())
         {
-            fireDiff(MSG_FIELD_NOW_FINAL, net.sf.clirr.core.Severity.ERROR, clazz, cField, null);
+            fireDiff(MSG_FIELD_NOW_FINAL, Severity.ERROR, clazz, cField, null);
         }
 
         if (bField.isStatic() && !cField.isStatic())
         {
-            fireDiff(MSG_FIELD_NOW_NON_STATIC, net.sf.clirr.core.Severity.ERROR, clazz, cField, null);
+            fireDiff(MSG_FIELD_NOW_NON_STATIC, Severity.ERROR, clazz, cField, null);
         }
 
         if (!bField.isStatic() && cField.isStatic())
         {
-            fireDiff(MSG_FIELD_NOW_STATIC, net.sf.clirr.core.Severity.ERROR, clazz, cField, null);
+            fireDiff(MSG_FIELD_NOW_STATIC, Severity.ERROR, clazz, cField, null);
         }
 
         // JLS, 13.4.10: Adding or deleting a transient modifier of a field
@@ -187,23 +187,23 @@ public class FieldSetCheck extends AbstractDiffReporter implements ClassChangeCh
 
     private void checkForVisibilityChange(Field bField, Field cField, JavaClass clazz)
     {
-        net.sf.clirr.core.ScopeSelector.Scope bScope = net.sf.clirr.core.ScopeSelector.getScope(bField);
-        net.sf.clirr.core.ScopeSelector.Scope cScope = net.sf.clirr.core.ScopeSelector.getScope(cField);
+        ScopeSelector.Scope bScope = ScopeSelector.getScope(bField);
+        ScopeSelector.Scope cScope = ScopeSelector.getScope(cField);
 
         if (cScope.isMoreVisibleThan(bScope))
         {
-            fireDiff(MSG_FIELD_MORE_ACCESSABLE, net.sf.clirr.core.Severity.INFO, clazz, cField, new String[]{bScope.getDesc(), cScope.getDesc()});
+            fireDiff(MSG_FIELD_MORE_ACCESSABLE, Severity.INFO, clazz, cField, new String[]{bScope.getDesc(), cScope.getDesc()});
         }
         else if (cScope.isLessVisibleThan(bScope))
         {
-            fireDiff(MSG_FIELD_LESS_ACCESSABLE, net.sf.clirr.core.Severity.ERROR, clazz, cField, new String[]{bScope.getDesc(), cScope.getDesc()});
+            fireDiff(MSG_FIELD_LESS_ACCESSABLE, Severity.ERROR, clazz, cField, new String[]{bScope.getDesc(), cScope.getDesc()});
         }
     }
 
-    private void fireDiff(net.sf.clirr.core.Message msg, net.sf.clirr.core.Severity severity, JavaClass clazz, Field field, String[] args)
+    private void fireDiff(Message msg, Severity severity, JavaClass clazz, Field field, String[] args)
     {
         final String className = clazz.getClassName();
-        final net.sf.clirr.core.ApiDifference diff = new ApiDifference(msg, severity, className, null, field.getName(), args);
+        final ApiDifference diff = new ApiDifference(msg, severity, className, null, field.getName(), args);
         getApiDiffDispatcher().fireDiff(diff);
 
     }

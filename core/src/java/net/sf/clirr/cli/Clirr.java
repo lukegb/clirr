@@ -24,6 +24,8 @@ import net.sf.clirr.core.CheckerException;
 import net.sf.clirr.core.ClassSelector;
 import net.sf.clirr.core.PlainDiffListener;
 import net.sf.clirr.core.XmlDiffListener;
+import net.sf.clirr.core.DiffListener;
+import net.sf.clirr.core.ScopeSelector;
 import org.apache.commons.cli.BasicParser;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.HelpFormatter;
@@ -97,11 +99,11 @@ public class Clirr
         Checker checker = new Checker();
         if (showAll)
         {
-            checker.getScopeSelector().setScope(net.sf.clirr.core.ScopeSelector.SCOPE_PRIVATE);
+            checker.getScopeSelector().setScope(ScopeSelector.SCOPE_PRIVATE);
         }
         else if (showPkg)
         {
-            checker.getScopeSelector().setScope(net.sf.clirr.core.ScopeSelector.SCOPE_PACKAGE);
+            checker.getScopeSelector().setScope(ScopeSelector.SCOPE_PACKAGE);
         }
 
         ClassSelector classSelector;
@@ -119,7 +121,7 @@ public class Clirr
             classSelector = new ClassSelector(ClassSelector.MODE_UNLESS);
         }
 
-        net.sf.clirr.core.DiffListener diffListener = null;
+        DiffListener diffListener = null;
         if (style.equals("text"))
         {
             try

@@ -312,7 +312,7 @@ public final class ScopeSelector
      * specified class is retrieved and its InnerClasses attribute checked to
      * find the true scope for the specified class.
      * <p>
-     * @throws net.sf.clirr.core.CheckerException if the specified class is a nested class and
+     * @throws CheckerException if the specified class is a nested class and
      * the enclosing class could not be found, or if the supposedly enclosing
      * class has no reference to the nested class. This exception is not
      * expected to occur in practice, unless a truly screwed-up jar file is

@@ -38,8 +38,8 @@ import org.apache.bcel.classfile.JavaClass;
  */
 public final class InterfaceSetCheck extends AbstractDiffReporter implements ClassChangeCheck
 {
-    private static final net.sf.clirr.core.Message MSG_IFACE_ADDED = new Message(4000);
-    private static final net.sf.clirr.core.Message MSG_IFACE_REMOVED = new Message(4001);
+    private static final Message MSG_IFACE_ADDED = new Message(4000);
+    private static final Message MSG_IFACE_REMOVED = new Message(4001);
 
     /**
      * Create a new instance of this check.
@@ -82,11 +82,11 @@ public final class InterfaceSetCheck extends AbstractDiffReporter implements Cla
 
             if (compatInterface == null)
             {
-                log(MSG_IFACE_ADDED, net.sf.clirr.core.Severity.INFO, className, null, null, new String[]{currentInterface.getClassName()});
+                log(MSG_IFACE_ADDED, Severity.INFO, className, null, null, new String[]{currentInterface.getClassName()});
             }
             else if (currentInterface == null)
             {
-                log(MSG_IFACE_REMOVED, net.sf.clirr.core.Severity.ERROR, className, null, null, new String[]{compatInterface.getClassName()});
+                log(MSG_IFACE_REMOVED, Severity.ERROR, className, null, null, new String[]{compatInterface.getClassName()});
             }
         }
 

@@ -20,6 +20,7 @@
 package net.sf.clirr.core.internal.checks;
 
 import net.sf.clirr.core.Message;
+import net.sf.clirr.core.Severity;
 import net.sf.clirr.core.internal.AbstractDiffReporter;
 import net.sf.clirr.core.internal.ApiDiffDispatcher;
 import net.sf.clirr.core.internal.ClassChangeCheck;
@@ -74,21 +75,21 @@ public final class ClassHierarchyCheck extends AbstractDiffReporter implements C
 
             if (baselineSuper == null)
             {
-                net.sf.clirr.core.Severity severity;
+                Severity severity;
                 if (isThrowable)
                 {
-                    severity = net.sf.clirr.core.Severity.WARNING;
+                    severity = Severity.WARNING;
                 }
                 else
                 {
-                    severity = net.sf.clirr.core.Severity.INFO;
+                    severity = Severity.INFO;
                 }
 
                 log(MSG_ADDED_CLASS_TO_SUPERCLASSES, severity, className, null, null, new String[]{currentSuper.getClassName()});
             }
             else if (currentSuper == null)
             {
-                log(MSG_REMOVED_CLASS_FROM_SUPERCLASSES, net.sf.clirr.core.Severity.ERROR, className, null, null, new String[]{baselineSuper.getClassName()});
+                log(MSG_REMOVED_CLASS_FROM_SUPERCLASSES, Severity.ERROR, className, null, null, new String[]{baselineSuper.getClassName()});
             }
         }
 

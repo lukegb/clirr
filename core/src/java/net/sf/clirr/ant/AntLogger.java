@@ -25,6 +25,7 @@ import java.util.Map;
 import net.sf.clirr.core.DiffListenerAdapter;
 import net.sf.clirr.core.Severity;
 import net.sf.clirr.core.MessageTranslator;
+import net.sf.clirr.core.ApiDifference;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.Task;
 
@@ -44,7 +45,7 @@ final class AntLogger extends DiffListenerAdapter
         severityPrioMap.put(Severity.ERROR, new Integer(Project.MSG_ERR));
     }
 
-    public void reportDiff(net.sf.clirr.core.ApiDifference difference)
+    public void reportDiff(ApiDifference difference)
     {
         final Severity severity = difference.getMaximumSeverity();
         final Integer prio = (Integer) severityPrioMap.get(severity);

@@ -19,8 +19,12 @@
 
 package net.sf.clirr.ant;
 
+import net.sf.clirr.core.ApiDifference;
+import net.sf.clirr.core.Severity;
+import net.sf.clirr.core.DiffListenerAdapter;
 
-final class ChangeCounter extends net.sf.clirr.core.DiffListenerAdapter
+
+final class ChangeCounter extends DiffListenerAdapter
 {
     private int binInfos = 0;
     private int binWarnings = 0;
@@ -65,32 +69,32 @@ final class ChangeCounter extends net.sf.clirr.core.DiffListenerAdapter
         return srcErrors;
     }
 
-    public void reportDiff(net.sf.clirr.core.ApiDifference difference)
+    public void reportDiff(ApiDifference difference)
     {
-        final net.sf.clirr.core.Severity binSeverity = difference.getBinaryCompatibilitySeverity();
-        if (net.sf.clirr.core.Severity.ERROR.equals(binSeverity))
+        final Severity binSeverity = difference.getBinaryCompatibilitySeverity();
+        if (Severity.ERROR.equals(binSeverity))
         {
             binErrors += 1;
         }
-        else if (net.sf.clirr.core.Severity.WARNING.equals(binSeverity))
+        else if (Severity.WARNING.equals(binSeverity))
         {
             binWarnings += 1;
         }
-        else if (net.sf.clirr.core.Severity.INFO.equals(binSeverity))
+        else if (Severity.INFO.equals(binSeverity))
         {
             binInfos += 1;
         }
 
-        final net.sf.clirr.core.Severity srcSeverity = difference.getSourceCompatibilitySeverity();
-        if (net.sf.clirr.core.Severity.ERROR.equals(srcSeverity))
+        final Severity srcSeverity = difference.getSourceCompatibilitySeverity();
+        if (Severity.ERROR.equals(srcSeverity))
         {
             srcErrors += 1;
         }
-        else if (net.sf.clirr.core.Severity.WARNING.equals(srcSeverity))
+        else if (Severity.WARNING.equals(srcSeverity))
         {
             srcWarnings += 1;
         }
-        else if (net.sf.clirr.core.Severity.INFO.equals(srcSeverity))
+        else if (Severity.INFO.equals(srcSeverity))
         {
             srcInfos += 1;
         }

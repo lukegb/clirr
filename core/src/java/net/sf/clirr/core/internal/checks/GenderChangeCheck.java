@@ -33,8 +33,8 @@ import org.apache.bcel.classfile.JavaClass;
  */
 public final class GenderChangeCheck extends AbstractDiffReporter implements ClassChangeCheck
 {
-    private static final net.sf.clirr.core.Message MSG_GENDER_CLASS_TO_INTERFACE = new Message(2000);
-    private static final net.sf.clirr.core.Message MSG_GENDER_INTERFACE_TO_CLASS = new Message(2001);
+    private static final Message MSG_GENDER_CLASS_TO_INTERFACE = new Message(2000);
+    private static final Message MSG_GENDER_INTERFACE_TO_CLASS = new Message(2001);
 
     /**
      * Create a new instance of this check.
@@ -51,11 +51,11 @@ public final class GenderChangeCheck extends AbstractDiffReporter implements Cla
     {
         if (baseLine.isClass() && current.isInterface())
         {
-            log(MSG_GENDER_CLASS_TO_INTERFACE, net.sf.clirr.core.Severity.ERROR, baseLine.getClassName(), null, null, null);
+            log(MSG_GENDER_CLASS_TO_INTERFACE, Severity.ERROR, baseLine.getClassName(), null, null, null);
         }
         else if (baseLine.isInterface() && current.isClass())
         {
-            log(MSG_GENDER_INTERFACE_TO_CLASS, net.sf.clirr.core.Severity.ERROR, baseLine.getClassName(), null, null, null);
+            log(MSG_GENDER_INTERFACE_TO_CLASS, Severity.ERROR, baseLine.getClassName(), null, null, null);
         }
 
         return true;

@@ -23,5 +23,5 @@ import net.sf.clirr.core.ApiDifference;
 
 public interface ApiDiffDispatcher
 {
-    void fireDiff(net.sf.clirr.core.ApiDifference diff);
+    void fireDiff(ApiDifference diff);
 }

@@ -69,7 +69,7 @@ public final class Checker implements ApiDiffDispatcher
 
     private List classChecks = new ArrayList();
 
-    private net.sf.clirr.core.ScopeSelector scopeSelector = new ScopeSelector();
+    private ScopeSelector scopeSelector = new ScopeSelector();
 
     /**
      * Package visible constructor for unit testing.
@@ -93,12 +93,12 @@ public final class Checker implements ApiDiffDispatcher
         classChecks.add(new MethodSetCheck(this, scopeSelector));
     }
 
-    public net.sf.clirr.core.ScopeSelector getScopeSelector()
+    public ScopeSelector getScopeSelector()
     {
         return scopeSelector;
     }
 
-    public void addDiffListener(net.sf.clirr.core.DiffListener listener)
+    public void addDiffListener(DiffListener listener)
     {
         listeners.add(listener);
     }
@@ -107,7 +107,7 @@ public final class Checker implements ApiDiffDispatcher
     {
         for (Iterator it = listeners.iterator(); it.hasNext();)
         {
-            net.sf.clirr.core.DiffListener diffListener = (net.sf.clirr.core.DiffListener) it.next();
+            DiffListener diffListener = (DiffListener) it.next();
             diffListener.start();
         }
     }
@@ -116,16 +116,16 @@ public final class Checker implements ApiDiffDispatcher
     {
         for (Iterator it = listeners.iterator(); it.hasNext();)
         {
-            net.sf.clirr.core.DiffListener diffListener = (net.sf.clirr.core.DiffListener) it.next();
+            DiffListener diffListener = (DiffListener) it.next();
             diffListener.stop();
         }
     }
 
-    public void fireDiff(net.sf.clirr.core.ApiDifference diff)
+    public void fireDiff(ApiDifference diff)
     {
         for (Iterator it = listeners.iterator(); it.hasNext();)
         {
-            net.sf.clirr.core.DiffListener diffListener = (net.sf.clirr.core.DiffListener) it.next();
+            DiffListener diffListener = (DiffListener) it.next();
             diffListener.reportDiff(diff);
         }
     }

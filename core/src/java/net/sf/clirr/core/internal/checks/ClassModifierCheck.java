@@ -37,12 +37,12 @@ import org.apache.bcel.classfile.Method;
  */
 public final class ClassModifierCheck extends AbstractDiffReporter implements ClassChangeCheck
 {
-    private static final net.sf.clirr.core.Message MSG_MODIFIER_UNABLE_TO_DETERMINE_CLASS_SCOPE = new Message(3000);
-    private static final net.sf.clirr.core.Message MSG_MODIFIER_REMOVED_FINAL = new Message(3001);
-    private static final net.sf.clirr.core.Message MSG_MODIFIER_ADDED_FINAL_TO_EFFECTIVE_FINAL = new Message(3002);
-    private static final net.sf.clirr.core.Message MSG_MODIFIER_ADDED_FINAL = new Message(3003);
-    private static final net.sf.clirr.core.Message MSG_MODIFIER_REMOVED_ABSTRACT = new Message(3004);
-    private static final net.sf.clirr.core.Message MSG_MODIFIER_ADDED_ABSTRACT = new Message(3005);
+    private static final Message MSG_MODIFIER_UNABLE_TO_DETERMINE_CLASS_SCOPE = new Message(3000);
+    private static final Message MSG_MODIFIER_REMOVED_FINAL = new Message(3001);
+    private static final Message MSG_MODIFIER_ADDED_FINAL_TO_EFFECTIVE_FINAL = new Message(3002);
+    private static final Message MSG_MODIFIER_ADDED_FINAL = new Message(3003);
+    private static final Message MSG_MODIFIER_REMOVED_ABSTRACT = new Message(3004);
+    private static final Message MSG_MODIFIER_ADDED_ABSTRACT = new Message(3005);
 
     /**
      * Create a new instance of this check.
@@ -60,8 +60,8 @@ public final class ClassModifierCheck extends AbstractDiffReporter implements Cl
 
         try
         {
-            net.sf.clirr.core.ScopeSelector.Scope currentScope = net.sf.clirr.core.ScopeSelector.getClassScope(currentVersion);
-            if (currentScope == net.sf.clirr.core.ScopeSelector.SCOPE_PRIVATE)
+            ScopeSelector.Scope currentScope = ScopeSelector.getClassScope(currentVersion);
+            if (currentScope == ScopeSelector.SCOPE_PRIVATE)
             {
                 // for private classes, we don't care if they are now final,
                 // or now abstract, or now an interface.
@@ -70,7 +70,7 @@ public final class ClassModifierCheck extends AbstractDiffReporter implements Cl
         }
         catch (CheckerException ex)
         {
-            log(MSG_MODIFIER_UNABLE_TO_DETERMINE_CLASS_SCOPE, net.sf.clirr.core.Severity.ERROR, className, null, null, null);
+            log(MSG_MODIFIER_UNABLE_TO_DETERMINE_CLASS_SCOPE, Severity.ERROR, className, null, null, null);
             return true;
         }
 
@@ -83,28 +83,28 @@ public final class ClassModifierCheck extends AbstractDiffReporter implements Cl
 
         if (compatIsFinal && !currentIsFinal)
         {
-            log(MSG_MODIFIER_REMOVED_FINAL, net.sf.clirr.core.Severity.INFO, className, null, null, null);
+            log(MSG_MODIFIER_REMOVED_FINAL, Severity.INFO, className, null, null, null);
         }
         else if (!compatIsFinal && currentIsFinal)
         {
             if (isEffectivelyFinal(compatBaseLine))
             {
-                log(MSG_MODIFIER_ADDED_FINAL_TO_EFFECTIVE_FINAL, net.sf.clirr.core.Severity.INFO, className, null, null, null);
+                log(MSG_MODIFIER_ADDED_FINAL_TO_EFFECTIVE_FINAL, Severity.INFO, className, null, null, null);
             }
             else
             {
-                log(MSG_MODIFIER_ADDED_FINAL, net.sf.clirr.core.Severity.ERROR, className, null, null, null);
+                log(MSG_MODIFIER_ADDED_FINAL, Severity.ERROR, className, null, null, null);
             }
         }
 
         // interfaces are always abstract, don't report gender change here
         if (compatIsAbstract && !currentIsAbstract && !compatIsInterface)
         {
-            log(MSG_MODIFIER_REMOVED_ABSTRACT, net.sf.clirr.core.Severity.INFO, className, null, null, null);
+            log(MSG_MODIFIER_REMOVED_ABSTRACT, Severity.INFO, className, null, null, null);
         }
         else if (!compatIsAbstract && currentIsAbstract && !currentIsInterface)
         {
-            log(MSG_MODIFIER_ADDED_ABSTRACT, net.sf.clirr.core.Severity.ERROR, className, null, null, null);
+            log(MSG_MODIFIER_ADDED_ABSTRACT, Severity.ERROR, className, null, null, null);
         }
 
         return true;

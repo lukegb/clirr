@@ -48,18 +48,18 @@ import org.apache.bcel.classfile.JavaClass;
  */
 public final class ClassScopeCheck extends AbstractDiffReporter implements ClassChangeCheck
 {
-    private static final net.sf.clirr.core.Message MSG_SCOPE_INCREASED = new Message(1000);
-    private static final net.sf.clirr.core.Message MSG_SCOPE_DECREASED = new Message(1001);
-    private static final net.sf.clirr.core.Message MSG_ERROR_DETERMINING_SCOPE_OLD = new Message(1002);
-    private static final net.sf.clirr.core.Message MSG_ERROR_DETERMINING_SCOPE_NEW = new Message(1003);
+    private static final Message MSG_SCOPE_INCREASED = new Message(1000);
+    private static final Message MSG_SCOPE_DECREASED = new Message(1001);
+    private static final Message MSG_ERROR_DETERMINING_SCOPE_OLD = new Message(1002);
+    private static final Message MSG_ERROR_DETERMINING_SCOPE_NEW = new Message(1003);
 
-    private net.sf.clirr.core.ScopeSelector scopeSelector;
+    private ScopeSelector scopeSelector;
 
     /**
      * Create a new instance of this check.
      * @param dispatcher the diff dispatcher that distributes the detected changes to the listeners.
      */
-    public ClassScopeCheck(ApiDiffDispatcher dispatcher, net.sf.clirr.core.ScopeSelector scopeSelector)
+    public ClassScopeCheck(ApiDiffDispatcher dispatcher, ScopeSelector scopeSelector)
     {
         super(dispatcher);
         this.scopeSelector = scopeSelector;
@@ -68,25 +68,25 @@ public final class ClassScopeCheck extends AbstractDiffReporter implements Class
     /** {@inheritDoc} */
     public boolean check(JavaClass compatBaseline, JavaClass currentVersion)
     {
-        net.sf.clirr.core.ScopeSelector.Scope bScope;
+        ScopeSelector.Scope bScope;
         try
         {
-            bScope = net.sf.clirr.core.ScopeSelector.getClassScope(compatBaseline);
+            bScope = ScopeSelector.getClassScope(compatBaseline);
         }
         catch (CheckerException ex)
         {
-            log(MSG_ERROR_DETERMINING_SCOPE_OLD, net.sf.clirr.core.Severity.ERROR, compatBaseline.getClassName(), null, null, new String[]{ex.getMessage()});
+            log(MSG_ERROR_DETERMINING_SCOPE_OLD, Severity.ERROR, compatBaseline.getClassName(), null, null, new String[]{ex.getMessage()});
             return false;
         }
 
-        net.sf.clirr.core.ScopeSelector.Scope cScope;
+        ScopeSelector.Scope cScope;
         try
         {
-            cScope = net.sf.clirr.core.ScopeSelector.getClassScope(currentVersion);
+            cScope = ScopeSelector.getClassScope(currentVersion);
         }
         catch (CheckerException ex)
         {
-            log(MSG_ERROR_DETERMINING_SCOPE_NEW, net.sf.clirr.core.Severity.ERROR, compatBaseline.getClassName(), null, null, new String[]{ex.getMessage()});
+            log(MSG_ERROR_DETERMINING_SCOPE_NEW, Severity.ERROR, compatBaseline.getClassName(), null, null, new String[]{ex.getMessage()});
             return false;
         }
 
@@ -102,13 +102,13 @@ public final class ClassScopeCheck extends AbstractDiffReporter implements Class
         {
             String[] args = {bScope.getDesc(), cScope.getDesc()};
 
-            log(MSG_SCOPE_INCREASED, net.sf.clirr.core.Severity.INFO, compatBaseline.getClassName(), null, null, args);
+            log(MSG_SCOPE_INCREASED, Severity.INFO, compatBaseline.getClassName(), null, null, args);
         }
         else if (cScope.isLessVisibleThan(bScope))
         {
             String[] args = {bScope.getDesc(), cScope.getDesc()};
 
-            log(MSG_SCOPE_DECREASED, net.sf.clirr.core.Severity.ERROR, compatBaseline.getClassName(), null, null, args);
+            log(MSG_SCOPE_DECREASED, Severity.ERROR, compatBaseline.getClassName(), null, null, args);
         }
 
         // Apply further checks only if both versions of the class have scopes
