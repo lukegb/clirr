@@ -49,7 +49,7 @@ public class FileDiffListener extends DiffListenerAdapter
 
     }
 
-    protected PrintStream getOutputStream()
+    protected final PrintStream getOutputStream()
     {
         return outputStream;
     }
