@@ -29,6 +29,12 @@ public final class ApiDifference
 {
     private static final int HASHCODE_MAGIC = 29;
 
+    /**
+     * Object representing the message text to be output (or null if
+     * the constructor which takes a message string directly is used).
+     */
+    private Message message = null;
+
     /** human readable change report. */
     private String report;
 
@@ -118,6 +124,78 @@ public final class ApiDifference
         this.affectedMethod = method;
     }
 
+    /**
+     * Invokes the two-severity-level version of this constructor.
+     */
+    public ApiDifference(
+        Message message,
+        Severity severity,
+        String clazz,
+        String method,
+        String field,
+        String[] args)
+    {
+        this(message, severity, severity, clazz, method, field, args);
+    }
+
+    /**
+     * Create a new API difference representation.
+     *
+     * @param message is the key of a human readable string describing the
+     * change that was made.
+     *
+     * @param binarySeverity the severity in terms of binary compatibility,
+     * must be non-null.
+     *
+     * @param sourceSeverity the severity in terms of source code compatibility,
+     * must be non-null.
+     *
+     * @param clazz is the fully-qualified name of the class in which the
+     * change occurred.
+     *
+     * @param method the method signature of the method that changed,
+     * <code>null</code> if no method was affected.
+     *
+     * @param field the field name where the change occured, <code>null</code>
+     * if no field was affected.
+     *
+     * @param args is a set of additional change-specific strings which are
+     * made available for the message description string to reference via
+     * the standard {n} syntax.
+     */
+    public ApiDifference(
+        Message message,
+        Severity binarySeverity,
+        Severity sourceSeverity,
+        String clazz,
+        String method,
+        String field,
+        String[] args)
+    {
+        String desc = MessageManager.getInstance().getDesc(message);
+        int nArgs = 0;
+        if (args != null)
+        {
+            nArgs = args.length;
+        }
+        String[] strings = new String[nArgs + 3];
+        strings[0] = clazz;
+        strings[1] = method;
+        strings[2] = field;
+        for (int i = 0; i < nArgs; ++i)
+        {
+            strings[i + 3] = args[i];
+        }
+
+        this.message = message;
+        this.report = java.text.MessageFormat.format(desc, strings);
+        this.binaryCompatibilitySeverity = binarySeverity;
+        this.sourceCompatibilitySeverity = sourceSeverity;
+        this.affectedClass = clazz;
+        this.affectedField = field;
+        this.affectedMethod = method;
+    }
+
     private void checkNonNull(Object o)
     {
         if (o == null)
@@ -156,6 +234,9 @@ public final class ApiDifference
         return sourceCompatibilitySeverity;
     }
 
+    /**
+     * Return the maximum of the binary and source compatibility severities.
+     */
     public Severity getMaximumSeverity()
     {
         final Severity src = getSourceCompatibilitySeverity();
