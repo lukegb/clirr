@@ -4,9 +4,9 @@
     <body>
         <links>
             <item name="SourceForge Project Page"
-                href="http://www.sourceforge.net/projects/clirr"/>
+                href="http://sourceforge.net/projects/clirr"/>
             <item name="Hosted by SourceForge"
-                href="http://www.sourceforge.net/"/>
+                href="http://sourceforge.net/"/>
         </links>
         <menu name="Clirr">
             <item name="Overview"
@@ -17,6 +17,8 @@
                 href="http://sourceforge.net/project/showfiles.php?group_id=89627"/>
             <item name="Contributing"
                 href="/contributing.html"/>
+            <item name="Related tools"
+                href="/related.html"/>
         </menu>
 
 

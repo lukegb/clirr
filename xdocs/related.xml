@@ -1,0 +1,38 @@
+<document>
+    <properties>
+
+    </properties>
+    <body>
+         <section name="Related projects">
+             <ul>
+                 <li>
+                     <a href="http://jdiff.sf.net">JDiff</a> is a javadoc plugin
+                     that reports api contract changes, based on the Javadoc of
+                     the code. This approach is complementary to that of
+                     Clirr - JDiff seems to be a great tool for manual
+                     inspection during release preparation, while Clirr is well
+                     suited to detect one class of compatibility problems
+                     automatically during the nightly build.
+                 </li>
+                 <li>
+                     The <a href="http://www.intellij.org/twiki/bin/view/Main/APIComparatorPlugin">APIComparatorPlugin</a>
+                     for the <a href="http://www.intellij.com">IntelliJ IDEA</a> IDE
+                     is an interactive tool that presents binary api diffs visually.
+                 </li>
+                 <li>
+                     In the near future there will probably be a
+                     <a href="maven.apache.org">Maven</a> plugin for Clirr.
+                     Stay tuned.
+                 </li>
+                 <li>
+                     If you like Clirr because you want to deliver quality work
+                     to your users, you might want to have a look at
+                     <a href="http://checkstyle.sf.net">Checkstyle</a>.
+                     The development teams of Clirr and Checkstyle overlap,
+                     so if you like Clirr, you will probably love Checkstyle.
+                 </li>
+
+             </ul>
+         </section>
+    </body>
+</document>
