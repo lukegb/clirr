@@ -46,7 +46,9 @@ import org.apache.bcel.classfile.JavaClass;
  *
  * @author Simon Kitching
  */
-public final class ClassScopeCheck extends AbstractDiffReporter implements ClassChangeCheck
+public final class ClassScopeCheck
+        extends AbstractDiffReporter
+        implements ClassChangeCheck
 {
     private static final Message MSG_SCOPE_INCREASED = new Message(1000);
     private static final Message MSG_SCOPE_DECREASED = new Message(1001);
@@ -75,7 +77,9 @@ public final class ClassScopeCheck extends AbstractDiffReporter implements Class
         }
         catch (CheckerException ex)
         {
-            log(MSG_ERROR_DETERMINING_SCOPE_OLD, Severity.ERROR, compatBaseline.getClassName(), null, null, new String[]{ex.getMessage()});
+            log(MSG_ERROR_DETERMINING_SCOPE_OLD,
+                Severity.ERROR, compatBaseline.getClassName(), null, null,
+                new String[] {ex.getMessage()});
             return false;
         }
 
@@ -86,7 +90,9 @@ public final class ClassScopeCheck extends AbstractDiffReporter implements Class
         }
         catch (CheckerException ex)
         {
-            log(MSG_ERROR_DETERMINING_SCOPE_NEW, Severity.ERROR, compatBaseline.getClassName(), null, null, new String[]{ex.getMessage()});
+            log(MSG_ERROR_DETERMINING_SCOPE_NEW,
+                Severity.ERROR, compatBaseline.getClassName(), null, null,
+                new String[] {ex.getMessage()});
             return false;
         }
 
@@ -102,13 +108,16 @@ public final class ClassScopeCheck extends AbstractDiffReporter implements Class
         {
             String[] args = {bScope.getDesc(), cScope.getDesc()};
 
-            log(MSG_SCOPE_INCREASED, Severity.INFO, compatBaseline.getClassName(), null, null, args);
+            log(MSG_SCOPE_INCREASED,
+                Severity.INFO, compatBaseline.getClassName(), null, null, args);
         }
         else if (cScope.isLessVisibleThan(bScope))
         {
             String[] args = {bScope.getDesc(), cScope.getDesc()};
 
-            log(MSG_SCOPE_DECREASED, Severity.ERROR, compatBaseline.getClassName(), null, null, args);
+            log(MSG_SCOPE_DECREASED,
+                getSeverity(compatBaseline, Severity.ERROR),
+                compatBaseline.getClassName(), null, null, args);
         }
 
         // Apply further checks only if both versions of the class have scopes
