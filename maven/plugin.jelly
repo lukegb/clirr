@@ -109,8 +109,11 @@
     <ant:basename property="clirr.baseline.destination.basename" 
         file="${clirr.baseline.destination}"/>
     
-    <clirr failOnWarning="${clirr.fail.on.warning}"
-        failOnError="${clirr.fail.on.error}">
+    <clirr 
+        failOnBinWarning="${clirr.fail.on.warning}"
+        failOnBinError="${clirr.fail.on.error}"
+        failOnSrcWarning="${clirr.fail.on.warning}"
+        failOnSrcError="${clirr.fail.on.error}">
       <origFiles dir="${clirr.baseline.destination.dir}" 
           includes="${clirr.baseline.destination.basename}"/>
       <newFiles dir="${maven.build.dir}" includes="${maven.final.name}.jar"/>
