@@ -77,10 +77,11 @@
     <contributor>
       <name>Vincent Massol</name>
       <email></email>
-      <organization>Apache</organization>
+      <organization>Apache Software Foundation</organization>
       <url>http://blogs.codehaus.org/people/vmassol</url>
       <roles>
-        <role>Early Feedback</role>
+          <role>Initial Inspiration</role>
+          <role>Feedback</role>
       </roles>
     </contributor>
   </contributors>
