@@ -34,7 +34,7 @@ public final class MessageTranslator
      * The default base name of the resource bundle from which message
      * descriptions are read.
      */
-    public static final String DFLT_RESOURCE_NAME = "event-messages";
+    public static final String DFLT_RESOURCE_NAME = EventMessages.class.getName();
 
     private Locale locale = Locale.getDefault();
     private String resourceName = DFLT_RESOURCE_NAME;
