@@ -203,7 +203,7 @@ public final class AntTask extends Task
             final String type = formatter.getType();
             final String outFile = formatter.getOutFile();
 
-            formattersWriteToStdOut = formattersWriteToStdOut || (outFile == null);
+            formattersWriteToStdOut = formattersWriteToStdOut || outFile == null;
 
             try
             {
@@ -250,9 +250,12 @@ public final class AntTask extends Task
                 URL url = entry.toURL();
                 cpUrls[i] = url;
             }
-            catch (MalformedURLException e)
+            catch (MalformedURLException ex)
             {
-                throw new RuntimeException("Cannot create classLoader from classpath entry " + entry);
+                final IllegalArgumentException illegalArgEx = new IllegalArgumentException(
+                        "Cannot create classLoader from classpath entry " + entry);
+                illegalArgEx.initCause(ex);
+                throw illegalArgEx;
             }
         }
         final URLClassLoader classPathLoader = new URLClassLoader(cpUrls);
