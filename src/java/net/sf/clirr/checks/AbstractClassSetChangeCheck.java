@@ -33,7 +33,8 @@ public abstract class AbstractClassSetChangeCheck
         super(dispatcher);
     }
 
-    protected void compareClassNameSets(String[] setA, String[] setB, String diffPrefix, Severity severity)
+    protected final void compareClassNameSets(
+            String[] setA, String[] setB, String diffPrefix, Severity severity)
     {
         Arrays.sort(setA);
         Arrays.sort(setB);

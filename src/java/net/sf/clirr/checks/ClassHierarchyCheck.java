@@ -75,13 +75,15 @@ public final class ClassHierarchyCheck
         for (int i = 0; i < added.size(); i++)
         {
             String s = (String) added.get(i);
-            log("Added " + s + " to the list of superclasses of " + compatBaseline.getClassName(), Severity.INFO);
+            log("Added " + s + " to the list of superclasses of "
+                    + compatBaseline.getClassName(), Severity.INFO);
         }
 
         for (int i = 0; i < removed.size(); i++)
         {
             String s = (String) removed.get(i);
-            log("Removed " + s + " from the list of superclasses of " + compatBaseline.getClassName(), Severity.ERROR);
+            log("Removed " + s + " from the list of superclasses of "
+                    + compatBaseline.getClassName(), Severity.ERROR);
         }
     }
 }
