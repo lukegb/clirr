@@ -171,6 +171,8 @@ public final class AntTask extends Task
 
     public void execute()
     {
+        log("Running Clirr, built from tag $Name$", Project.MSG_VERBOSE);
+
         if (origFiles == null || newFiles == null)
         {
             throw new BuildException("Missing nested filesetes origFiles and newFiles.", getLocation());
