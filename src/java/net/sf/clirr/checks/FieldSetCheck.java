@@ -25,6 +25,7 @@ import java.util.Comparator;
 import net.sf.clirr.framework.ClassChangeCheck;
 import net.sf.clirr.framework.AbstractDiffReporter;
 import net.sf.clirr.framework.ApiDiffDispatcher;
+import net.sf.clirr.framework.CoIterator;
 import net.sf.clirr.event.ApiDifference;
 import net.sf.clirr.event.Severity;
 import net.sf.clirr.event.ScopeSelector;
@@ -55,7 +56,7 @@ public class FieldSetCheck
         }
     }
 
-    private Comparator comparator = new FieldNameComparator();
+    private static final Comparator COMPARATOR = new FieldNameComparator();
     private ScopeSelector scopeSelector;
 
     public FieldSetCheck(ApiDiffDispatcher dispatcher, ScopeSelector scopeSelector)
@@ -64,64 +65,48 @@ public class FieldSetCheck
         this.scopeSelector = scopeSelector;
     }
 
-    public final boolean check(JavaClass compatBaseline, JavaClass currentVersion)
+    public final boolean check(JavaClass baselineClass, JavaClass currentClass)
     {
-        final Field[] baselineFields = compatBaseline.getFields();
-        final Field[] currentFields = currentVersion.getFields();
+        final Field[] baselineFields = baselineClass.getFields();
+        final Field[] currentFields = currentClass.getFields();
 
-        // Sigh... BCEL 5.1 hands out it's internal datastructure,
-        // so we have to make a copy here to make sure we don't mess up BCEL by sorting
+        CoIterator iter = new CoIterator(
+            COMPARATOR, baselineFields, currentFields);
 
-        final Field[] bFields = createSortedCopy(baselineFields);
-        final Field[] cFields = createSortedCopy(currentFields);
-
-        checkForChanges(bFields, cFields, compatBaseline, currentVersion);
-
-        return true;
-    }
-
-    private void checkForChanges(
-            Field[] bFields, Field[] cFields, JavaClass baseLineClass, JavaClass currentClass)
-    {
-        boolean[] newInCurrent = new boolean[cFields.length];
-        Arrays.fill(newInCurrent, true);
-
-        // check for deleted fields and modified fields
-        for (int i = 0; i < bFields.length; i++)
+        while (iter.hasNext())
         {
-            Field bField = bFields[i];
-            if (!scopeSelector.isSelected(bField))
+            iter.next();
+
+            Field bField = (Field) iter.getLeft();
+            Field cField = (Field) iter.getRight();
+            
+            if (bField == null)
             {
-                continue;
+                if (scopeSelector.isSelected(cField)) 
+                {
+                    final String name = cField.getName();
+                    String scope = ScopeSelector.getScopeDesc(cField);
+                    fireDiff("Added " + scope + " field " + name, Severity.INFO, currentClass, cField);
+                }
             }
-            int cIdx = Arrays.binarySearch(cFields, bField, comparator);
-            if (cIdx < 0)
+            else if (cField == null)
             {
-                final String name = bField.getName();
-                fireDiff("Field " + name + " has been removed", Severity.ERROR, baseLineClass, bField);
+                if (scopeSelector.isSelected(bField)) 
+                {
+                    final String name = bField.getName();
+                    fireDiff("Field " + name + " has been removed", Severity.ERROR, baselineClass, bField);
+                }
             }
-            else
+            else if (scopeSelector.isSelected(bField) || scopeSelector.isSelected(cField))
             {
-                Field cField = cFields[cIdx];
-                newInCurrent[cIdx] = false;
                 checkForModifierChange(bField, cField, currentClass);
                 checkForVisibilityChange(bField, cField, currentClass);
-                checkForReturnTypeChange(bField, cField,  currentClass);
+                checkForTypeChange(bField, cField,  currentClass);
                 checkForConstantValueChange(bField, cField,  currentClass);
             }
         }
-
-        // check for added fields
-        for (int i = 0; i < newInCurrent.length; i++)
-        {
-            Field field = cFields[i];
-            if (newInCurrent[i] && scopeSelector.isSelected(field))
-            {
-                String scope = ScopeSelector.getScopeDesc(field);
-                final String fieldName = field.getName();
-                fireDiff("Added " + scope + " field " + fieldName, Severity.INFO, currentClass, field);
-            }
-        }
+        
+        return true;
     }
 
     private void checkForConstantValueChange(Field bField, Field cField, JavaClass currentClass)
@@ -157,7 +142,7 @@ public class FieldSetCheck
         }
     }
 
-    private void checkForReturnTypeChange(Field bField, Field cField, JavaClass currentClass)
+    private void checkForTypeChange(Field bField, Field cField, JavaClass currentClass)
     {
         final String bSig = bField.getType().toString();
         final String cSig = cField.getType().toString();
@@ -229,13 +214,5 @@ public class FieldSetCheck
                         severity, className, null, field.getName());
         getApiDiffDispatcher().fireDiff(diff);
 
-    }
-
-    private Field[] createSortedCopy(final Field[] orig)
-    {
-        final Field[] fields = new Field[orig.length];
-        System.arraycopy(orig, 0, fields, 0, orig.length);
-        Arrays.sort(fields, comparator);
-        return fields;
     }
 }
