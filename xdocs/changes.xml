@@ -19,6 +19,9 @@
             XML formatter did not write method and field attributes
             correctly.
         </action>
+        <action dev="s_kitching" type="add">
+            Report on methods being deprecated or undeprecated.
+        </action>
     </release>
 
     <release version="0.3" date="2004-05-23">
