@@ -43,6 +43,7 @@ public final class ClassModifierCheck
         super(dispatcher);
     }
 
+    /** {@inheritDoc} */
     public void check(JavaClass compatBaseLine, JavaClass currentVersion)
     {
         final boolean currentIsFinal = currentVersion.isFinal();
