@@ -18,6 +18,8 @@
                 href="/clirr-core/anttask.html"/>
               <item name="Command-line"
                 href="/clirr-core/runcli.html"/>
+              <item name="Maven"
+                href="/clirr-maven/index.html"/>
             </item>
             <item name="Contributing"
                 href="/contributing.html"/>
