@@ -25,17 +25,32 @@ import org.apache.bcel.classfile.JavaClass;
 /**
  * A class which specifies that JavaClass instances are ordered
  * by string comparisons of their names.
+ *
+ * @author Simon Kitching
  */
 
-public class JavaClassNameComparator implements Comparator
+public final class JavaClassNameComparator implements Comparator
 {
-    public static final JavaClassNameComparator COMPARATOR = 
+    /**
+     * A JavaClassNameComparator does not carry any state,
+     * so only this singleton instance should be used.
+     */
+    public static final JavaClassNameComparator COMPARATOR =
         new JavaClassNameComparator();
-        
+
+    /**
+     * Prevents external instantiation.
+     * Clients should use {@link #COMPARATOR} exclusively.
+     */
+    private JavaClassNameComparator()
+    {
+    }
+
+    /** @see Comparator#compare */
     public int compare(Object o1, Object o2)
     {
-        String n1 = ((JavaClass)o1).getClassName();
-        String n2 = ((JavaClass)o2).getClassName();
+        String n1 = ((JavaClass) o1).getClassName();
+        String n2 = ((JavaClass) o2).getClassName();
         return n1.compareTo(n2);
     }
 }
