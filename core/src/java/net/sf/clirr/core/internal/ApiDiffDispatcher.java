@@ -21,7 +21,14 @@ package net.sf.clirr.core.internal;
 
 import net.sf.clirr.core.ApiDifference;
 
+/**
+ * Distributes API differences to listeners.
+ */
 public interface ApiDiffDispatcher
 {
+    /**
+     * Called by checks to inform listeners that an API difference has been detected.
+     * @param diff the API difference
+     */
     void fireDiff(ApiDifference diff);
 }
