@@ -14,7 +14,7 @@
 
   <!-- The version of the project under development, e.g.
        1.1, 1.2, 2.0-dev -->
-  <currentVersion>0.4-SNAPSHOT</currentVersion>
+  <currentVersion>0.4</currentVersion>
 
   <!-- details about the organization that 'owns' the project -->
   <organization>
@@ -70,7 +70,7 @@
     <version>
       <id>0.4</id>
       <name>0.4</name>
-      <tag>HEAD</tag>
+      <tag>RELEASE_CLIRR_0_4</tag>
     </version>
   </versions>
 
