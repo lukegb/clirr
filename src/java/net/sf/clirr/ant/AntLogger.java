@@ -46,6 +46,6 @@ final class AntLogger extends DiffListenerAdapter
     {
         final Severity severity = difference.getSeverity();
         final Integer prio = (Integer) severityPrioMap.get(severity);
-        task.log(difference.toString(), prio.intValue());
+        task.log(severity.toString() + ": " + difference.getReport(), prio.intValue());
     }
 }
