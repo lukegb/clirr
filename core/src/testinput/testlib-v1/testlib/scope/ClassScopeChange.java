@@ -49,4 +49,11 @@ public class ClassScopeChange
 
     // private class becomes package
     private static class D4 {}
+
+    // unchanged scope of class defined inside method body
+    private void method1()
+    {
+        class E1 {};
+        E1 e1 = new E1();
+    }
 }

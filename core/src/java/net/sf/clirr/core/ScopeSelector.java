@@ -18,16 +18,16 @@
 //////////////////////////////////////////////////////////////////////////////
 package net.sf.clirr.core;
 
-import org.apache.bcel.classfile.JavaClass;
+import org.apache.bcel.Constants;
 import org.apache.bcel.classfile.AccessFlags;
 import org.apache.bcel.classfile.Attribute;
-import org.apache.bcel.classfile.InnerClasses;
-import org.apache.bcel.classfile.InnerClass;
+import org.apache.bcel.classfile.ConstantClass;
 import org.apache.bcel.classfile.ConstantPool;
-import org.apache.bcel.classfile.Constant;
 import org.apache.bcel.classfile.ConstantUtf8;
+import org.apache.bcel.classfile.InnerClass;
+import org.apache.bcel.classfile.InnerClasses;
+import org.apache.bcel.classfile.JavaClass;
 import org.apache.bcel.util.Repository;
-import org.apache.bcel.Constants;
 
 /**
  * Selects zero or more java scope values (public, protected, package,
@@ -332,8 +332,6 @@ public final class ScopeSelector
         // ok this is a nested class
         String jclassName = jclass.getClassName();
         String enclosingClassName = jclassName.substring(0, dollarPos);
-        String jclassNestedName = jclassName.substring(dollarPos + 1);
-
         Repository repo = jclass.getRepository();
         JavaClass enclosingClass = repo.findClass(enclosingClassName);
 
@@ -354,17 +352,18 @@ public final class ScopeSelector
                 InnerClass[] icarray = ics.getInnerClasses();
                 for (int j = 0; j < icarray.length; ++j)
                 {
+                    // in the code below, instanceof checks should not be necessary
+                    // before casting Constants because the classfile format ensures
+                    // that instanceof would always be true
                     InnerClass ic = icarray[j];
-                    int nameIndex = ic.getInnerNameIndex();
-
-                    Constant nameconst = pool.getConstant(nameIndex);
-                    if (nameconst instanceof ConstantUtf8)
+                    int classIndex = ic.getInnerClassIndex();
+                    ConstantClass constClass = (ConstantClass) pool.getConstant(classIndex);
+                    int nameIndex = constClass.getNameIndex();
+                    ConstantUtf8 nameconst = (ConstantUtf8) pool.getConstant(nameIndex);
+                    String classname = nameconst.getBytes().replace('/', '.');
+                    if (jclassName.equals(classname))
                     {
-                        String classname = ((ConstantUtf8) nameconst).getBytes();
-                        if (jclassNestedName.equals(classname))
-                        {
-                            return getScope(ic.getInnerAccessFlags());
-                        }
+                        return getScope(ic.getInnerAccessFlags());
                     }
                 }
             }
