@@ -25,12 +25,15 @@ import java.util.Map;
 import net.sf.clirr.event.ApiDifference;
 import net.sf.clirr.event.DiffListenerAdapter;
 import net.sf.clirr.event.Severity;
+import net.sf.clirr.event.MessageTranslator;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.Task;
 
 final class AntLogger extends DiffListenerAdapter
 {
     private Task task;
+
+    private MessageTranslator translator = new MessageTranslator();
 
     private Map severityPrioMap = new HashMap(3);
 
@@ -49,7 +52,7 @@ final class AntLogger extends DiffListenerAdapter
         task.log(
             severity.toString()
             + ": " + difference.getAffectedClass()
-            + ": " + difference.getReport(),
+            + ": " + difference.getReport(translator),
             prio.intValue());
     }
 }

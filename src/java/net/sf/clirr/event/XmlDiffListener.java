@@ -34,6 +34,8 @@ public final class XmlDiffListener extends FileDiffListener
     private static final String DIFFREPORT = "diffreport";
     private static final String DIFFERENCE = "difference";
 
+    private MessageTranslator translator = new MessageTranslator();
+
     public XmlDiffListener(String outFile) throws IOException
     {
         super(outFile);
@@ -55,7 +57,7 @@ public final class XmlDiffListener extends FileDiffListener
             out.print(" field=\"" + difference.getAffectedField() + "\"");
         }
         out.print(">");
-        out.print(difference.getReport()); // TODO: XML escapes??
+        out.print(difference.getReport(translator)); // TODO: XML escapes??
         out.println("</" + DIFFERENCE + '>');
     }
 
