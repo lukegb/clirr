@@ -47,12 +47,15 @@ import net.sf.clirr.framework.ApiDiffDispatcher;
 import net.sf.clirr.framework.ClassChangeCheck;
 import net.sf.clirr.framework.ClassSelector;
 import net.sf.clirr.framework.ClassSetChangeCheck;
+import net.sf.clirr.framework.CoIterator;
+import net.sf.clirr.framework.JavaClassNameComparator;
+import net.sf.clirr.framework.CheckerException;
+
 import org.apache.bcel.classfile.JavaClass;
 import org.apache.bcel.classfile.ClassParser;
 import org.apache.bcel.util.ClassSet;
 import org.apache.bcel.util.Repository;
 import org.apache.bcel.util.ClassLoaderRepository;
-import net.sf.clirr.framework.CheckerException;
 
 /**
  * This is the main class to be used by Clirr frontends,
@@ -336,13 +339,18 @@ public final class Checker implements ApiDiffDispatcher
         JavaClass[] compat = compatBaseline.toArray();
         JavaClass[] current = currentVersion.toArray();
 
-        for (int i = 0; i < compat.length; i++)
+        CoIterator iter = new CoIterator(
+            JavaClassNameComparator.COMPARATOR, compat, current);
+
+        while (iter.hasNext())
         {
-            JavaClass compatBaselineClass = compat[i];
-            JavaClass currentClass = findClass(compatBaselineClass.getClassName(), current);
-            if (currentClass != null)
+            iter.next();
+
+            JavaClass compatBaselineClass = (JavaClass) iter.getLeft();
+            JavaClass currentClass = (JavaClass) iter.getRight();
+            if ((compatBaselineClass != null) && (currentClass != null))
             {
-                // class still available in current release
+                // class is available in both releases
                 for (Iterator it = classChecks.iterator(); it.hasNext();)
                 {
                     ClassChangeCheck classChangeCheck = (ClassChangeCheck) it.next();
@@ -351,18 +359,4 @@ public final class Checker implements ApiDiffDispatcher
             }
         }
     }
-
-    private JavaClass findClass(String className, JavaClass[] javaClasses)
-    {
-        for (int i = 0; i < javaClasses.length; i++)
-        {
-            JavaClass javaClass = javaClasses[i];
-            if (javaClass.getClassName().equals(className))
-            {
-                return javaClass;
-            }
-        }
-        return null;
-    }
-
 }
