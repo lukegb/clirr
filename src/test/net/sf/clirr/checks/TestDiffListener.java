@@ -27,7 +27,7 @@ class TestDiffListener implements ApiDiffDispatcher
 
             for (Iterator it = expectedDiffs.iterator(); it.hasNext();) {
                 ApiDifference apiDifference = (ApiDifference) it.next();
-                TestCase.assertTrue("expected diff " + apiDifference + " was not generated",
+                TestCase.assertTrue("expected diff " + apiDifference + " was not generated: " + diffs,
                         diffs.contains(apiDifference));
             }
 

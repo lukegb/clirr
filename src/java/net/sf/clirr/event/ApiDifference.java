@@ -123,7 +123,8 @@ public final class ApiDifference
      */
     public String toString()
     {
-        return report + " (" + severity + ')';
+        return report + " (" + severity + ") - "
+                + getAffectedClass() + '[' + getAffectedField() + '/'+ getAffectedMethod() + ']';
     }
 
     /**
