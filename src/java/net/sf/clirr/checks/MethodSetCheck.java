@@ -422,15 +422,27 @@ public class MethodSetCheck
      */
     private void reportMethodAdded(JavaClass newClass, Method newMethod)
     {
-
-        final Severity severity = !newClass.isInterface() && (newClass.isFinal() || !newMethod.isAbstract())
-                ? Severity.INFO
-                : Severity.ERROR;
-
-        fireDiff("Method '"
-                + getMethodId(newClass, newMethod)
-                + "' has been added",
-                severity, newClass, newMethod);
+        if (newClass.isInterface())
+        {
+            fireDiff("Method '"
+                    + getMethodId(newClass, newMethod)
+                    + "' has been added to an interface",
+                    Severity.ERROR, newClass, newMethod);
+        }
+        else if (newMethod.isAbstract())
+        {
+            fireDiff("Abstract method '"
+                    + getMethodId(newClass, newMethod)
+                    + "' has been added",
+                    Severity.ERROR, newClass, newMethod);
+        }
+        else
+        {
+            fireDiff("Method '"
+                    + getMethodId(newClass, newMethod)
+                    + "' has been added",
+                    Severity.INFO, newClass, newMethod);
+        }
     }
 
     /**
