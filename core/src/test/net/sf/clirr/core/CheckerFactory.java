@@ -13,4 +13,9 @@ public class CheckerFactory
     {
         return new Checker(check);
     }
+
+    public static Checker createChecker()
+    {
+        return new Checker();
+    }
 }
