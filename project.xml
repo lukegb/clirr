@@ -127,9 +127,6 @@
       <includes>
         <include>**/*Test.java</include>
       </includes>
-      <excludes>
-        <exclude>**/NaughtyTest.java</exclude>
-      </excludes>
     </unitTest>
 
     <resources>
@@ -140,17 +137,17 @@
   </build>
 
   <reports>
-    <report>maven-changelog-plugin</report> -->
-    <report>maven-changes-plugin</report>
+<!--    <report>maven-changelog-plugin</report> -->
+<!--    <report>maven-changes-plugin</report> -->
     <report>maven-checkstyle-plugin</report>
-    <report>maven-developer-activity-plugin</report> -->
-    <report>maven-file-activity-plugin</report> -->
+<!--    <report>maven-developer-activity-plugin</report> -->
+<!--    <report>maven-file-activity-plugin</report> -->
     <report>maven-javadoc-plugin</report>
     <report>maven-jdepend-plugin</report>
     <report>maven-junit-report-plugin</report>
     <report>maven-jxr-plugin</report>
     <report>maven-license-plugin</report>
-    <report>maven-linkcheck-plugin</report>
+<!--    <report>maven-linkcheck-plugin</report> -->
 <!-- we got checkstyle already, so who needs pmd... :-) -->
     <report>maven-tasklist-plugin</report>
   </reports>
