@@ -21,9 +21,8 @@ package net.sf.clirr.framework;
 
 import net.sf.clirr.event.ApiDifference;
 import net.sf.clirr.event.Severity;
-import org.apache.bcel.classfile.JavaClass;
-import org.apache.bcel.classfile.Method;
 import org.apache.bcel.classfile.Field;
+import org.apache.bcel.classfile.Method;
 
 public abstract class AbstractDiffReporter
 {
