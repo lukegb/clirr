@@ -31,6 +31,8 @@ import java.util.List;
 import net.sf.clirr.Checker;
 import net.sf.clirr.event.PlainDiffListener;
 import net.sf.clirr.event.XmlDiffListener;
+import net.sf.clirr.framework.CheckerException;
+
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.DirectoryScanner;
 import org.apache.tools.ant.Project;
@@ -242,7 +244,14 @@ public final class AntTask extends Task
         }
 
         checker.addDiffListener(counter);
-        checker.reportDiffs(origJars, newJars, origThirdPartyLoader, newThirdPartyLoader, null);
+        try
+        {
+            checker.reportDiffs(origJars, newJars, origThirdPartyLoader, newThirdPartyLoader, null);
+        }
+        catch(CheckerException ex)
+        {
+            throw new BuildException(ex.getMessage());
+        }
 
         if (counter.getWarnings() > 0 && failOnWarning || counter.getErrors() > 0 && failOnError)
         {
