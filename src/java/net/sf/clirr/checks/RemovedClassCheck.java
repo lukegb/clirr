@@ -33,11 +33,16 @@ public final class RemovedClassCheck
         extends AbstractClassSetChangeCheck
         implements ClassSetChangeCheck
 {
+    /**
+     * Create a new instance of this check.
+     * @param dispatcher the diff dispatcher that distributes the detected changes to the listeners.
+     */
     public RemovedClassCheck(ApiDiffDispatcher dispatcher)
     {
         super(dispatcher);
     }
 
+    /** {@inheritDoc} */
     public void check(ClassSet compatBaseline, ClassSet currentVersion)
     {
         String[] oldClassNames = compatBaseline.getClassNames();

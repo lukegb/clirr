@@ -24,15 +24,26 @@ import net.sf.clirr.framework.ApiDiffDispatcher;
 import net.sf.clirr.framework.ClassSetChangeCheck;
 import org.apache.bcel.util.ClassSet;
 
+/**
+ * Checks whether a class/interface has been added.
+ *
+ * @author lkuehne
+ */
 public final class AddedClassCheck
         extends AbstractClassSetChangeCheck
         implements ClassSetChangeCheck
 {
+    /**
+     * Create a new instance of this check.
+     * @param dispatcher the diff dispatcher that distributes the detected changes to the listeners.
+     */
     public AddedClassCheck(ApiDiffDispatcher dispatcher)
     {
         super(dispatcher);
     }
 
+
+    /** {@inheritDoc} */
     public void check(ClassSet compatBaseline, ClassSet currentVersion)
     {
         String[] oldClassNames = compatBaseline.getClassNames();

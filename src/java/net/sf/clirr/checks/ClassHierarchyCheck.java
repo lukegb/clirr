@@ -28,10 +28,19 @@ import net.sf.clirr.framework.ApiDiffDispatcher;
 import net.sf.clirr.framework.ClassChangeCheck;
 import org.apache.bcel.classfile.JavaClass;
 
+/**
+ * Detects changes in the set of superclasses.
+ *
+ * @author lkuehne
+ */
 public final class ClassHierarchyCheck
         extends AbstractDiffReporter
         implements ClassChangeCheck
 {
+    /**
+     * Create a new instance of this check.
+     * @param dispatcher the diff dispatcher that distributes the detected changes to the listeners.
+     */
     public ClassHierarchyCheck(ApiDiffDispatcher dispatcher)
     {
         super(dispatcher);
@@ -45,11 +54,6 @@ public final class ClassHierarchyCheck
         List retval = new ArrayList(list1);
         retval.removeAll(list2);
 
-        /*
-        System.out.println("list1 = " + list1);
-        System.out.println("list2 = " + list2);
-        System.out.println("retval = " + retval);
-        */
         return retval;
     }
 
@@ -64,6 +68,7 @@ public final class ClassHierarchyCheck
         return list;
     }
 
+    /** {@inheritDoc} */
     public void check(JavaClass compatBaseline, JavaClass currentVersion)
     {
         JavaClass[] compatSuper = compatBaseline.getSuperClasses();

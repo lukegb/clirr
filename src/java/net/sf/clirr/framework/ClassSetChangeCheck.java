@@ -21,7 +21,17 @@ package net.sf.clirr.framework;
 
 import org.apache.bcel.util.ClassSet;
 
+/**
+ * Checks for changes between two sets of classes.
+ *
+ * @author lkuehne
+ */
 public interface ClassSetChangeCheck
 {
+    /**
+     * Checks for changes etween two sets of classes.
+     * @param compatBaseline the classes of the compatibility baseline
+     * @param currentVersion the classes of the current software version
+     */
     void check(ClassSet compatBaseline, ClassSet currentVersion);
 }

@@ -25,10 +25,19 @@ import net.sf.clirr.framework.ApiDiffDispatcher;
 import net.sf.clirr.framework.ClassChangeCheck;
 import org.apache.bcel.classfile.JavaClass;
 
+/**
+ * Detects changes in class modifiers (abstract, final).
+ *
+ * @author lkuehne
+ */
 public final class ClassModifierCheck
         extends AbstractDiffReporter
         implements ClassChangeCheck
 {
+    /**
+     * Create a new instance of this check.
+     * @param dispatcher the diff dispatcher that distributes the detected changes to the listeners.
+     */
     public ClassModifierCheck(ApiDiffDispatcher dispatcher)
     {
         super(dispatcher);
