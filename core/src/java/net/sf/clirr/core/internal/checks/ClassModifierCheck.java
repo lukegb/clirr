@@ -35,7 +35,9 @@ import org.apache.bcel.classfile.Method;
  *
  * @author lkuehne
  */
-public final class ClassModifierCheck extends AbstractDiffReporter implements ClassChangeCheck
+public final class ClassModifierCheck
+    extends AbstractDiffReporter
+    implements ClassChangeCheck
 {
     private static final Message MSG_MODIFIER_UNABLE_TO_DETERMINE_CLASS_SCOPE = new Message(3000);
     private static final Message MSG_MODIFIER_REMOVED_FINAL = new Message(3001);
@@ -70,7 +72,8 @@ public final class ClassModifierCheck extends AbstractDiffReporter implements Cl
         }
         catch (CheckerException ex)
         {
-            log(MSG_MODIFIER_UNABLE_TO_DETERMINE_CLASS_SCOPE, Severity.ERROR, className, null, null, null);
+            log(MSG_MODIFIER_UNABLE_TO_DETERMINE_CLASS_SCOPE,
+                    Severity.ERROR, className, null, null, null);
             return true;
         }
 
@@ -83,28 +86,35 @@ public final class ClassModifierCheck extends AbstractDiffReporter implements Cl
 
         if (compatIsFinal && !currentIsFinal)
         {
-            log(MSG_MODIFIER_REMOVED_FINAL, Severity.INFO, className, null, null, null);
+            log(MSG_MODIFIER_REMOVED_FINAL,
+                    Severity.INFO, className, null, null, null);
         }
         else if (!compatIsFinal && currentIsFinal)
         {
             if (isEffectivelyFinal(compatBaseLine))
             {
-                log(MSG_MODIFIER_ADDED_FINAL_TO_EFFECTIVE_FINAL, Severity.INFO, className, null, null, null);
+                log(MSG_MODIFIER_ADDED_FINAL_TO_EFFECTIVE_FINAL,
+                        Severity.INFO, className, null, null, null);
             }
             else
             {
-                log(MSG_MODIFIER_ADDED_FINAL, Severity.ERROR, className, null, null, null);
+                log(MSG_MODIFIER_ADDED_FINAL,
+                        getSeverity(compatBaseLine, Severity.ERROR),
+                        className, null, null, null);
             }
         }
 
         // interfaces are always abstract, don't report gender change here
         if (compatIsAbstract && !currentIsAbstract && !compatIsInterface)
         {
-            log(MSG_MODIFIER_REMOVED_ABSTRACT, Severity.INFO, className, null, null, null);
+            log(MSG_MODIFIER_REMOVED_ABSTRACT,
+                    Severity.INFO, className, null, null, null);
         }
         else if (!compatIsAbstract && currentIsAbstract && !currentIsInterface)
         {
-            log(MSG_MODIFIER_ADDED_ABSTRACT, Severity.ERROR, className, null, null, null);
+            log(MSG_MODIFIER_ADDED_ABSTRACT,
+                    getSeverity(compatBaseLine, Severity.ERROR),
+                    className, null, null, null);
         }
 
         return true;
