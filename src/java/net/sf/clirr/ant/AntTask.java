@@ -248,7 +248,7 @@ public final class AntTask extends Task
         {
             checker.reportDiffs(origJars, newJars, origThirdPartyLoader, newThirdPartyLoader, null);
         }
-        catch(CheckerException ex)
+        catch (CheckerException ex)
         {
             throw new BuildException(ex.getMessage());
         }
