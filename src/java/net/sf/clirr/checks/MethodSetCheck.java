@@ -25,19 +25,17 @@ import net.sf.clirr.event.ScopeSelector;
 import net.sf.clirr.framework.AbstractDiffReporter;
 import net.sf.clirr.framework.ApiDiffDispatcher;
 import net.sf.clirr.framework.ClassChangeCheck;
+import net.sf.clirr.framework.CoIterator;
 import org.apache.bcel.classfile.JavaClass;
 import org.apache.bcel.classfile.Method;
 import org.apache.bcel.classfile.Attribute;
 import org.apache.bcel.generic.Type;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
 
 /**
  * Checks the methods of a class.
@@ -78,46 +76,81 @@ public class MethodSetCheck
         Map bNameToMethod = buildNameToMethodMap(compatBaseline);
         Map cNameToMethod = buildNameToMethodMap(currentVersion);
 
-        checkAddedOrRemoved(bNameToMethod, cNameToMethod, compatBaseline, currentVersion);
+        CoIterator iter = new CoIterator(null, bNameToMethod.keySet(), cNameToMethod.keySet());
 
-        // now the key sets of the two maps are equal,
-        // we only have collections of methods that have the same name
-
-        // for each name analyse the differences
-        for (Iterator it = bNameToMethod.keySet().iterator(); it.hasNext();)
+        while (iter.hasNext())
         {
-            String name = (String) it.next();
+            iter.next();
 
-            List baselineMethods = (List) bNameToMethod.get(name);
-            List currentMethods = (List) cNameToMethod.get(name);
+            String baselineMethodName = (String) iter.getLeft();
+            String currentMethodName = (String) iter.getRight();
 
-            while (baselineMethods.size() * currentMethods.size() > 0)
+            if (baselineMethodName == null)
             {
-                int[][] similarityTable = buildSimilarityTable(baselineMethods, currentMethods);
+                // a new method name has been added in the new version
 
-                int min = Integer.MAX_VALUE;
-                int iMin = baselineMethods.size();
-                int jMin = currentMethods.size();
-                for (int i = 0; i < baselineMethods.size(); i++)
+                List currentMethods = (List) cNameToMethod.get(currentMethodName);
+                for (Iterator i = currentMethods.iterator(); i.hasNext();)
                 {
-                    for (int j = 0; j < currentMethods.size(); j++)
-                    {
-                        final int tableEntry = similarityTable[i][j];
-                        if (tableEntry < min)
-                        {
-                            min = tableEntry;
-                            iMin = i;
-                            jMin = j;
-                        }
-                    }
+                    Method method = (Method) i.next();
+                    reportMethodAdded(currentVersion, method);
                 }
-                Method iMethod = (Method) baselineMethods.remove(iMin);
-                Method jMethod = (Method) currentMethods.remove(jMin);
-                check(compatBaseline, iMethod, jMethod);
+            }
+            else if (currentMethodName == null)
+            {
+                // all methods with name x have been removed from the old version
+
+                List baselineMethods = (List) bNameToMethod.get(baselineMethodName);
+                for (Iterator i = baselineMethods.iterator(); i.hasNext();)
+                {
+                    Method method = (Method) i.next();
+                    reportMethodRemoved(compatBaseline, method, currentVersion);
+                }
+            }
+            else
+            {
+                // assert baselineMethodName equals currentMethodName
+
+                List baselineMethods = (List) bNameToMethod.get(baselineMethodName);
+                List currentMethods = (List) cNameToMethod.get(currentMethodName);
+
+                checkChangedMethods(compatBaseline, baselineMethodName, baselineMethods, currentMethods);
             }
         }
 
         return true;
+    }
+
+    private void checkChangedMethods(
+            JavaClass compatBaseline,
+            String methodName,
+            List baselineMethods,
+            List currentMethods)
+    {
+        while (baselineMethods.size() * currentMethods.size() > 0)
+        {
+            int[][] similarityTable = buildSimilarityTable(baselineMethods, currentMethods);
+
+            int min = Integer.MAX_VALUE;
+            int iMin = baselineMethods.size();
+            int jMin = currentMethods.size();
+            for (int i = 0; i < baselineMethods.size(); i++)
+            {
+                for (int j = 0; j < currentMethods.size(); j++)
+                {
+                    final int tableEntry = similarityTable[i][j];
+                    if (tableEntry < min)
+                    {
+                        min = tableEntry;
+                        iMin = i;
+                        jMin = j;
+                    }
+                }
+            }
+            Method iMethod = (Method) baselineMethods.remove(iMin);
+            Method jMethod = (Method) currentMethods.remove(jMin);
+            check(compatBaseline, iMethod, jMethod);
+        }
     }
 
     private int[][] buildSimilarityTable(List baselineMethods, List currentMethods)
@@ -154,57 +187,6 @@ public class MethodSetCheck
             }
         }
         return retVal;
-    }
-
-    /**
-     * Checks for added or removed methods, modifies the argument maps so their key sets are equal.
-     */
-    private void checkAddedOrRemoved(
-            Map bNameToMethod,
-            Map cNameToMethod,
-            JavaClass compatBaseline,
-            JavaClass currentVersion)
-    {
-        // create copies to avoid concurrent modification exception
-        Set baselineNames = new TreeSet(bNameToMethod.keySet());
-        Set currentNames = new TreeSet(cNameToMethod.keySet());
-
-        for (Iterator it = baselineNames.iterator(); it.hasNext();)
-        {
-            String name = (String) it.next();
-            if (!currentNames.contains(name))
-            {
-                Collection removedMethods = (Collection) bNameToMethod.get(name);
-                for (Iterator rmIterator = removedMethods.iterator(); rmIterator.hasNext();)
-                {
-                    Method method = (Method) rmIterator.next();
-                    String methodSignature = getMethodId(compatBaseline, method);
-                    String superClass = findSuperClassWithSignature(methodSignature, currentVersion);
-                    String superInterface = null;
-                    if (method.isAbstract())
-                    {
-                        superInterface = findSuperInterfaceWithSignature(methodSignature, currentVersion);
-                    }
-                    reportMethodRemoved(compatBaseline, method, superClass, superInterface);
-                }
-                bNameToMethod.remove(name);
-            }
-        }
-
-        for (Iterator it = currentNames.iterator(); it.hasNext();)
-        {
-            String name = (String) it.next();
-            if (!baselineNames.contains(name))
-            {
-                Collection addedMethods = (Collection) cNameToMethod.get(name);
-                for (Iterator addIterator = addedMethods.iterator(); addIterator.hasNext();)
-                {
-                    Method method = (Method) addIterator.next();
-                    reportMethodAdded(currentVersion, method);
-                }
-                cNameToMethod.remove(name);
-            }
-        }
     }
 
     /**
@@ -265,14 +247,21 @@ public class MethodSetCheck
      * Report that a method has been removed from a class.
      * @param oldClass the class where the method was available
      * @param oldMethod the method that has been removed
-     * @param superClassName the superclass where the method is now available, might be null
+     * @param currentClass the superclass where the method is now available, might be null
      */
     private void reportMethodRemoved(
             JavaClass oldClass,
             Method oldMethod,
-            String superClassName,
-            String superInterfaceName)
+            JavaClass currentClass)
     {
+        String methodSignature = getMethodId(oldClass, oldMethod);
+        String superClassName = findSuperClassWithSignature(methodSignature, currentClass);
+        String superInterfaceName = null;
+        if (oldMethod.isAbstract())
+        {
+            superInterfaceName = findSuperInterfaceWithSignature(methodSignature, currentClass);
+        }
+
         if (superClassName != null)
         {
             fireDiff("Method '"
