@@ -90,7 +90,13 @@ public final class ApiDifference
     /**
      * Invokes the two-severity-level version of this constructor.
      */
-    public ApiDifference(Message message, Severity severity, String clazz, String method, String field, String[] args)
+    public ApiDifference(
+        Message message,
+        Severity severity,
+        String clazz,
+        String method,
+        String field,
+        String[] args)
     {
         this(message, severity, severity, clazz, method, field, args);
     }
@@ -260,6 +266,17 @@ public final class ApiDifference
      */
     public String toString()
     {
-        return report + " (" + binaryCompatibilitySeverity + ") - " + affectedClass + '[' + affectedField + '/' + affectedMethod + ']';
+        return "" + message.getId() + " (" + binaryCompatibilitySeverity + ") - "
+                + affectedClass + '[' + affectedField + '/' + affectedMethod + ']';
+    }
+
+    /**
+     * Get a human-readable description of this object. Intended for use by
+     * the unit tests.
+     */
+    public String toString(MessageTranslator translator)
+    {
+        return getReport(translator) + " (" + binaryCompatibilitySeverity + ") - "
+                + affectedClass + '[' + affectedField + '/' + affectedMethod + ']';
     }
 }
