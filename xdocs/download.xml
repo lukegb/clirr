@@ -32,7 +32,7 @@
             </p>
             <ul>
                 <li>
-                    <a href="http://maven.apache.org">Maven</a> 1.0 RC1 or above.
+                    <a href="http://maven.apache.org">Maven</a> 1.0 or above.
                 </li>
                 <li>
                     A CVS client. If you are on Linux you probably
@@ -53,7 +53,7 @@
 cvs -d :pserver:anonymous@cvs.sourceforge.net:/cvsroot/clirr login
 cvs -z3 -d :pserver:anonymous@cvs.sourceforge.net:/cvsroot/clirr checkout clirr
 cd clirr
-maven dist site
+maven
 ]]></source>
             <p>
                 Note that the anonymous CVS server on Sourceforge is

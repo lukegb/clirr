@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 
-<project default="dist"
+<project default="dist-site"
     xmlns:u="jelly:util"
   	xmlns:j="jelly:core">
   
