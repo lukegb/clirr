@@ -88,24 +88,14 @@ public class MethodSetCheck
             if (baselineMethodName == null)
             {
                 // a new method name has been added in the new version
-
                 List currentMethods = (List) cNameToMethod.get(currentMethodName);
-                for (Iterator i = currentMethods.iterator(); i.hasNext();)
-                {
-                    Method method = (Method) i.next();
-                    reportMethodAdded(currentVersion, method);
-                }
+                reportMethodsAdded(currentVersion, currentMethods);
             }
             else if (currentMethodName == null)
             {
                 // all methods with name x have been removed from the old version
-
                 List baselineMethods = (List) bNameToMethod.get(baselineMethodName);
-                for (Iterator i = baselineMethods.iterator(); i.hasNext();)
-                {
-                    Method method = (Method) i.next();
-                    reportMethodRemoved(compatBaseline, method, currentVersion);
-                }
+                reportMethodsRemoved(compatBaseline, baselineMethods, currentVersion);
             }
             else
             {
@@ -114,20 +104,141 @@ public class MethodSetCheck
                 List baselineMethods = (List) bNameToMethod.get(baselineMethodName);
                 List currentMethods = (List) cNameToMethod.get(currentMethodName);
 
-                checkChangedMethods(compatBaseline, baselineMethodName, baselineMethods, currentMethods);
+                filterSoftMatchedMethods(
+                    compatBaseline, baselineMethods,
+                    currentVersion, currentMethods);
+
+                filterChangedMethods(
+                    baselineMethodName,
+                    compatBaseline, baselineMethods, 
+                    currentVersion, currentMethods);
+
+                if (baselineMethods.isEmpty() && currentMethods.isEmpty())
+                {
+                    // ok, all done
+                }
+                else if (baselineMethods.isEmpty())
+                {
+                    reportMethodsAdded(currentVersion, currentMethods);
+                }
+                else if (currentMethods.isEmpty())
+                {
+                    reportMethodsRemoved(compatBaseline, baselineMethods, currentVersion);
+                }
+                else
+                {
+                    // error: this should not happen
+                    throw new RuntimeException(
+                        "Internal error in Clirr: one or more methods"
+                        + " on input class [" + compatBaseline.getClassName()
+                        + "] were not correlated.");
+                }
             }
         }
 
         return true;
     }
 
-    private void checkChangedMethods(
+    /**
+     * Given a list of old and new methods for a particular method name,
+     * find the (old, new) method pairs which have identical argument lists. 
+     * <p>
+     * For these:
+     * <ul>
+     *  <li>report on changes in accessability, return type, etc
+     *  <li>remove from the list
+     * </ul>
+     *
+     * On return from this method, the old and new method lists contain only 
+     * methods whose argument lists have changed between versions [or possibly, 
+     * methods which have been deleted while one or more new methods of the 
+     * same name have been added, depending on how you view it]. All other 
+     * situations have been dealt with.
+     * <p>
+     * Note that one or both method lists may be empty on return from
+     * this method.
+     */
+    private void filterSoftMatchedMethods(
             JavaClass compatBaseline,
-            String methodName,
             List baselineMethods,
+            JavaClass currentVersion,
             List currentMethods)
     {
-        while (baselineMethods.size() * currentMethods.size() > 0)
+        for(Iterator bIter = baselineMethods.iterator(); bIter.hasNext(); )
+        {
+            Method bMethod = (Method) bIter.next();
+            
+            for(Iterator cIter = currentMethods.iterator(); cIter.hasNext(); )
+            {
+                Method cMethod = (Method) cIter.next();
+                
+                if (isSoftMatch(bMethod, cMethod))
+                {
+                    check(compatBaseline, bMethod, cMethod);
+                    bIter.remove();
+                    cIter.remove();
+                    break;
+                }
+            }
+        }
+    }
+
+    /**
+     * Two methods are a "soft" match if they have the same name and argument
+     * list. No two methods on the same class are ever a "soft match" for
+     * each other, because the compiler requires distinct parameter lists for
+     * overloaded methods. This also implies that for a given method on an "old" 
+     * class version, there are either zero or one "soft matches" on the new 
+     * version.
+     * <p>
+     * However a "soft match" is not sufficient to ensure binary compatibility.
+     * A change in the method return type will result in a link error when used
+     * with code compiled against the previous version of the class.
+     * <p>
+     * There may also be other differences between methods that are regarded
+     * as "soft matches": the exceptions thrown, the deprecation status of the 
+     * methods, their accessability, etc.
+     */
+    private boolean isSoftMatch(Method oldMethod, Method newMethod)
+    {
+        String oldName = oldMethod.getName();
+        String newName = newMethod.getName();
+        
+        if (!oldName.equals(newName))
+        {
+            return false;
+        }
+        
+        StringBuffer buf = new StringBuffer();
+        appendHumanReadableArgTypeList(oldMethod, buf);
+        String oldArgs = buf.toString();
+        
+        buf.setLength(0);
+        appendHumanReadableArgTypeList(newMethod, buf);
+        String newArgs = buf.toString();
+        
+        return (oldArgs.equals(newArgs));
+    }
+
+    /**
+     * For each method in the baselineMethods list, find the "best match"
+     * in the currentMethods list, report the changes between this method
+     * pair, then remove both methods from the lists.
+     * <p>
+     * On return, at least one of the method lists will be empty.
+     */
+    private void filterChangedMethods(
+            String methodName,
+            JavaClass compatBaseline,
+            List baselineMethods,
+            JavaClass currentVersion,
+            List currentMethods)
+    {
+        // ok, we now have to deal with the tricky cases, where it is not
+        // immediately obvious which old methods correspond to which new
+        // methods.
+
+        while (!baselineMethods.isEmpty() && !currentMethods.isEmpty())
         {
             int[][] similarityTable = buildSimilarityTable(baselineMethods, currentMethods);
 
@@ -244,6 +355,21 @@ public class MethodSetCheck
     }
 
     /**
+     * Given a list of methods, report each one as being removed.
+     */
+    private void reportMethodsRemoved(
+            JavaClass baselineClass,
+            List baselineMethods,
+            JavaClass currentClass)
+    {
+        for (Iterator i = baselineMethods.iterator(); i.hasNext();)
+        {
+            Method method = (Method) i.next();
+            reportMethodRemoved(baselineClass, method, currentClass);
+        }
+    }
+
+    /**
      * Report that a method has been removed from a class.
      * @param oldClass the class where the method was available
      * @param oldMethod the method that has been removed
@@ -285,6 +411,23 @@ public class MethodSetCheck
         }
     }
 
+    /**
+     * Given a list of methods, report each one as being added.
+     */
+    private void reportMethodsAdded(
+            JavaClass currentClass,
+            List currentMethods)
+    {
+        for (Iterator i = currentMethods.iterator(); i.hasNext();)
+        {
+            Method method = (Method) i.next();
+            reportMethodAdded(currentClass, method);
+        }
+    }
+
+    /**
+     * Report that a method has been added to a class.
+     */
     private void reportMethodAdded(JavaClass newClass, Method newMethod)
     {
 
