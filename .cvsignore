@@ -4,3 +4,5 @@ clirr.iws
 clirr.ipr
 clirr.iml
 target
+.classpath
+.project
