@@ -466,6 +466,16 @@
         </p>
       </section>
 
+      <section name="7003 - Method Overide Removed">
+        <p>Severity: <code>INFO</code></p>
+        <p>
+          The specified method on the old class or interface was overriding an
+          inherited definition. The new class or interface no longer has this 
+          method explicitly declared on it, but it still inherits a definition
+          so there is no binary incompatibility.
+        </p>
+      </section>
+
       <section name="7004 - Method Argument Count Changed">
         <p>Severity: <code>ERROR</code></p>
         <p>
@@ -664,6 +674,23 @@
           is thrown at the time the method invocation is attempted.
         </p>
       </section>
+
+      <section name="8000 - Class Added">
+        <p>Severity: <code>INFO</code></p>
+        <p>
+          The new version of the library has a class which was not present
+          in the old version.
+        </p>
+      </section>
+
+      <section name="8001 - Class Removed">
+        <p>Severity: <code>ERROR</code></p>
+        <p>
+          The new version of the library no longer contains the specified
+          class.
+        </p>
+      </section>
+
     </section>
   </body>
 </document>
