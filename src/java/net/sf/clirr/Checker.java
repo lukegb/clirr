@@ -311,7 +311,7 @@ public final class Checker implements ApiDiffDispatcher
      * @param currentVersion the classes that are checked for
      *        compatibility with compatibilityBaseline
      */
-    private void reportDiffs(ClassSet compatibilityBaseline, ClassSet currentVersion)
+    private void reportDiffs(ClassSet compatibilityBaseline, ClassSet currentVersion) throws CheckerException
     {
         fireStart();
         runClassChecks(compatibilityBaseline, currentVersion);
@@ -319,6 +319,7 @@ public final class Checker implements ApiDiffDispatcher
     }
 
     private void runClassChecks(ClassSet compatBaseline, ClassSet currentVersion)
+            throws CheckerException
     {
         JavaClass[] compat = compatBaseline.toArray();
         JavaClass[] current = currentVersion.toArray();
