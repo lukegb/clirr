@@ -21,13 +21,14 @@
                  </li>
                  <li>
                      In the near future there will probably be a
-                     <a href="maven.apache.org">Maven</a> plugin for Clirr.
+                     <a href="http://maven.apache.org">Maven</a> plugin for Clirr.
                      Stay tuned.
                  </li>
                  <li>
                      If you like Clirr because you want to deliver quality work
                      to your users, you might want to have a look at
-                     <a href="http://checkstyle.sf.net">Checkstyle</a>.
+                     <a href="http://checkstyle.sf.net">Checkstyle</a>, a tool
+                     for automatic code inspection.
                      The development teams of Clirr and Checkstyle overlap,
                      so if you like Clirr, you will probably love Checkstyle.
                  </li>
