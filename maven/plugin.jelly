@@ -115,6 +115,12 @@
           includes="${clirr.baseline.destination.basename}"/>
       <newFiles dir="${maven.build.dir}" includes="${maven.final.name}.jar"/>
       <formatter type="xml" outfile="${clirr.report.file}"/>
+
+      <newClassPath refid="maven.dependency.classpath"/>
+
+      <!-- TODO: If the old version has different dependencies, this is not correct. -->
+      <origClassPath refid="maven.dependency.classpath"/>
+
     </clirr>  
   
   </goal>
