@@ -1,6 +1,6 @@
 package testlib;
 
-public class MembersChange
+public class MembersChange extends BaseMembers
 {
     public static int stat1 = 0;
     public static int stat2 = 0;
