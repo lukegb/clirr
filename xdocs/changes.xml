@@ -28,6 +28,14 @@
             <!-- RFE #958807 -->
             Documented formatter subelements in Ant task.
         </action>
+        <action dev="lkuehne" type="add">
+            <!-- RFE #958808 -->
+            Warn about compile time constant value changes. Changing the value
+            of a constant is not binary incompatible (you won't get any Exception),
+            but client code compiled against the old version of the library will
+            have the old value inlined and continue to use that old value.
+            See the Java Language Spec, Chapter 13.4.8, for details.
+        </action>
     </release>
 
     <release version="0.2" date="2004-05-22">

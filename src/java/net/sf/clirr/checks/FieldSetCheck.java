@@ -29,6 +29,7 @@ import net.sf.clirr.event.ApiDifference;
 import net.sf.clirr.event.Severity;
 import org.apache.bcel.classfile.JavaClass;
 import org.apache.bcel.classfile.Field;
+import org.apache.bcel.classfile.ConstantValue;
 
 /**
  * Checks the fields of a class.
@@ -100,6 +101,7 @@ public class FieldSetCheck
                 checkForModifierChange(bField, cField, currentClass);
                 checkForVisibilityChange(bField, cField, currentClass);
                 checkForReturnTypeChange(bField, cField,  currentClass);
+                checkForConstantValueChange(bField, cField,  currentClass);
             }
         }
 
@@ -113,10 +115,39 @@ public class FieldSetCheck
                 fireDiff("Added " + scope + " field " + fieldName, Severity.INFO, currentClass, field);
             }
         }
+    }
 
-        // TODO: Check field types
+    private void checkForConstantValueChange(Field bField, Field cField, JavaClass currentClass)
+    {
+        if (!(bField.isStatic() && bField.isFinal() && cField.isStatic() && cField.isFinal()))
+        {
+            return;
+        }
 
-        // TODO: warn about constant value changes (see JLS, section 13.4.8)
+        final ConstantValue bVal = bField.getConstantValue();
+
+        if (bVal != null)
+        {
+            final String bValRep = bVal.toString();
+            final ConstantValue cVal = cField.getConstantValue();
+            if (cVal == null)
+            {
+                fireDiff("Value of " + bField.getName()
+                        + " is no longer a compile time constant",
+                        Severity.WARNING, currentClass, cField);
+                return;
+            }
+
+            final String cValRep = String.valueOf(cVal);
+            if (!bValRep.equals(cValRep))
+            {
+                // TODO: print out old and new value
+                // How can that be done with BCEL, esp. for boolean values?
+                fireDiff("Value of compile time constant " + bField.getName()
+                        + " has been changed",
+                        Severity.WARNING, currentClass, cField);
+            }
+        }
     }
 
     private void checkForReturnTypeChange(Field bField, Field cField, JavaClass currentClass)

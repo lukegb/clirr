@@ -15,6 +15,9 @@ public class MembersChange
     protected static final int fin2 = 0; // public -> protected
     public final int fin3 = 0;           // removed static
     public static int fin4 = 0;          // removed final
+    public static final int fin5 = 1;    // changed compile time constant
+    public static final boolean fin6 =
+        Boolean.FALSE.booleanValue();    // removed value of compile time constant
 
     public int pub1 = 0;
     public static int pub2 = 0;          // added static

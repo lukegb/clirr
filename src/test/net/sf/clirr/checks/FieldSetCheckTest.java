@@ -29,6 +29,8 @@ public class FieldSetCheckTest extends AbstractCheckTestCase
             new ApiDifference("Field pub2 is now static in testlib.MembersChange", Severity.ERROR, "testlib.MembersChange", null, "pub2"),
             new ApiDifference("Changed type of field obj1 from java.lang.Object to java.lang.String in testlib.MembersChange", Severity.ERROR, "testlib.MembersChange", null, "obj1"),
             new ApiDifference("Changed type of field obj2 from java.lang.Boolean to java.lang.String in testlib.MembersChange", Severity.ERROR, "testlib.MembersChange", null, "obj2"),
+            new ApiDifference("Value of compile time constant fin5 has been changed in testlib.MembersChange", Severity.WARNING, "testlib.MembersChange", null, "fin5"),
+            new ApiDifference("Value of fin6 is no longer a compile time constant in testlib.MembersChange", Severity.WARNING, "testlib.MembersChange", null, "fin6"),
         };
         verify(expected);
     }

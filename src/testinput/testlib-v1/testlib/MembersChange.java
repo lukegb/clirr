@@ -14,6 +14,8 @@ public class MembersChange
     public static final int fin2 = 0;
     public static final int fin3 = 0;
     public static final int fin4 = 0;
+    public static final int fin5 = 0;
+    public static final boolean fin6 = false;
 
     public int pub1 = 0;
     public int pub2 = 0;
