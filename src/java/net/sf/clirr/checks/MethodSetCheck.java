@@ -178,7 +178,12 @@ public class MethodSetCheck
                     Method method = (Method) rmIterator.next();
                     String methodSignature = getMethodId(compatBaseline, method);
                     String superClass = findSuperClassWithSignature(methodSignature, currentVersion);
-                    reportMethodRemoved(compatBaseline, method, superClass);
+                    String superInterface = null;
+                    if (method.isAbstract())
+                    {
+                        superInterface = findSuperInterfaceWithSignature(methodSignature, currentVersion);
+                    }
+                    reportMethodRemoved(compatBaseline, method, superClass, superInterface);
                 }
                 bNameToMethod.remove(name);
             }
@@ -228,26 +233,64 @@ public class MethodSetCheck
     }
 
     /**
+     * Searches the class hierarchy for a method that has a certtain signature.
+     * @param methodSignature the sig we're looking for
+     * @param clazz class where search starts
+     * @return class name of a superinterface of clazz, might be null
+     */
+    private String findSuperInterfaceWithSignature(String methodSignature, JavaClass clazz)
+    {
+        final JavaClass[] superClasses = clazz.getAllInterfaces();
+        for (int i = 0; i < superClasses.length; i++)
+        {
+            JavaClass superClass = superClasses[i];
+            final Method[] superMethods = superClass.getMethods();
+            for (int j = 0; j < superMethods.length; j++)
+            {
+                Method superMethod = superMethods[j];
+                final String superMethodSignature = getMethodId(superClass, superMethod);
+                if (methodSignature.equals(superMethodSignature))
+                {
+                    return superClass.getClassName();
+                }
+            }
+
+        }
+        return null;
+    }
+
+    /**
      * Report that a method has been removed from a class.
      * @param oldClass the class where the method was available
      * @param oldMethod the method that has been removed
      * @param superClassName the superclass where the method is now available, might be null
      */
-    private void reportMethodRemoved(JavaClass oldClass, Method oldMethod, String superClassName)
+    private void reportMethodRemoved(
+            JavaClass oldClass,
+            Method oldMethod,
+            String superClassName,
+            String superInterfaceName)
     {
-        if (superClassName == null)
-        {
-            fireDiff("Method '"
-                    + getMethodId(oldClass, oldMethod)
-                    + "' has been removed",
-                    Severity.ERROR, oldClass, oldMethod);
-        }
-        else
+        if (superClassName != null)
         {
             fireDiff("Method '"
                     + getMethodId(oldClass, oldMethod)
                     + "' is now implemented in superclass " + superClassName,
                     Severity.INFO, oldClass, oldMethod);
+        }
+        else if (superInterfaceName != null)
+        {
+            fireDiff("Abstract method '"
+                    + getMethodId(oldClass, oldMethod)
+                    + "' is now specified by implemented interface " + superInterfaceName,
+                    Severity.INFO, oldClass, oldMethod);
+        }
+        else
+        {
+            fireDiff("Method '"
+                    + getMethodId(oldClass, oldMethod)
+                    + "' has been removed",
+                    Severity.ERROR, oldClass, oldMethod);
         }
     }
 

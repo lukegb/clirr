@@ -29,6 +29,9 @@ public class MethodSetCheckTest extends AbstractCheckTestCase
             new ApiDifference("Method 'public void moveToSuper()' is now implemented in superclass testlib.ComplexMethodMoveBase in testlib.ComplexMethodMoveSub",
                     Severity.INFO, "testlib.ComplexMethodMoveSub", "public void moveToSuper()", null),
 
+            new ApiDifference("Abstract method 'public void method()' is now specified by implemented interface testlib.BaseInterface in testlib.AbstractImpl",
+                    Severity.INFO, "testlib.AbstractImpl", "public void method()", null),
+
             // Constructor changes
             new ApiDifference("Parameter 1 of 'protected MethodsChange(int)' has changed it's type to java.lang.Integer in testlib.MethodsChange",
                     Severity.ERROR, "testlib.MethodsChange", "protected MethodsChange(int)", null),
@@ -57,7 +60,7 @@ public class MethodSetCheckTest extends AbstractCheckTestCase
                     Severity.INFO, "testlib.MethodsChange", "public void becomesDeprecated()", null),
             new ApiDifference("Method 'public void becomesUndeprecated()' is no longer deprecated in testlib.MethodsChange",
                     Severity.INFO, "testlib.MethodsChange", "public void becomesUndeprecated()", null),
-                    
+
             // declared exceptions
             // TODO
         };
