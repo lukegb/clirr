@@ -27,6 +27,7 @@ import net.sf.clirr.framework.AbstractDiffReporter;
 import net.sf.clirr.framework.ApiDiffDispatcher;
 import net.sf.clirr.event.ApiDifference;
 import net.sf.clirr.event.Severity;
+import net.sf.clirr.event.ScopeSelector;
 import org.apache.bcel.classfile.JavaClass;
 import org.apache.bcel.classfile.Field;
 import org.apache.bcel.classfile.ConstantValue;
@@ -55,10 +56,12 @@ public class FieldSetCheck
     }
 
     private Comparator comparator = new FieldNameComparator();
+    private ScopeSelector scopeSelector;
 
-    public FieldSetCheck(ApiDiffDispatcher dispatcher)
+    public FieldSetCheck(ApiDiffDispatcher dispatcher, ScopeSelector scopeSelector)
     {
         super(dispatcher);
+        this.scopeSelector = scopeSelector;
     }
 
     public final void check(JavaClass compatBaseline, JavaClass currentVersion)
@@ -81,10 +84,11 @@ public class FieldSetCheck
         boolean[] newInCurrent = new boolean[cFields.length];
         Arrays.fill(newInCurrent, true);
 
+        // check for deleted fields and modified fields
         for (int i = 0; i < bFields.length; i++)
         {
             Field bField = bFields[i];
-            if (!bField.isPublic() && !bField.isProtected())
+            if (!scopeSelector.isSelected(bField))
             {
                 continue;
             }
@@ -105,12 +109,13 @@ public class FieldSetCheck
             }
         }
 
+        // check for added fields
         for (int i = 0; i < newInCurrent.length; i++)
         {
             Field field = cFields[i];
-            if (newInCurrent[i] && (field.isPublic() || field.isProtected()))
+            if (newInCurrent[i] && scopeSelector.isSelected(field))
             {
-                String scope = field.isPublic() ? "public" : "protected";
+                String scope = ScopeSelector.getScopeDesc(field);
                 final String fieldName = field.getName();
                 fireDiff("Added " + scope + " field " + fieldName, Severity.INFO, currentClass, field);
             }
@@ -191,15 +196,26 @@ public class FieldSetCheck
 
     private void checkForVisibilityChange(Field bField, Field cField, JavaClass clazz)
     {
-        if (bField.isProtected() && cField.isPublic())
+        int bVisibility = ScopeSelector.getVisibilityRating(bField);
+        int cVisibility = ScopeSelector.getVisibilityRating(cField);
+
+        if (cVisibility > bVisibility)
         {
-            fireDiff("Field " + bField.getName() + " is now public", Severity.INFO, clazz, cField);
+            fireDiff(
+                "Accessability of field " + bField.getName()
+                + " has been increased"
+                + " from " + ScopeSelector.getScopeDesc(bField)
+                + " to " + ScopeSelector.getScopeDesc(cField),
+                Severity.INFO, clazz, cField);
         }
-        else if (bField.isProtected() && !(cField.isProtected() || cField.isPublic())
-                || bField.isPublic() && !cField.isPublic())
+        else if (cVisibility < bVisibility)
         {
-            fireDiff("Accessibility of field " + bField.getName() + " has been weakened",
-                    Severity.ERROR, clazz, cField);
+            fireDiff(
+                "Accessibility of field " + bField.getName()
+                + " has been weakened"
+                + " from " + ScopeSelector.getScopeDesc(bField)
+                + " to " + ScopeSelector.getScopeDesc(cField),
+                Severity.ERROR, clazz, cField);
         }
     }
 
