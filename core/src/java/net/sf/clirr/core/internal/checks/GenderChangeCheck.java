@@ -31,7 +31,9 @@ import org.apache.bcel.classfile.JavaClass;
  *
  * @author lkuehne
  */
-public final class GenderChangeCheck extends AbstractDiffReporter implements ClassChangeCheck
+public final class GenderChangeCheck
+    extends AbstractDiffReporter 
+    implements ClassChangeCheck
 {
     private static final Message MSG_GENDER_CLASS_TO_INTERFACE = new Message(2000);
     private static final Message MSG_GENDER_INTERFACE_TO_CLASS = new Message(2001);
@@ -51,11 +53,15 @@ public final class GenderChangeCheck extends AbstractDiffReporter implements Cla
     {
         if (baseLine.isClass() && current.isInterface())
         {
-            log(MSG_GENDER_CLASS_TO_INTERFACE, Severity.ERROR, baseLine.getClassName(), null, null, null);
+            log(MSG_GENDER_CLASS_TO_INTERFACE,
+                getSeverity(baseLine, Severity.ERROR),
+                baseLine.getClassName(), null, null, null);
         }
         else if (baseLine.isInterface() && current.isClass())
         {
-            log(MSG_GENDER_INTERFACE_TO_CLASS, Severity.ERROR, baseLine.getClassName(), null, null, null);
+            log(MSG_GENDER_INTERFACE_TO_CLASS,
+                getSeverity(baseLine, Severity.ERROR),
+                baseLine.getClassName(), null, null, null);
         }
 
         return true;
