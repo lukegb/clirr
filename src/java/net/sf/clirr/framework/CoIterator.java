@@ -95,8 +95,8 @@ public class CoIterator
     public CoIterator(Comparator comparator, Object[] left, Object[] right)
     {
         this.comparator = comparator;
-        this.left = left.clone();
-        this.right = right.clone();
+        this.left = (Object[]) left.clone();
+        this.right = (Object[]) right.clone();
         
         Arrays.sort(this.left, comparator);
         Arrays.sort(this.right, comparator);
