@@ -21,7 +21,7 @@ public class MethodSetCheckTest extends AbstractCheckTestCase
             // method addition and removal
             new ExpectedDiff("Method 'public void removedMethod(java.lang.String)' has been removed",
                     Severity.ERROR, "testlib.MethodsChange", "public void removedMethod(java.lang.String)", null),
-            new ExpectedDiff("Accessability of method 'public int getPriv2()' has been decreased from public to private",
+            new ExpectedDiff("Accessibility of method 'public int getPriv2()' has been decreased from public to private",
                     Severity.ERROR, "testlib.MethodsChange", "public int getPriv2()", null),
             new ExpectedDiff("Method 'protected MethodsChange(int, boolean)' has been added",
                     Severity.INFO, "testlib.MethodsChange", "protected MethodsChange(int, boolean)", null),
