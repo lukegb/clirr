@@ -53,6 +53,7 @@ public class FieldSetCheck
     private static final Message MSG_FIELD_NOW_STATIC = new Message(6008);
     private static final Message MSG_FIELD_MORE_ACCESSIBLE = new Message(6009);
     private static final Message MSG_FIELD_LESS_ACCESSIBLE = new Message(6010);
+    private static final Message MSG_CONSTANT_FIELD_REMOVED = new Message(6011);
 
     private static final class FieldNameComparator implements Comparator
     {
@@ -107,16 +108,27 @@ public class FieldSetCheck
             {
                 if (scopeSelector.isSelected(bField))
                 {
-                    // TODO: This is not an error if the field is a
-                    // compile-time constant, because the value will
-                    // have been inlined into callers [Q: is this
-                    // mandatory, or only allowed by the java spec?].
-                    // See bugtracker #961222
-
                     final String name = bField.getName();
-                    fireDiff(MSG_FIELD_REMOVED,
-                        getSeverity(baselineClass, bField, Severity.ERROR),
-                        baselineClass, bField, null);
+                    if ((bField.getConstantValue() != null) && bField.isFinal())
+                    {
+                        // Fields which are compile-time constants will have
+                        // been inlined into callers; even though the field
+                        // has been deleted, the caller will continue to use
+                        // the old value. The result is therefore not
+                        // technically a binary incompatibility, though it is
+                        // a source-code incompatibility.
+                        // See bugtracker #961222
+                        fireDiff(MSG_CONSTANT_FIELD_REMOVED,
+                            getSeverity(baselineClass, bField, Severity.WARNING),
+                            getSeverity(baselineClass, bField, Severity.ERROR),
+                            baselineClass, bField, null);
+                    }
+                    else
+                    {
+                        fireDiff(MSG_FIELD_REMOVED,
+                            getSeverity(baselineClass, bField, Severity.ERROR),
+                            baselineClass, bField, null);
+                    }
                 }
             }
             else if (scopeSelector.isSelected(bField) || scopeSelector.isSelected(cField))
@@ -245,10 +257,23 @@ public class FieldSetCheck
         Field field,
         String[] args)
     {
+        fireDiff(msg, severity, severity, clazz, field, args);
+    }
+
+    private void fireDiff(
+        Message msg,
+        Severity binarySeverity,
+        Severity sourceSeverity,
+        JavaClass clazz,
+        Field field,
+        String[] args)
+    {
         final String className = clazz.getClassName();
         final ApiDifference diff =
             new ApiDifference(
-                msg, severity, className, null, field.getName(), args);
+                msg,
+                binarySeverity, sourceSeverity,
+                className, null, field.getName(), args);
         getApiDiffDispatcher().fireDiff(diff);
     }
 }
