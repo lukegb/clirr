@@ -99,6 +99,11 @@ public final class ClassSelector
      */
     public boolean isSelected(JavaClass clazz)
     {
+        if (isAnonymousInnerClass(clazz))
+        {
+            return false;
+        }
+        
         boolean matches = matchesCriteria(clazz);
         if (mode == MODE_IF)
         {
@@ -110,6 +115,33 @@ public final class ClassSelector
         }
     }
 
+    /**
+     * Return true if this class is an anonymous inner class.
+     * Not even developers working on a package would be interested
+     * in API changes in these classes...
+     */
+    private boolean isAnonymousInnerClass(JavaClass clazz)
+    {
+        String name = clazz.getClassName();
+        int dollarPos = name.indexOf('$');
+        if (dollarPos == -1)
+        {
+            return false;
+        }
+        
+        for(int i=dollarPos+1; i<name.length(); ++i)
+        {
+            if (!Character.isDigit(name.charAt(i)))
+            {
+                return false;
+            }
+        }
+        
+        // ok, we have a class name which contains a dollar sign, and
+        // every subsequent character is a digit.
+        return true;
+    }
+    
     /**
      * Return true if this class matches one of the criteria stored
      * in this object.
