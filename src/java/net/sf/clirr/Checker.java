@@ -182,10 +182,10 @@ public final class Checker implements ApiDiffDispatcher
         }
 
         final ClassSet origClasses = createClassSet(
-            origJars, origThirdPartyLoader, scopeSelector, classSelector);
+            origJars, origThirdPartyLoader, classSelector);
 
         final ClassSet newClasses = createClassSet(
-            newJars, newThirdPartyLoader, scopeSelector, classSelector);
+            newJars, newThirdPartyLoader, classSelector);
 
         reportDiffs(origClasses, newClasses);
     }
@@ -198,8 +198,6 @@ public final class Checker implements ApiDiffDispatcher
      * @param thirdPartyClasses loads classes that are referenced
      * by the classes in the jarFiles
      *
-     * @param scopeSelector scope of classes that should be included
-     *
      * @param classSelector is an object which determines which classes from the
      * old and new jars are to be compared. This parameter may be null, in
      * which case all classes in the old and new jars are compared.
@@ -207,7 +205,6 @@ public final class Checker implements ApiDiffDispatcher
     private static ClassSet createClassSet(
             File[] jarFiles,
             ClassLoader thirdPartyClasses,
-            ScopeSelector scopeSelector,
             ClassSelector classSelector)
             throws CheckerException
     {
@@ -242,7 +239,7 @@ public final class Checker implements ApiDiffDispatcher
                 if (!zipEntry.isDirectory() && zipEntry.getName().endsWith(".class"))
                 {
                     JavaClass clazz = extractClass(zipEntry, zip, repository);
-                    if (scopeSelector.isSelected(clazz) && classSelector.isSelected(clazz))
+                    if (classSelector.isSelected(clazz))
                     {
                         ret.add(clazz);
                     }
