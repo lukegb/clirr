@@ -1,0 +1,69 @@
+<document>
+    <properties>
+        <title>Clirr Ant Task</title>
+        <author>Lars Kühne</author>
+    </properties>
+    <body>
+        <section name="Contributing to Clirr">
+            <p>
+                If you have made an improvent to the Clirr source code, documentation,
+                or anything else, please consider contributing it back to the community.
+            </p>
+            <p>
+                You can place patches or new code in the sourceforge patch
+                tracker. Please send an announcement and explanations to the
+                clirr developer mailing list.
+            </p>
+            <p>
+                Note that anything you contribute must have the same license
+                as the rest of Clirr, i.e. LGPL, Copyright Lars Kühne.
+            </p>
+        </section>
+        <section name="Copyright Lars? Why not copyright myself?">
+            <p>
+                Licensing does matter and can get very confusing to maintain.
+                Handing over copyrights to Lars keeps things simple for us
+                to manage licensing issues. We do this for free and do not
+                want to waste time on legal issues and managing
+                who has copyright of which parts of the code.
+                The only safe option is to have people hand over copyright to
+                a person (like Lars) or an organisation (like Apache).
+            </p>
+            <p>
+                Assigning Copyright to Lars allows easy re-licensing of the
+                code. For example Lars could re-license Clirr under
+                the Apache license for commercial development without having
+                to contact everybody who has ever contributed. Note that
+                you would not lose any of the work you (and others) have done
+                as it would still be licensed under LGPL - <em>noone can ever take
+                these rights away from you</em>!
+            </p>
+            <p>
+                Another reason why the Clirr project insists on assigning copyright
+                to one person is to put that person in a position to sucessfully
+                take legal action against potential copyright infringements.
+                This means that should someone use <em>your</em> code without
+                accepting the terms of the LGPL, that someone risks getting sued
+                by the copyright owner and has a good chance of loosing.
+            </p>
+            <p>
+                Some people feel that handing over copyright to Lars
+                limits their rights in the code they contribute.
+            </p>
+            <p>
+                In fact it doesn't. Think about it: You give copyright to Lars,
+                Lars immediately gives you the right to use the code under LGPL.
+                What have you lost? Nothing! For example you can still
+            </p>
+            <ul>
+                <li>claim authorship in the Javadoc or other comments,
+                    so credit goes where it should</li>
+                <li>redistribute the code in source or binary form
+                    (provided the terms of the LGPL are met)</li>
+                <li>use the code in a commercial environment or link it into IDEs</li>
+                <li>fork the codebase if you are not happy with the way
+                    Lars is running the project</li>
+            </ul>
+        </section>
+    </body>
+</document>
