@@ -32,22 +32,20 @@ import java.net.URL;
 import java.net.MalformedURLException;
 import java.net.URLClassLoader;
 
-import net.sf.clirr.checks.AddedClassCheck;
 import net.sf.clirr.checks.ClassHierarchyCheck;
 import net.sf.clirr.checks.ClassScopeCheck;
 import net.sf.clirr.checks.ClassModifierCheck;
 import net.sf.clirr.checks.GenderChangeCheck;
 import net.sf.clirr.checks.InterfaceSetCheck;
-import net.sf.clirr.checks.RemovedClassCheck;
 import net.sf.clirr.checks.FieldSetCheck;
 import net.sf.clirr.checks.MethodSetCheck;
 import net.sf.clirr.event.ApiDifference;
 import net.sf.clirr.event.DiffListener;
 import net.sf.clirr.event.ScopeSelector;
+import net.sf.clirr.event.Severity;
 import net.sf.clirr.framework.ApiDiffDispatcher;
 import net.sf.clirr.framework.ClassChangeCheck;
 import net.sf.clirr.framework.ClassSelector;
-import net.sf.clirr.framework.ClassSetChangeCheck;
 import net.sf.clirr.framework.CoIterator;
 import net.sf.clirr.framework.JavaClassNameComparator;
 import net.sf.clirr.framework.CheckerException;
@@ -73,18 +71,9 @@ public final class Checker implements ApiDiffDispatcher
 
     private List listeners = new ArrayList();
 
-    private List classSetChecks = new ArrayList();
     private List classChecks = new ArrayList();
 
     private ScopeSelector scopeSelector = new ScopeSelector();
-
-    /**
-     * Package visible constructor for unit testing.
-     */
-    Checker(ClassSetChangeCheck cscc)
-    {
-        classSetChecks.add(cscc);
-    }
 
     /**
      * Package visible constructor for unit testing.
@@ -99,9 +88,6 @@ public final class Checker implements ApiDiffDispatcher
      */
     public Checker()
     {
-        classSetChecks.add(new RemovedClassCheck(this));
-        classSetChecks.add(new AddedClassCheck(this));
-
         classChecks.add(new ClassScopeCheck(this, scopeSelector));
         classChecks.add(new GenderChangeCheck(this));
         classChecks.add(new ClassModifierCheck(this));
@@ -325,11 +311,6 @@ public final class Checker implements ApiDiffDispatcher
     private void reportDiffs(ClassSet compatibilityBaseline, ClassSet currentVersion)
     {
         fireStart();
-        for (Iterator it = classSetChecks.iterator(); it.hasNext();)
-        {
-            ClassSetChangeCheck check = (ClassSetChangeCheck) it.next();
-            check.check(compatibilityBaseline, currentVersion);
-        }
         runClassChecks(compatibilityBaseline, currentVersion);
         fireStop();
     }
@@ -348,7 +329,22 @@ public final class Checker implements ApiDiffDispatcher
 
             JavaClass compatBaselineClass = (JavaClass) iter.getLeft();
             JavaClass currentClass = (JavaClass) iter.getRight();
-            if ((compatBaselineClass != null) && (currentClass != null))
+
+            if (compatBaselineClass == null)
+            {
+                final String className = compatBaselineClass.getClassName();
+                final ApiDifference diff = new ApiDifference(
+                    "Added " + className, Severity.INFO, className, null, null);
+                fireDiff(diff);
+            }
+            else if (currentClass == null)
+            {
+                final String className = currentClass.getClassName();
+                final ApiDifference diff = new ApiDifference(
+                    "Removed " + className, Severity.ERROR, className, null, null);
+                fireDiff(diff);
+            }
+            else
             {
                 // class is available in both releases
                 boolean continueTesting = true;
