@@ -104,7 +104,6 @@
       <developer>
           <name>Vincent Massol</name>
           <id>vmassol</id>
-          <email></email>
           <organization>Apache Software Foundation</organization>
           <timezone>+1</timezone>
           <url>http://blogs.codehaus.org/people/vmassol</url>
@@ -112,6 +111,15 @@
               <role>Initial Inspiration and Feedback</role>
               <role>Java Developer</role>
               <role>Maven Guru</role>
+          </roles>
+      </developer>
+      <developer>
+          <name>Simon Kitching</name>
+          <id>s_kitching</id>
+          <organization>ECN</organization>
+          <timezone>+12</timezone>
+          <roles>
+              <role>Java Developer</role>
           </roles>
       </developer>
 
