@@ -1,6 +1,5 @@
 package net.sf.clirr.checks;
 
-import net.sf.clirr.event.ApiDifference;
 import net.sf.clirr.event.Severity;
 import net.sf.clirr.framework.ClassChangeCheck;
 
@@ -8,9 +7,9 @@ public class GenderChangeCheckTest extends AbstractCheckTestCase
 {
     public void testGenderChangeCheckTest() throws Exception
     {
-        ApiDifference[] expected = new ApiDifference[] {
-            new ApiDifference("Changed Gender of testlib.ClassBecomesInterface", Severity.ERROR, "testlib.ClassBecomesInterface", null, null),
-            new ApiDifference("Changed Gender of testlib.InterfaceBecomesClass", Severity.ERROR, "testlib.InterfaceBecomesClass", null, null),
+        ExpectedDiff[] expected = new ExpectedDiff[] {
+            new ExpectedDiff("Changed from class to interface", Severity.ERROR, "testlib.ClassBecomesInterface", null, null),
+            new ExpectedDiff("Changed from interface to class", Severity.ERROR, "testlib.InterfaceBecomesClass", null, null),
         };
         verify(expected);
     }

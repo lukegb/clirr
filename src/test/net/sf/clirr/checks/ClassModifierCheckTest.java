@@ -1,7 +1,6 @@
 package net.sf.clirr.checks;
 
 import net.sf.clirr.framework.ClassChangeCheck;
-import net.sf.clirr.event.ApiDifference;
 import net.sf.clirr.event.Severity;
 import net.sf.clirr.framework.ClassSelector;
 
@@ -12,9 +11,9 @@ public class ClassModifierCheckTest extends AbstractCheckTestCase
 {
     public void testAll() throws Exception
     {
-        ApiDifference[] expected = new ApiDifference[] {
-            new ApiDifference("Added final modifier in class testlib.modifiers.NonFinalBecomesFinal", Severity.ERROR, "testlib.modifiers.NonFinalBecomesFinal", null, null),
-            new ApiDifference("Added final modifier in class testlib.modifiers.EffectivelyFinal (but class was effectively final anyway)", Severity.INFO, "testlib.modifiers.EffectivelyFinal", null, null),
+        ExpectedDiff[] expected = new ExpectedDiff[] {
+            new ExpectedDiff("Added final modifier to class", Severity.ERROR, "testlib.modifiers.NonFinalBecomesFinal", null, null),
+            new ExpectedDiff("Added final modifier to class, but class was effectively final anyway", Severity.INFO, "testlib.modifiers.EffectivelyFinal", null, null),
         };
         verify(expected);
     }

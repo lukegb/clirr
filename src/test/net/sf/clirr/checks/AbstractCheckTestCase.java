@@ -45,7 +45,7 @@ public abstract class AbstractCheckTestCase extends TestCase
         };
     }
 
-    protected void verify(ApiDifference[] expected)
+    protected void verify(ExpectedDiff[] expected)
     throws Exception
     {
         TestDiffListener tdl = new TestDiffListener();
