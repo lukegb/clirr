@@ -324,7 +324,7 @@ public final class ScopeSelector
      */
     public static Scope getClassScope(JavaClass jclass) throws CheckerException
     {
-        int dollarPos = jclass.getClassName().indexOf('$');
+        int dollarPos = jclass.getClassName().lastIndexOf('$');
         if (dollarPos == -1)
         {
             // not a nested class
