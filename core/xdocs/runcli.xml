@@ -1,7 +1,9 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
 <document>
   <properties>
     <title>Clirr Command-Line Usage</title>
-    <author>Lars KÃ¼hne</author>
+    <author>Lars Kühne</author>
   </properties>
   <body>
     <section name="Running Clirr from the Command Line">
@@ -11,7 +13,7 @@
         executable jar file. Clirr can then be run from a commandline
         via the command:
         <code>
-          java -jar clirr-1.0-uber.jar
+          java -jar clirr-core-1.0-uber.jar
         </code>
         Running clirr with no command-line arguments will display the
         available options.
