@@ -56,7 +56,20 @@
   </repository>
 
   <!-- any mailing lists for the project -->
-  <mailingLists/>
+  <mailingLists>
+    <mailingList>
+      <name>clirr-user</name>
+      <subscribe>http://lists.sourceforge.net/lists/listinfo/clirr-user</subscribe>
+      <unsubscribe>http://lists.sourceforge.net/lists/listinfo/clirr-user</unsubscribe>
+      <archive>http://lists.sourceforge.net/lists/listinfo/clirr-user</archive>
+    </mailingList>
+    <mailingList>
+      <name>clirr-devel</name>
+      <subscribe>http://lists.sourceforge.net/lists/listinfo/clirr-devel</subscribe>
+      <unsubscribe>http://lists.sourceforge.net/lists/listinfo/clirr-devel</unsubscribe>
+      <archive>http://lists.sourceforge.net/lists/listinfo/clirr-devel</archive>
+    </mailingList>
+  </mailingLists>
   
   <!-- who the developers are for the project -->
   <developers>
