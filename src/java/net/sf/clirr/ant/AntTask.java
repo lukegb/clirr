@@ -175,7 +175,7 @@ public final class AntTask extends Task
 
         if (origFiles == null || newFiles == null)
         {
-            throw new BuildException("Missing nested filesetes origFiles and newFiles.", getLocation());
+            throw new BuildException("Missing nested filesets origFiles and newFiles.", getLocation());
         }
 
         if (newClassPath == null)
@@ -190,6 +190,18 @@ public final class AntTask extends Task
 
         final File[] origJars = scanFileSet(origFiles);
         final File[] newJars = scanFileSet(newFiles);
+
+        if (origJars.length == 0)
+        {
+            throw new BuildException("No files in nested fileset origFiles - nothing to check!"
+                    + " Please check your fileset specification.");
+        }
+
+        if (newJars.length == 0)
+        {
+            throw new BuildException("No files in nested fileset newFiles - nothing to check!"
+                    + " Please check your fileset specification.");
+        }
 
         final ClassLoader origThirdPartyLoader = createClasspathLoader(origClassPath);
         final ClassLoader newThirdPartyLoader = createClasspathLoader(newClassPath);

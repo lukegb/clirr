@@ -17,6 +17,13 @@
             <!-- RFE #958810 -->
             Detect changes of field types.
         </action>
+        <action dev="lkuehne" type="add">
+            <!-- RFE #958808 -->
+            Ant Task fails when filesets origFiles or newFiles are empty.
+            Empty file sets are usually a setup problem - they should not
+            create the impression that there are no compatibility problems,
+            just because Clirr didn't report anything.
+        </action>
     </release>
 
     <release version="0.2" date="2004-05-22">
