@@ -23,11 +23,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import net.sf.clirr.AbstractDiffReporter;
-import net.sf.clirr.ApiDiffDispatcher;
-import net.sf.clirr.ClassChangeCheck;
 import net.sf.clirr.event.ApiDifference;
 import net.sf.clirr.event.Severity;
+import net.sf.clirr.framework.AbstractDiffReporter;
+import net.sf.clirr.framework.ApiDiffDispatcher;
+import net.sf.clirr.framework.ClassChangeCheck;
 import org.apache.bcel.classfile.JavaClass;
 import org.apache.bcel.util.ClassSet;
 

@@ -17,28 +17,11 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 //////////////////////////////////////////////////////////////////////////////
 
-package net.sf.clirr;
+package net.sf.clirr.framework;
 
-import net.sf.clirr.event.ApiDifference;
-import net.sf.clirr.event.Severity;
+import org.apache.bcel.classfile.JavaClass;
 
-public abstract class AbstractDiffReporter
+public interface ClassChangeCheck
 {
-
-    private ApiDiffDispatcher dispatcher;
-
-    public AbstractDiffReporter(ApiDiffDispatcher dispatcher)
-    {
-        this.dispatcher = dispatcher;
-    }
-
-    protected final ApiDiffDispatcher getApiDiffDispatcher()
-    {
-        return dispatcher;
-    }
-
-    protected final void log(String msg, Severity severity)
-    {
-        getApiDiffDispatcher().fireDiff(new ApiDifference(msg, severity));
-    }
+    void check(JavaClass compatBaseline, JavaClass currentVersion);
 }

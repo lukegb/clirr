@@ -23,10 +23,10 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-import net.sf.clirr.AbstractDiffReporter;
-import net.sf.clirr.ApiDiffDispatcher;
-import net.sf.clirr.ClassChangeCheck;
 import net.sf.clirr.event.Severity;
+import net.sf.clirr.framework.AbstractDiffReporter;
+import net.sf.clirr.framework.ApiDiffDispatcher;
+import net.sf.clirr.framework.ClassChangeCheck;
 import org.apache.bcel.classfile.JavaClass;
 
 public final class InterfaceSetCheck

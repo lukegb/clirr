@@ -21,9 +21,9 @@ package net.sf.clirr.checks;
 
 import java.util.Arrays;
 
-import net.sf.clirr.AbstractDiffReporter;
-import net.sf.clirr.ApiDiffDispatcher;
 import net.sf.clirr.event.Severity;
+import net.sf.clirr.framework.AbstractDiffReporter;
+import net.sf.clirr.framework.ApiDiffDispatcher;
 
 public abstract class AbstractClassSetChangeCheck
         extends AbstractDiffReporter

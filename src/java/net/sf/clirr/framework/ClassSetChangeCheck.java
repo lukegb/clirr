@@ -17,11 +17,11 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 //////////////////////////////////////////////////////////////////////////////
 
-package net.sf.clirr;
+package net.sf.clirr.framework;
 
-import net.sf.clirr.event.ApiDifference;
+import org.apache.bcel.util.ClassSet;
 
-public interface ApiDiffDispatcher
+public interface ClassSetChangeCheck
 {
-    void fireDiff(ApiDifference diff);
+    void check(ClassSet compatBaseline, ClassSet currentVersion);
 }

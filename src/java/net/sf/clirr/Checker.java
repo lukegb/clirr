@@ -31,6 +31,9 @@ import net.sf.clirr.checks.InterfaceSetCheck;
 import net.sf.clirr.checks.RemovedClassCheck;
 import net.sf.clirr.event.ApiDifference;
 import net.sf.clirr.event.DiffListener;
+import net.sf.clirr.framework.ApiDiffDispatcher;
+import net.sf.clirr.framework.ClassChangeCheck;
+import net.sf.clirr.framework.ClassSetChangeCheck;
 import org.apache.bcel.classfile.JavaClass;
 import org.apache.bcel.util.ClassSet;
 

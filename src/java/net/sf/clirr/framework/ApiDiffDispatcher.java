@@ -17,11 +17,11 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 //////////////////////////////////////////////////////////////////////////////
 
-package net.sf.clirr;
+package net.sf.clirr.framework;
 
-import org.apache.bcel.classfile.JavaClass;
+import net.sf.clirr.event.ApiDifference;
 
-public interface ClassChangeCheck
+public interface ApiDiffDispatcher
 {
-    void check(JavaClass compatBaseline, JavaClass currentVersion);
+    void fireDiff(ApiDifference diff);
 }
