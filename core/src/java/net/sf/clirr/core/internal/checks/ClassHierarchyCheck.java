@@ -78,6 +78,9 @@ public final class ClassHierarchyCheck extends AbstractDiffReporter implements C
                 Severity severity;
                 if (isThrowable)
                 {
+                    // report a warning, because a change to the set of types
+                    // implemented by a thrown object can affect the
+                    // exception-catching behaviour of a program.
                     severity = Severity.WARNING;
                 }
                 else
@@ -85,11 +88,15 @@ public final class ClassHierarchyCheck extends AbstractDiffReporter implements C
                     severity = Severity.INFO;
                 }
 
-                log(MSG_ADDED_CLASS_TO_SUPERCLASSES, severity, className, null, null, new String[]{currentSuper.getClassName()});
+                log(MSG_ADDED_CLASS_TO_SUPERCLASSES,
+                    getSeverity(compatBaseline, severity), className, null, null,
+                    new String[] {currentSuper.getClassName()});
             }
             else if (currentSuper == null)
             {
-                log(MSG_REMOVED_CLASS_FROM_SUPERCLASSES, Severity.ERROR, className, null, null, new String[]{baselineSuper.getClassName()});
+                log(MSG_REMOVED_CLASS_FROM_SUPERCLASSES,
+                    getSeverity(compatBaseline, Severity.ERROR), className, null, null,
+                    new String[] {baselineSuper.getClassName()});
             }
         }
 
