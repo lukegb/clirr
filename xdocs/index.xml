@@ -2,6 +2,7 @@
     <properties>
         <title>Clirr</title>
         <author>Lars Kühne</author>
+        <meta name="keyword" content="java, api, diff, compare, jar, binary, compatibility, compatible, detect, incompatibility, incompatible"/>
     </properties>
     <body>
         <section name="What is it?">
