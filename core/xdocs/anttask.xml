@@ -107,7 +107,7 @@
                 <p>
         Clirr works with FileSets instead of individual jar files to allow
         splitting up or combining library distributions. An example is log4j,
-        presumably the 1.3.0 release will split up the earlier log4j.jar 
+        presumably the 1.3.0 release will split up the earlier log4j.jar
         into several jar files.
                 </p>
             </section>
@@ -184,5 +184,40 @@
                 If no formatter is specified, Clirr will write it's findings to stdout in plain format.
             </p>
         </section>
+
+        <section name="apiclasses">
+
+            <p>
+    A
+                <a href="http://ant.apache.org/manual/CoreTypes/patternset.html">PatternSet</a>
+    that defines which classes form the API. By default all classes are included.
+            </p>
+
+            <p>
+    The API is often only a subset from the set of public classes in a jar file. For example,
+    the Eclipse project has
+    <a href="http://www.eclipse.org/articles/Article-API%20use/eclipse-api-usage-rules.html">package
+        naming conventions</a> that signal which classes must not
+    be used outside a module, even though they are technically public.
+            </p>
+
+            <p>
+    Example:
+            </p>
+
+            <source>
+  &lt;clirr&gt;
+        &lt;origfiles dir="build/tmp" includes="${jar.baseline}"/&gt;
+        &lt;newfiles dir="build/lib" includes="${jar.buildresult}"/&gt;
+        &lt;apiclasses&gt;
+              &lt;exclude name="**/internal/**"/&gt;
+              &lt;exclude name="**/examples/**"/&gt;
+              &lt;exclude name="**/tests/**"/&gt;
+        &lt;/apiclasses&gt;
+  &lt;/clirr&gt;
+            </source>
+
+        </section>
+
     </body>
 </document>

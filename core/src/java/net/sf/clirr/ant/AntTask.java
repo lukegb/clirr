@@ -32,6 +32,8 @@ import net.sf.clirr.core.Checker;
 import net.sf.clirr.core.CheckerException;
 import net.sf.clirr.core.PlainDiffListener;
 import net.sf.clirr.core.XmlDiffListener;
+import net.sf.clirr.core.ClassSelector;
+import net.sf.clirr.core.ClassFilter;
 import net.sf.clirr.core.internal.ExceptionUtil;
 
 import org.apache.tools.ant.BuildException;
@@ -40,6 +42,8 @@ import org.apache.tools.ant.Project;
 import org.apache.tools.ant.Task;
 import org.apache.tools.ant.types.FileSet;
 import org.apache.tools.ant.types.Path;
+import org.apache.tools.ant.types.PatternSet;
+import org.apache.bcel.classfile.JavaClass;
 
 
 /**
@@ -88,6 +92,25 @@ public final class AntTask extends Task
         }
     }
 
+    /**
+     * Class Filter that returns the logical "and" of two underlying class filters.
+     */
+    private static class CompoundClassFilter implements ClassFilter
+    {
+        private final ClassFilter patternSetFilter;
+        private final ClassFilter scopeSelector;
+
+        public CompoundClassFilter(ClassFilter patternSetFilter, ClassFilter scopeSelector)
+        {
+            this.patternSetFilter = patternSetFilter;
+            this.scopeSelector = scopeSelector;
+        }
+
+        public boolean isSelected(JavaClass clazz)
+        {
+            return patternSetFilter.isSelected(clazz) && scopeSelector.isSelected(clazz);
+        }
+    }
 
     private FileSet origFiles = null;
     private FileSet newFiles = null;
@@ -99,6 +122,7 @@ public final class AntTask extends Task
     private boolean failOnSrcError = true;
     private boolean failOnSrcWarning = false;
     private List formatters = new LinkedList();
+    private List patternSets = new LinkedList();
 
 
     public Path createNewClassPath()
@@ -186,6 +210,11 @@ public final class AntTask extends Task
         formatters.add(formatter);
     }
 
+    public void addApiClasses(PatternSet set)
+    {
+        patternSets.add(set);
+    }
+
     public void execute()
     {
         log("Running Clirr, built from tag $Name$", Project.MSG_VERBOSE);
@@ -266,7 +295,7 @@ public final class AntTask extends Task
         try
         {
             checker.reportDiffs(
-                origJars, newJars, origThirdPartyLoader, newThirdPartyLoader, null);
+                origJars, newJars, origThirdPartyLoader, newThirdPartyLoader, buildClassFilter());
         }
         catch (CheckerException ex)
         {
@@ -284,6 +313,13 @@ public final class AntTask extends Task
         {
             throw new BuildException("detected source incompatible API changes");
         }
+    }
+
+    private ClassFilter buildClassFilter()
+    {
+        final PatternSetFilter patternSetFilter = new PatternSetFilter(getProject(), patternSets);
+        final ClassFilter scopeSelector = new ClassSelector(ClassSelector.MODE_UNLESS);
+        return new CompoundClassFilter(patternSetFilter, scopeSelector);
     }
 
 
@@ -328,4 +364,5 @@ public final class AntTask extends Task
         }
         return ret;
     }
+
 }

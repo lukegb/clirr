@@ -3,6 +3,7 @@ package net.sf.clirr.core.internal.checks;
 import net.sf.clirr.core.internal.ClassChangeCheck;
 import net.sf.clirr.core.Severity;
 import net.sf.clirr.core.ClassSelector;
+import net.sf.clirr.core.ClassFilter;
 import net.sf.clirr.core.internal.checks.ClassModifierCheck;
 import net.sf.clirr.core.internal.checks.AbstractCheckTestCase;
 
@@ -25,7 +26,7 @@ public class ClassModifierCheckTest extends AbstractCheckTestCase
         return new ClassModifierCheck(tdl);
     }
 
-    protected ClassSelector createClassSelector()
+    protected ClassFilter createClassSelector()
     {
         // only apply the check to classes in the testlib.modifiers package.
         ClassSelector classSelector = new ClassSelector(ClassSelector.MODE_IF);

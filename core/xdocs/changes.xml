@@ -7,6 +7,13 @@
   </properties>
   <body>
 
+    <release version="0.5-dev">
+        <action dev="lkuehne" type="add" due-to="lkuehne">
+            The Ant task now allows to exclude classes from compatibility checks
+            via the 'apiclasses' subelement.
+        </action>
+    </release>
+
     <release version="0.4" date="2004-09-05">
         <action dev="lkuehne" type="add" due-to="skitching">
             Improved change messages if field accessibility is weakened/strengthened.
@@ -52,7 +59,7 @@
         </action>
         <action dev="s_kitching" type="fix">
             Treat all changes in package and private items as being of INFO level
-            severity only, ie changes which would result in an ERROR being 
+            severity only, ie changes which would result in an ERROR being
             reported if they were public or protected are reported with a severity
             of INFO if they are package or private.
         </action>

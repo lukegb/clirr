@@ -30,7 +30,7 @@ import java.util.Iterator;
  *
  * @author Simon Kitching
  */
-public final class ClassSelector
+public final class ClassSelector implements ClassFilter
 {
     /** Class for implementing an enumeration. */
     public static final class Mode

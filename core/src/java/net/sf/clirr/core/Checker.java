@@ -157,7 +157,7 @@ public final class Checker implements ApiDiffDispatcher
     public void reportDiffs(
         File[] origJars, File[] newJars,
         ClassLoader origThirdPartyLoader, ClassLoader newThirdPartyLoader,
-        ClassSelector classSelector)
+        ClassFilter classSelector)
         throws CheckerException
     {
         if (classSelector == null)
@@ -188,7 +188,7 @@ public final class Checker implements ApiDiffDispatcher
      * which case all classes in the old and new jars are compared.
      */
     private static ClassSet createClassSet(
-        File[] jarFiles, ClassLoader thirdPartyClasses, ClassSelector classSelector)
+        File[] jarFiles, ClassLoader thirdPartyClasses, ClassFilter classSelector)
         throws CheckerException
     {
         if (classSelector == null)

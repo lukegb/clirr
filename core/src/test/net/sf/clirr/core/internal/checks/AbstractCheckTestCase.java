@@ -5,6 +5,7 @@ import net.sf.clirr.core.Checker;
 import net.sf.clirr.core.ClassSelector;
 import net.sf.clirr.core.ApiDifference;
 import net.sf.clirr.core.CheckerFactory;
+import net.sf.clirr.core.ClassFilter;
 import net.sf.clirr.core.internal.ClassChangeCheck;
 import org.apache.bcel.util.ClassSet;
 
@@ -50,7 +51,7 @@ public abstract class AbstractCheckTestCase extends TestCase
     {
         TestDiffListener tdl = new TestDiffListener();
         Checker checker = CheckerFactory.createChecker(createCheck(tdl));
-        ClassSelector classSelector = createClassSelector();
+        ClassFilter classSelector = createClassSelector();
 
         checker.reportDiffs(
             getBaseLine(), getCurrent(),
@@ -70,7 +71,7 @@ public abstract class AbstractCheckTestCase extends TestCase
      * to select different classes from the test jars should override this
      * method.
      */
-    protected ClassSelector createClassSelector()
+    protected ClassFilter createClassSelector()
     {
         // only check classes in the base "testlib" package of the jars
         ClassSelector classSelector = new ClassSelector(ClassSelector.MODE_IF);

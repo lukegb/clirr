@@ -4,6 +4,7 @@ import net.sf.clirr.core.internal.ClassChangeCheck;
 import net.sf.clirr.core.Severity;
 import net.sf.clirr.core.ClassSelector;
 import net.sf.clirr.core.ScopeSelector;
+import net.sf.clirr.core.ClassFilter;
 import net.sf.clirr.core.internal.checks.ClassScopeCheck;
 import net.sf.clirr.core.internal.checks.AbstractCheckTestCase;
 
@@ -43,7 +44,7 @@ public class ClassScopeCheckTest extends AbstractCheckTestCase
         return new ClassScopeCheck(tdl, scopeSelector);
     }
 
-    protected ClassSelector createClassSelector()
+    protected ClassFilter createClassSelector()
     {
         // only check the testlib/scope/ClassScopeChange class.
         ClassSelector classSelector = new ClassSelector(ClassSelector.MODE_IF);
