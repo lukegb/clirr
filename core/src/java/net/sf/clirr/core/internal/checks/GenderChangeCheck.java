@@ -32,7 +32,7 @@ import org.apache.bcel.classfile.JavaClass;
  * @author lkuehne
  */
 public final class GenderChangeCheck
-    extends AbstractDiffReporter 
+    extends AbstractDiffReporter
     implements ClassChangeCheck
 {
     private static final Message MSG_GENDER_CLASS_TO_INTERFACE = new Message(2000);

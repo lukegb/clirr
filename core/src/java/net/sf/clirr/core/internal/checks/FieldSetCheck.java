@@ -38,8 +38,8 @@ import org.apache.bcel.classfile.ConstantValue;
  *
  * @author lkuehne
  */
-public class FieldSetCheck 
-    extends AbstractDiffReporter 
+public class FieldSetCheck
+    extends AbstractDiffReporter
     implements ClassChangeCheck
 {
     private static final Message MSG_FIELD_ADDED = new Message(6000);
@@ -98,8 +98,8 @@ public class FieldSetCheck
                 {
                     final String name = cField.getName();
                     String scope = ScopeSelector.getScopeDesc(cField);
-                    fireDiff(MSG_FIELD_ADDED, 
-                        Severity.INFO, currentClass, cField, 
+                    fireDiff(MSG_FIELD_ADDED,
+                        Severity.INFO, currentClass, cField,
                         new String[]{scope});
                 }
             }
@@ -239,10 +239,10 @@ public class FieldSetCheck
     }
 
     private void fireDiff(
-        Message msg, 
-        Severity severity, 
-        JavaClass clazz, 
-        Field field, 
+        Message msg,
+        Severity severity,
+        JavaClass clazz,
+        Field field,
         String[] args)
     {
         final String className = clazz.getClassName();
