@@ -11,8 +11,6 @@
         <menu name="Clirr Core">
             <item name="Overview"
                 href="/index.html"/>
-            <item name="Download"
-                href="/download.html"/>
             <item name="Running Clirr">
               <item name="From Ant"
                 href="/anttask.html"/>
