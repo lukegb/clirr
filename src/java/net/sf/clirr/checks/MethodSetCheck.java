@@ -19,11 +19,6 @@
 
 package net.sf.clirr.checks;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
-
 import net.sf.clirr.event.ApiDifference;
 import net.sf.clirr.event.Severity;
 import net.sf.clirr.framework.AbstractDiffReporter;
@@ -32,6 +27,15 @@ import net.sf.clirr.framework.ClassChangeCheck;
 import org.apache.bcel.classfile.JavaClass;
 import org.apache.bcel.classfile.Method;
 import org.apache.bcel.generic.Type;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 
 /**
  * Checks the methods of a class.
@@ -42,28 +46,6 @@ public class MethodSetCheck
         extends AbstractDiffReporter
         implements ClassChangeCheck
 {
-    private class MethodComparator implements Comparator
-    {
-        public final int compare(Object o1, Object o2)
-        {
-            Method m1 = (Method) o1;
-            Method m2 = (Method) o2;
-
-            String name1 = m1.getName();
-            String name2 = m2.getName();
-
-            final int nameComparison = name1.compareTo(name2);
-            if (nameComparison == 0)
-            {
-                return m1.getArgumentTypes().length - m2.getArgumentTypes().length;
-            }
-            else
-            {
-                return nameComparison;
-            }
-        }
-    }
-
     /** {@inheritDoc} */
     public MethodSetCheck(ApiDiffDispatcher dispatcher)
     {
@@ -80,30 +62,184 @@ public class MethodSetCheck
             return;
         }
 
-        Method[] baselineMethods = sort(compatBaseline.getMethods());
-        Method[] currentMethods = sort(currentVersion.getMethods());
+        // The main problem here is to figure out which old method corresponds to which new method.
 
-        for (int i = 0; i < baselineMethods.length; i++)
+        // Methods that are named differently are trated as unrelated
+        //
+        // For Methods that differ only in their parameter list we build a similarity table, i.e.
+        // for new method i and old method j we have number that charaterizes how similar
+        // the method signatures are (0 means equal, higher number means more different)
+
+        Map bNameToMethod = buildNameToMethodMap(compatBaseline);
+        Map cNameToMethod = buildNameToMethodMap(currentVersion);
+
+        checkAddedOrRemoved(bNameToMethod, cNameToMethod, compatBaseline, currentVersion);
+
+        // now the key sets of the two maps are equal,
+        // we only have collections of methods that have the same name
+
+        // for each name analyse the differences
+        for (Iterator it = bNameToMethod.keySet().iterator(); it.hasNext();)
         {
-            Method baselineMethod = baselineMethods[i];
+            String name = (String) it.next();
 
-            // TODO: We need a global perspective
-            // to determine which current method matches which baseline method.
+            List baselineMethods = (List) bNameToMethod.get(name);
+            List currentMethods = (List) cNameToMethod.get(name);
 
-            // simply checking the name and arg numbers won't be enough in all cases
-            // but I'll stick with it for now to get the framework out
-
-            final int idx = Arrays.binarySearch(currentMethods, baselineMethod, new MethodComparator());
-            if (idx < 0)
+            while (baselineMethods.size() * currentMethods.size() > 0)
             {
-                fireDiff("Method '" + getMethodId(compatBaseline, baselineMethod) + "' has been removed",
-                        Severity.ERROR, compatBaseline, baselineMethod);
-            }
-            else
-            {
-                check(compatBaseline, baselineMethod, currentMethods[idx]);
+                int[][] similarityTable = buildSimilarityTable(baselineMethods, currentMethods);
+
+                int min = Integer.MAX_VALUE;
+                int iMin = baselineMethods.size();
+                int jMin = currentMethods.size();
+                for (int i = 0; i < baselineMethods.size(); i++)
+                {
+                    for (int j = 0; j < currentMethods.size(); j++)
+                    {
+                        final int tableEntry = similarityTable[i][j];
+                        if (tableEntry < min)
+                        {
+                            min = tableEntry;
+                            iMin = i;
+                            jMin = j;
+                        }
+                    }
+                }
+                Method iMethod = (Method) baselineMethods.remove(iMin);
+                Method jMethod = (Method) currentMethods.remove(jMin);
+                check(compatBaseline, iMethod, jMethod);
             }
         }
+    }
+
+    private int[][] buildSimilarityTable(List baselineMethods, List currentMethods)
+    {
+        int[][] similarityTable = new int[baselineMethods.size()][currentMethods.size()];
+        for (int i = 0; i < baselineMethods.size(); i++)
+        {
+            for (int j = 0; j < currentMethods.size(); j++)
+            {
+                final Method iMethod = (Method) baselineMethods.get(i);
+                final Method jMethod = (Method) currentMethods.get(j);
+                similarityTable[i][j] = distance(iMethod, jMethod);
+            }
+        }
+        return similarityTable;
+    }
+
+    private int distance(Method m1, Method m2)
+    {
+        final Type[] m1Args = m1.getArgumentTypes();
+        final Type[] m2Args = m2.getArgumentTypes();
+
+        if (m1Args.length != m2Args.length)
+        {
+            return 1000 * Math.abs(m1Args.length - m2Args.length);
+        }
+
+        int retVal = 0;
+        for (int i = 0; i < m1Args.length; i++)
+        {
+            if (!m1Args[i].toString().equals(m2Args[i].toString()))
+            {
+                retVal += 1;
+            }
+        }
+        return retVal;
+    }
+
+    /**
+     * Checks for added or removed methods, modifies the argument maps so their key sets are equal.
+     */
+    private void checkAddedOrRemoved(
+            Map bNameToMethod,
+            Map cNameToMethod,
+            JavaClass compatBaseline,
+            JavaClass currentVersion)
+    {
+        // create copies to avoid concurrent modification exception
+        Set baselineNames = new TreeSet(bNameToMethod.keySet());
+        Set currentNames = new TreeSet(cNameToMethod.keySet());
+
+        for (Iterator it = baselineNames.iterator(); it.hasNext();)
+        {
+            String name = (String) it.next();
+            if (!currentNames.contains(name))
+            {
+                Collection removedMethods = (Collection) bNameToMethod.get(name);
+                for (Iterator rmIterator = removedMethods.iterator(); rmIterator.hasNext();)
+                {
+                    Method method = (Method) rmIterator.next();
+                    reportMethodRemoved(compatBaseline, method);
+                }
+                bNameToMethod.remove(name);
+            }
+        }
+
+        for (Iterator it = currentNames.iterator(); it.hasNext();)
+        {
+            String name = (String) it.next();
+            if (!baselineNames.contains(name))
+            {
+                Collection addedMethods = (Collection) cNameToMethod.get(name);
+                for (Iterator addIterator = addedMethods.iterator(); addIterator.hasNext();)
+                {
+                    Method method = (Method) addIterator.next();
+                    reportMethodAdded(currentVersion, method);
+                }
+                cNameToMethod.remove(name);
+            }
+        }
+    }
+
+    private void reportMethodRemoved(JavaClass oldClass, Method oldMethod)
+    {
+        fireDiff("Method '"
+                + getMethodId(oldClass, oldMethod)
+                + "' has been removed",
+                Severity.ERROR, oldClass, oldMethod);
+    }
+
+    private void reportMethodAdded(JavaClass newClass, Method newMethod)
+    {
+
+        final Severity severity = !newClass.isInterface() && (newClass.isFinal() || !newMethod.isAbstract())
+                ? Severity.INFO
+                : Severity.ERROR;
+
+        fireDiff("Method '"
+                + getMethodId(newClass, newMethod)
+                + "' has been added",
+                severity, newClass, newMethod);
+    }
+
+    /**
+     * Builds a map from a method name to a List of methods.
+     */
+    private Map buildNameToMethodMap(JavaClass clazz)
+    {
+        Method[] methods = clazz.getMethods();
+        Map retVal = new HashMap();
+        for (int i = 0; i < methods.length; i++)
+        {
+            Method method = methods[i];
+
+            if (!(method.isPublic() || method.isProtected()))
+            {
+                continue;
+            }
+
+            final String name = method.getName();
+            List set = (List) retVal.get(name);
+            if (set == null)
+            {
+                set = new ArrayList();
+                retVal.put(name, set);
+            }
+            set.add(method);
+        }
+        return retVal;
     }
 
     private void check(JavaClass compatBaseline, Method baselineMethod, Method currentMethod)
@@ -118,7 +254,6 @@ public class MethodSetCheck
         Type[] bArgs = baselineMethod.getArgumentTypes();
         Type[] cArgs = currentMethod.getArgumentTypes();
 
-        // TODO: This currently never fires because of our poor method matching algorithm
         if (bArgs.length != cArgs.length)
         {
             fireDiff("In Method '" + getMethodId(compatBaseline, baselineMethod)
@@ -167,24 +302,6 @@ public class MethodSetCheck
         // TODO
     }
 
-    private Method[] sort(Method[] methods)
-    {
-        List target = new ArrayList();
-        for (int i = 0; i < methods.length; i++)
-        {
-            final Method method = methods[i];
-            if ((method.isPublic() || method.isProtected())
-                    && !"<clinit>".equals(method.getName()))
-            {
-                target.add(method);
-            }
-        }
-        Method[] retval = new Method[target.size()];
-        target.toArray(retval);
-        Arrays.sort(retval, new MethodComparator());
-        return retval;
-    }
-
     /**
      * Creates a human readable String that is similar to the method signature
      * and identifies the method within a class.
@@ -218,6 +335,13 @@ public class MethodSetCheck
         }
         buf.append(name);
         buf.append('(');
+        appendHumanReadableArgTypeList(method, buf);
+        buf.append(')');
+        return buf.toString();
+    }
+
+    private void appendHumanReadableArgTypeList(Method method, StringBuffer buf)
+    {
         Type[] argTypes = method.getArgumentTypes();
         String argSeparator = "";
         for (int i = 0; i < argTypes.length; i++)
@@ -226,8 +350,6 @@ public class MethodSetCheck
             buf.append(argTypes[i].toString());
             argSeparator = ", ";
         }
-        buf.append(')');
-        return buf.toString();
     }
 
     private void fireDiff(String report, Severity severity, JavaClass clazz, Method method)
