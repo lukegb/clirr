@@ -1,12 +1,14 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
 <document>
     <properties>
         <title>Clirr Ant Task</title>
-        <author>Lars KÃ¼hne</author>
+        <author>Lars Kühne</author>
     </properties>
     <body>
         <section name="Running Clirr as an Ant Task">
             <p>
-        clirr is distributed as an
+        The clirr-core module contains an
                 <a href="http://ant.apache.org">Ant</a> task.
         The following text assumes that you are familiar with Ant. To run clirr, you typically
             </p>
@@ -26,7 +28,7 @@
 &lt;target name="checkbinarycompatibility" depends="build"&gt;
 
   &lt;!-- buildtools.classpath should contain
-        clirr.jar and the libraries it depends on --&gt;
+        clirr-core.jar and the libraries it depends on --&gt;
 
   &lt;taskdef
         classpathref="buildtools.classpath"
@@ -104,8 +106,9 @@
 
                 <p>
         Clirr works with FileSets instead of individual jar files to allow
-        splitting up or combining library distributions. An example is log4j, the 1.3.0
-        release splits up the earlier log4j.jar into several jar files.
+        splitting up or combining library distributions. An example is log4j,
+        presumably the 1.3.0 release will split up the earlier log4j.jar 
+        into several jar files.
                 </p>
             </section>
 
