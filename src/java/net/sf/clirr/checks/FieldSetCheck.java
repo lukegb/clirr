@@ -99,6 +99,7 @@ public class FieldSetCheck
                 newInCurrent[cIdx] = false;
                 checkForModifierChange(bField, cField, currentClass);
                 checkForVisibilityChange(bField, cField, currentClass);
+                checkForReturnTypeChange(bField, cField,  currentClass);
             }
         }
 
@@ -116,6 +117,23 @@ public class FieldSetCheck
         // TODO: Check field types
 
         // TODO: warn about constant value changes (see JLS, section 13.4.8)
+    }
+
+    private void checkForReturnTypeChange(Field bField, Field cField, JavaClass currentClass)
+    {
+        final String bSig = bField.getType().toString();
+        final String cSig = cField.getType().toString();
+        System.out.println("=====================================");
+        System.out.println("bField = " + bField);
+        System.out.println("bSig = " + bSig);
+        System.out.println("cField = " + cField);
+        System.out.println("cSig = " + cSig);
+        System.out.println("=====================================");
+        if (!bSig.equals(cSig))
+        {
+            fireDiff("Changed type of field " + bField.getName() + " from " + bSig + " to " + cSig,
+                    Severity.ERROR, currentClass, bField);
+        }
     }
 
     private void checkForModifierChange(Field bField, Field cField, JavaClass clazz)

@@ -8,11 +8,15 @@
   <body>
 
     <release version="0.3" date="in CVS">
-      <action dev="lkuehne" due-to="Stephen Colebourne" type="fix">
-          Fixed a copy + paste error in field modifier comparison logic
-          that would lead to false alarms and undetected compatibility
-          problems.
-      </action>
+        <action dev="lkuehne" due-to="Stephen Colebourne" type="fix">
+            Fixed a copy + paste error in field modifier comparison logic
+            that would lead to false alarms and undetected compatibility
+            problems.
+        </action>
+        <action dev="lkuehne" type="add">
+            <!-- RFE #958810 -->
+            Detect changes of field types.
+        </action>
     </release>
 
     <release version="0.2" date="2004-05-22">

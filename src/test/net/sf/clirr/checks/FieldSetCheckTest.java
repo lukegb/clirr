@@ -27,6 +27,8 @@ public class FieldSetCheckTest extends AbstractCheckTestCase
             new ApiDifference("Added public field stat8 in testlib.MembersChange", Severity.INFO, "testlib.MembersChange", null, "stat8"),
             new ApiDifference("Field fin4 is now non-final in testlib.MembersChange", Severity.INFO, "testlib.MembersChange", null, "fin4"),
             new ApiDifference("Field pub2 is now static in testlib.MembersChange", Severity.ERROR, "testlib.MembersChange", null, "pub2"),
+            new ApiDifference("Changed type of field obj1 from java.lang.Object to java.lang.String in testlib.MembersChange", Severity.ERROR, "testlib.MembersChange", null, "obj1"),
+            new ApiDifference("Changed type of field obj2 from java.lang.Boolean to java.lang.String in testlib.MembersChange", Severity.ERROR, "testlib.MembersChange", null, "obj2"),
         };
         verify(expected);
     }
