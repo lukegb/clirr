@@ -16,7 +16,7 @@
       <goal>
         <name>clirr:check</name>
         <description>
-          Run binary compatibility checks.
+          Run compatibility checks.
         </description>
       </goal>
     </goals>
