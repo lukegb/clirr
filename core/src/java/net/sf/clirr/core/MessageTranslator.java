@@ -19,9 +19,6 @@
 
 package net.sf.clirr.core;
 
-import net.sf.clirr.core.EventMessages;
-import net.sf.clirr.core.Message;
-
 import java.util.Locale;
 import java.util.Iterator;
 import java.util.Collection;
