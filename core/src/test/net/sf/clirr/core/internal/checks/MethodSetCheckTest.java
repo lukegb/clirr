@@ -33,7 +33,7 @@ public class MethodSetCheckTest extends AbstractCheckTestCase
             new ExpectedDiff("Method 'public void moveToSuper()' is now implemented in superclass testlib.ComplexMethodMoveBase",
                     Severity.INFO, "testlib.ComplexMethodMoveSub", "public void moveToSuper()", null),
 
-            new ExpectedDiff("Abstract method 'public void method()' is now specified by implemented interface testlib.BaseInterface",
+            new ExpectedDiff("Method 'public void method()' has been removed, but an inherited definition exists.",
                     Severity.INFO, "testlib.AbstractImpl", "public void method()", null),
 
             // Constructor changes
