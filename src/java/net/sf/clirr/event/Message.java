@@ -27,10 +27,36 @@ public final class Message
 {
     private int id;
 
+    /**
+     * This constructor is equivalent to new Message(id, true).
+     */
     public Message(int id)
     {
+        this(id, true);
+    }
+
+    /**
+     * Create an instance of this object with the specified message id
+     *
+     * @param id is an integer which is used to look up the appropriate
+     * text string for this message from a resource file. The id of a
+     * message should be unique.
+     *
+     * @param register determines whether the new Message object should be
+     * registered with the central MessageManager object. This is normally
+     * desirable, as this allows the unit tests associated with clirr to
+     * verify that message ids are unique and that translations exist for
+     * all registered messages. However false can be useful in some
+     * circumstances, eg when creating Message objects for the purposes
+     * of unit tests.
+     */
+    public Message(int id, boolean register)
+    {
         this.id = id;
-        MessageManager.getInstance().addMessage(this);
+        if (register)
+        {
+            MessageManager.getInstance().addMessage(this);
+        }
     }
 
     public int getId()
