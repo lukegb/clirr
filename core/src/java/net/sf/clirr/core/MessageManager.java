@@ -19,8 +19,6 @@
 
 package net.sf.clirr.core;
 
-import net.sf.clirr.core.Message;
-
 import java.util.Iterator;
 import java.util.ArrayList;
 import java.util.Comparator;
