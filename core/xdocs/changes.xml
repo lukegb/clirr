@@ -12,6 +12,10 @@
             The Ant task now allows to exclude classes from compatibility checks
             via the 'apiclasses' subelement.
         </action>
+        <action dev="lkuehne" type="add" due-to="lkuehne">
+            <!-- RFE #1241245-->
+            Detect change of method final modifier.
+        </action>
     </release>
 
     <release version="0.4" date="2004-09-05">

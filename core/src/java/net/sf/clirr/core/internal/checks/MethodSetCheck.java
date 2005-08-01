@@ -61,6 +61,8 @@ public class MethodSetCheck
     private static final Message MSG_METHOD_ADDED = new Message(7011);
     private static final Message MSG_METHOD_ADDED_TO_INTERFACE = new Message(7012);
     private static final Message MSG_ABSTRACT_METHOD_ADDED = new Message(7013);
+    private static final Message MSG_METHOD_NOW_FINAL = new Message(7014);
+    private static final Message MSG_METHOD_NOW_NONFINAL = new Message(7015);
 
     private ScopeSelector scopeSelector;
 
@@ -558,6 +560,7 @@ public class MethodSetCheck
         checkDeclaredExceptions(compatBaseline, baselineMethod, currentMethod);
         checkDeprecated(compatBaseline, baselineMethod, currentMethod);
         checkVisibility(compatBaseline, baselineMethod, currentMethod);
+        checkFinal(compatBaseline, baselineMethod, currentMethod);
     }
 
     private void checkParameterTypes(JavaClass compatBaseline, Method baselineMethod, Method currentMethod)
@@ -660,6 +663,25 @@ public class MethodSetCheck
             String[] args = {bScope.getDesc(), cScope.getDesc()};
             fireDiff(MSG_METHOD_MORE_ACCESSIBLE,
                     Severity.INFO, compatBaseline, baselineMethod, args);
+        }
+    }
+
+    private void checkFinal(
+            JavaClass compatBaseline,
+            Method baselineMethod, Method currentMethod)
+    {
+        boolean bIsFinal = baselineMethod.isFinal();
+        boolean cIsFinal = currentMethod.isFinal();
+
+        if (bIsFinal && !cIsFinal)
+        {
+            fireDiff(MSG_METHOD_NOW_NONFINAL,
+                    Severity.INFO, compatBaseline, baselineMethod, null);
+        }
+        else if (!bIsFinal && cIsFinal)
+        {
+            fireDiff(MSG_METHOD_NOW_FINAL,
+                    Severity.ERROR, compatBaseline, baselineMethod, null);
         }
     }
 

@@ -62,11 +62,13 @@
         users of clirr to generate "change reports" at a level suitable for
         developers without having some of those changes marked (irrelevantly) 
         as binary incompatibilities.
-        
+      </p>
+      <p>
         There can never be binary incompatibilities for changes to private 
         classes, methods or fields as that access can only occur from 
         within the same class (ie the same compilation unit). 
-        
+      </p>
+      <p>
         Clirr does not report binary incompatibility WARNINGs or ERRORs for 
         package-scoped items either, because java packages are intended to be 
         "release units", ie all classes within a package are compiled together 
@@ -690,6 +692,24 @@
           then their methods can be invoked without problems. But if the
           newly-added abstract method is ever invoked, then an AbstractMethodError
           is thrown at the time the method invocation is attempted.
+        </p>
+      </section>
+
+      <section name="7014 - Method now final">
+        <p>Binary Severity: <code>ERROR</code></p>
+        <p>Source Severity: <code>ERROR</code></p>
+        <p>
+          The method was previously non-final, and is now final.
+          This change will 
+        </p>
+      </section>
+
+      <section name="7015 - Method now non-final">
+        <p>Binary Severity: <code>INFO</code></p>
+        <p>Source Severity: <code>INFO</code></p>
+        <p>
+          The method was previously final, and is now non-final. This is
+          always a binary-compatible change.
         </p>
       </section>
 

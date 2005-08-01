@@ -106,4 +106,14 @@ public class MethodsChange
     public void becomesUndeprecated()
     {
     }
+    
+    
+    public void becomesNonFinal()
+    {
+    }
+    
+    public final void becomesFinal()
+    {
+    }
+
 }

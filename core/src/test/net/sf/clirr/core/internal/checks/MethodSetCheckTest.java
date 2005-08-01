@@ -62,9 +62,15 @@ public class MethodSetCheckTest extends AbstractCheckTestCase
             // deprecation changes
             new ExpectedDiff("Method 'public void becomesDeprecated()' has been deprecated",
                     Severity.INFO, "testlib.MethodsChange", "public void becomesDeprecated()", null),
-            new ExpectedDiff("Method 'public void becomesUndeprecated()' is no longer deprecated",
-                    Severity.INFO, "testlib.MethodsChange", "public void becomesUndeprecated()", null),
+                    new ExpectedDiff("Method 'public void becomesUndeprecated()' is no longer deprecated",
+                            Severity.INFO, "testlib.MethodsChange", "public void becomesUndeprecated()", null),
 
+            // modifier changes                
+            new ExpectedDiff("Method 'public void becomesFinal()' is now final",
+                    Severity.ERROR, "testlib.MethodsChange", "public void becomesFinal()", null),
+            new ExpectedDiff("Method 'public void becomesNonFinal()' is no longer final",
+                     Severity.INFO, "testlib.MethodsChange", "public void becomesNonFinal()", null),
+                    
             // declared exceptions
             // TODO
         };
