@@ -696,17 +696,24 @@
       </section>
 
       <section name="7014 - Method now final">
-        <p>Binary Severity: <code>ERROR</code></p>
-        <p>Source Severity: <code>ERROR</code></p>
+        <p>Severity: <code>ERROR</code></p>
         <p>
           The method was previously non-final, and is now final.
-          This change will 
+          Subclasses of this class will no longer compile or
+          run.
+        </p>
+
+        <p>
+          When the old class containig this method was final
+          (explicitly or by only providing private constructors) 
+          then subclasses cannot exist. Clirr currently does not check
+          for this situation, so this will raise a false alarm
+          in some corner cases.
         </p>
       </section>
 
       <section name="7015 - Method now non-final">
-        <p>Binary Severity: <code>INFO</code></p>
-        <p>Source Severity: <code>INFO</code></p>
+        <p>Severity: <code>INFO</code></p>
         <p>
           The method was previously final, and is now non-final. This is
           always a binary-compatible change.
