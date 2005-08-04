@@ -7,12 +7,12 @@
   </properties>
   <body>
 
-    <release version="0.5-dev">
-        <action dev="lkuehne" type="add" due-to="lkuehne">
+    <release version="0.5" date="2005-08-07">
+        <action dev="lkuehne" type="add">
             The Ant task now allows to exclude classes from compatibility checks
             via the 'apiclasses' subelement.
         </action>
-        <action dev="lkuehne" type="add" due-to="lkuehne">
+        <action dev="lkuehne" type="add">
             <!-- RFE #1241245-->
             Detect change of method final modifier.
         </action>

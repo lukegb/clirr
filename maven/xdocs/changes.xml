@@ -7,7 +7,13 @@
 
   <body>
 
-    <release version="0.4-SNAPSHOT" date="in CVS">
+    <release version="0.5" date="2005-08-07">
+      <action dev="lkuehne" type="add">
+        Upgraded to version 0.5 of clirr-core.
+      </action>
+    </release>
+
+    <release version="0.4" date="2004-09-05">
       <action dev="vmassol" type="add">
         Initial release. See the plugin's web page for the features 
         list.
