@@ -1,12 +1,19 @@
 <?xml version="1.0"?>
 
-<project default="dist-site"
-    xmlns:u="jelly:util"
-  	xmlns:j="jelly:core">
-  
+<project default="build-clirr-release"
+  xmlns:u="jelly:util"
+  xmlns:ant="jelly:ant"
+  xmlns:j="jelly:core">
+ 
   <goal name="dist">
     <!-- call the dist target of each sub-project -->
     <j:set var="goal" value="dist"/>
+    <attainGoal name="multiproject:goal"/>
+  </goal>
+
+  <goal name="jar">
+    <!-- call the jar target of each sub-project -->
+    <j:set var="goal" value="jar:jar"/>
     <attainGoal name="multiproject:goal"/>
   </goal>
 
@@ -20,5 +27,68 @@
   <preGoal name="clean">
     <attainGoal name="multiproject:clean"/>
   </preGoal>
-   
+
+
+
+  <!-- this is the target that creates all distributables -->
+  <goal name="build-clirr-release">
+
+    <!--
+     this is probably not the 'maven way' to do this but it works,
+     so what the heck... feel free to improve this part of the build :-)
+    -->
+
+    <!--
+       I'd like to clean first, but that somehow breaks 
+       something inside multiproject, and the 
+       multiproject:goal call below executes 'clean' 
+       instead of 'dist' for each subproject.
+       <attainGoal name="clean"/> 
+    -->
+    <attainGoal name="multiproject:site"/>
+
+    <!-- call the dist target of each sub-project -->
+    <j:set var="goal" value="dist"/>
+    <attainGoal name="multiproject:goal"/>
+
+    <attainGoal name="dist:build-setup"/>
+
+    <ant:mkdir dir="${maven.dist.dir}"/>
+
+    <ant:mkdir dir="${maven.dist.src.assembly.dir}" />
+
+    <ant:copy todir="${maven.dist.src.assembly.dir}">
+      <ant:fileset dir=".">
+        <ant:exclude name="**/target/**"/>
+        <ant:exclude name="**/velocity.log*"/>
+      </ant:fileset>
+    </ant:copy>
+
+    <ant:zip zipfile="${maven.dist.dir}/${maven.final.name}-src.zip">
+      <ant:zipfileset dir="${maven.dist.src.archive.dir}"/>
+    </ant:zip>
+
+
+    <ant:mkdir dir="${maven.dist.bin.assembly.dir}"/>
+
+    <ant:copy flatten="true" todir="${maven.dist.bin.assembly.dir}">
+      <ant:fileset dir=".">
+        <ant:include name="README.txt"/>
+        <ant:include name="LICENSE*"/>
+        <ant:include name="**/target/*.jar"/>
+      </ant:fileset>
+    </ant:copy>
+
+    <ant:copy todir="${maven.dist.bin.assembly.dir}/docs">
+      <ant:fileset dir="${maven.docs.dest}">
+        <ant:include name="**"/>
+      </ant:fileset>
+    </ant:copy>
+
+    <ant:zip zipfile="${maven.dist.dir}/${maven.final.name}.zip">
+      <ant:zipfileset dir="${maven.dist.bin.archive.dir}"/>
+    </ant:zip>
+
+  </goal>
+
 </project>
