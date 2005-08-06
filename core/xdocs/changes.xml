@@ -9,6 +9,10 @@
 
     <release version="0.5" date="2005-08-07">
         <action dev="lkuehne" type="add">
+            Removed the ant.jar from the uberjar file, resulting in
+            a much smaller distribution size.
+        </action>
+        <action dev="lkuehne" type="add">
             The Ant task now allows to exclude classes from compatibility checks
             via the 'apiclasses' subelement.
         </action>
