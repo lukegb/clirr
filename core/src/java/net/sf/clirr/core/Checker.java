@@ -77,7 +77,10 @@ public final class Checker implements ApiDiffDispatcher
      */
     Checker(ClassChangeCheck ccc)
     {
-        classChecks.add(ccc);
+        if (ccc != null)
+        {
+            classChecks.add(ccc);
+        }
     }
 
     /**
@@ -336,6 +339,10 @@ public final class Checker implements ApiDiffDispatcher
 
             if (compatBaselineClass == null)
             {
+                if (!scopeSelector.isSelected(ScopeSelector.getClassScope(currentClass)))
+                {
+                    continue;   
+                }
                 final String className = currentClass.getClassName();
                 final ApiDifference diff =
                     new ApiDifference(
@@ -345,10 +352,17 @@ public final class Checker implements ApiDiffDispatcher
             }
             else if (currentClass == null)
             {
+                final ScopeSelector.Scope classScope = ScopeSelector.getClassScope(compatBaselineClass);
+                if (!scopeSelector.isSelected(classScope))
+                {
+                    continue;   
+                }
                 final String className = compatBaselineClass.getClassName();
+                final Severity severity = classScope.isLessVisibleThan(
+                        ScopeSelector.SCOPE_PROTECTED) ? Severity.INFO : Severity.ERROR;
                 final ApiDifference diff =
                     new ApiDifference(
-                        MSG_CLASS_REMOVED, Severity.ERROR, className,
+                        MSG_CLASS_REMOVED, severity, className,
                         null, null, null);
                 fireDiff(diff);
             }

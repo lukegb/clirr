@@ -8,6 +8,9 @@
   <body>
 
     <release version="0.5" date="2005-08-07">
+        <action dev="lkuehne" type="fix">
+            Avoid false alarms when package visible classes are removed.
+        </action>
         <action dev="lkuehne" type="add">
             Removed the ant.jar from the uberjar file, resulting in
             a much smaller distribution size.
