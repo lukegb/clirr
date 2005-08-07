@@ -120,7 +120,7 @@ class PatternSetFilter implements ClassFilter
                 }
             }
         }
-        System.out.println("included " + className + " = " + included);
+        project.log("included " + className + " = " + included, Project.MSG_VERBOSE);
         return included;
     }
 }
