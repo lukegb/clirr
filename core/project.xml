@@ -3,7 +3,7 @@
 
   <extend>${basedir}/../project.xml</extend>
 
-  <id>clirr-core</id>
+  <artifactId>clirr-core</artifactId>
   <name>Clirr Core</name>
 
   <package>net.sf.clirr</package>

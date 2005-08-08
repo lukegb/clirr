@@ -2,7 +2,7 @@
 
 <project>
   <extend>${basedir}/../project.xml</extend>
-  <id>clirr-maven</id>
+  <artifactId>clirr-maven</artifactId>
   <name>Clirr Maven plugin</name>
 
   <!-- Note: Although we inherit from project.xml, we still cannot 

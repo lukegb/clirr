@@ -7,7 +7,7 @@
   <groupId>clirr</groupId>
 
   <!-- a unique name for this project -->
-  <id>clirr</id>
+  <artifactId>clirr</artifactId>
 
   <!-- a short but descriptive name for the project -->
   <name>Clirr</name>
