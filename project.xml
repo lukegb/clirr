@@ -4,7 +4,7 @@
   <!-- the version of maven's project object model -->
   <pomVersion>3</pomVersion>
 
-  <groupId>clirr</groupId>
+  <groupId>net.sf.clirr</groupId>
 
   <!-- a unique name for this project -->
   <artifactId>clirr</artifactId>
@@ -20,7 +20,6 @@
   <organization>
     <name>Lars Kühne</name>
     <url>mailto:clirr-devel@lists.sourceforge.net</url>
-<!--    <logo>http://maven.apache.org/images/jakarta-logo-blue.gif</logo> -->
   </organization>
 
   <!-- the year the project started -->
