@@ -1,0 +1,17 @@
+<html>
+<body>
+    Service Provider Interface for letting Clirr know about Java types, methods, etc.
+    This package is intended to
+    <ul>
+        <li>
+            Decouple the current BCEL implementation from the comparison algorithms
+            (separation of concerns).
+        </li>
+        <li>
+            Allow IDE plugins to provide an implementation that is based on 
+            the internal Java representation of the IDE. This allows instantatious
+            error marker feedback, building class files or jars on disk is not required.
+        </li>
+    </ul>
+</body>
+</html>
