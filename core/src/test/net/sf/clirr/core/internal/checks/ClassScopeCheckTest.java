@@ -7,6 +7,7 @@ import net.sf.clirr.core.ScopeSelector;
 import net.sf.clirr.core.ClassFilter;
 import net.sf.clirr.core.internal.checks.ClassScopeCheck;
 import net.sf.clirr.core.internal.checks.AbstractCheckTestCase;
+import net.sf.clirr.core.spi.Scope;
 
 /**
  * Tests for the ClassScopeCheck test.
@@ -40,7 +41,7 @@ public class ClassScopeCheckTest extends AbstractCheckTestCase
 
     protected ClassChangeCheck createCheck(TestDiffListener tdl)
     {
-        ScopeSelector scopeSelector = new ScopeSelector(ScopeSelector.SCOPE_PRIVATE);
+        ScopeSelector scopeSelector = new ScopeSelector(Scope.PRIVATE);
         return new ClassScopeCheck(tdl, scopeSelector);
     }
 

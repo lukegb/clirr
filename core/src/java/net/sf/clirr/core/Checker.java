@@ -32,6 +32,7 @@ import java.net.URL;
 import java.net.MalformedURLException;
 import java.net.URLClassLoader;
 
+import net.sf.clirr.core.internal.bcel.BcelJavaType;
 import net.sf.clirr.core.internal.checks.ClassHierarchyCheck;
 import net.sf.clirr.core.internal.checks.ClassScopeCheck;
 import net.sf.clirr.core.internal.checks.ClassModifierCheck;
@@ -42,12 +43,13 @@ import net.sf.clirr.core.internal.checks.MethodSetCheck;
 import net.sf.clirr.core.internal.ApiDiffDispatcher;
 import net.sf.clirr.core.internal.ClassChangeCheck;
 import net.sf.clirr.core.internal.CoIterator;
-import net.sf.clirr.core.internal.JavaClassNameComparator;
 import net.sf.clirr.core.internal.ExceptionUtil;
+import net.sf.clirr.core.internal.NameComparator;
+import net.sf.clirr.core.spi.JavaType;
+import net.sf.clirr.core.spi.Scope;
 
 import org.apache.bcel.classfile.JavaClass;
 import org.apache.bcel.classfile.ClassParser;
-import org.apache.bcel.util.ClassSet;
 import org.apache.bcel.util.Repository;
 import org.apache.bcel.util.ClassLoaderRepository;
 
@@ -169,10 +171,10 @@ public final class Checker implements ApiDiffDispatcher
             classSelector = new ClassSelector(ClassSelector.MODE_UNLESS);
         }
 
-        final ClassSet origClasses =
+        final JavaType[] origClasses =
             createClassSet(origJars, origThirdPartyLoader, classSelector);
 
-        final ClassSet newClasses =
+        final JavaType[] newClasses =
             createClassSet(newJars, newThirdPartyLoader, classSelector);
 
         reportDiffs(origClasses, newClasses);
@@ -190,7 +192,7 @@ public final class Checker implements ApiDiffDispatcher
      * old and new jars are to be compared. This parameter may be null, in
      * which case all classes in the old and new jars are compared.
      */
-    private static ClassSet createClassSet(
+    private static JavaType[] createClassSet(
         File[] jarFiles, ClassLoader thirdPartyClasses, ClassFilter classSelector)
         throws CheckerException
     {
@@ -204,7 +206,7 @@ public final class Checker implements ApiDiffDispatcher
 
         Repository repository = new ClassLoaderRepository(classLoader);
 
-        ClassSet ret = new ClassSet();
+        List selected = new ArrayList();
 
         for (int i = 0; i < jarFiles.length; i++)
         {
@@ -228,13 +230,15 @@ public final class Checker implements ApiDiffDispatcher
                     JavaClass clazz = extractClass(zipEntry, zip, repository);
                     if (classSelector.isSelected(clazz))
                     {
-                        ret.add(clazz);
+                        selected.add(new BcelJavaType(clazz));
                         repository.storeClass(clazz);
                     }
                 }
             }
         }
 
+        JavaType[] ret = new JavaType[selected.size()];
+        selected.toArray(ret);
         return ret;
     }
 
@@ -312,7 +316,7 @@ public final class Checker implements ApiDiffDispatcher
      *        compatibility with compatibilityBaseline
      */
     private void reportDiffs(
-        ClassSet compatibilityBaseline, ClassSet currentVersion)
+        JavaType[] compatibilityBaseline, JavaType[] currentVersion)
         throws CheckerException
     {
         fireStart();
@@ -321,29 +325,26 @@ public final class Checker implements ApiDiffDispatcher
     }
 
     private void runClassChecks(
-        ClassSet compatBaseline, ClassSet currentVersion)
+        JavaType[] compat, JavaType[] current)
         throws CheckerException
     {
-        JavaClass[] compat = compatBaseline.toArray();
-        JavaClass[] current = currentVersion.toArray();
-
         CoIterator iter = new CoIterator(
-            JavaClassNameComparator.COMPARATOR, compat, current);
+            new NameComparator(), compat, current);
 
         while (iter.hasNext())
         {
             iter.next();
 
-            JavaClass compatBaselineClass = (JavaClass) iter.getLeft();
-            JavaClass currentClass = (JavaClass) iter.getRight();
+            JavaType compatBaselineClass = (JavaType) iter.getLeft();
+            JavaType currentClass = (JavaType) iter.getRight();
 
             if (compatBaselineClass == null)
             {
-                if (!scopeSelector.isSelected(ScopeSelector.getClassScope(currentClass)))
+                if (!scopeSelector.isSelected(currentClass.getEffectiveScope()))
                 {
                     continue;   
                 }
-                final String className = currentClass.getClassName();
+                final String className = currentClass.getName();
                 final ApiDifference diff =
                     new ApiDifference(
                         MSG_CLASS_ADDED, Severity.INFO, className,
@@ -352,14 +353,14 @@ public final class Checker implements ApiDiffDispatcher
             }
             else if (currentClass == null)
             {
-                final ScopeSelector.Scope classScope = ScopeSelector.getClassScope(compatBaselineClass);
+                final Scope classScope = compatBaselineClass.getEffectiveScope();
                 if (!scopeSelector.isSelected(classScope))
                 {
                     continue;   
                 }
-                final String className = compatBaselineClass.getClassName();
+                final String className = compatBaselineClass.getName();
                 final Severity severity = classScope.isLessVisibleThan(
-                        ScopeSelector.SCOPE_PROTECTED) ? Severity.INFO : Severity.ERROR;
+                        Scope.PROTECTED) ? Severity.INFO : Severity.ERROR;
                 final ApiDifference diff =
                     new ApiDifference(
                         MSG_CLASS_REMOVED, severity, className,

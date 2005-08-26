@@ -14,6 +14,9 @@ public class ClassScopeChange
     // public class becomes private
     public static class A4 {}
     
+    // public class is removed
+    public static class A5 {}
+
     // protected class is unchanged
     protected static class B1 {}
     
@@ -37,6 +40,9 @@ public class ClassScopeChange
 
     // package class becomes private
     static class C4 {}
+
+    // package class is removed
+    static class C5 {}
     
     // private class is unchanged
     private static class D1 {}

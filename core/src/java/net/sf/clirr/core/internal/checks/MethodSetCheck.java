@@ -27,10 +27,9 @@ import net.sf.clirr.core.internal.AbstractDiffReporter;
 import net.sf.clirr.core.internal.ApiDiffDispatcher;
 import net.sf.clirr.core.internal.ClassChangeCheck;
 import net.sf.clirr.core.internal.CoIterator;
-import org.apache.bcel.classfile.Attribute;
-import org.apache.bcel.classfile.JavaClass;
-import org.apache.bcel.classfile.Method;
-import org.apache.bcel.generic.Type;
+import net.sf.clirr.core.spi.JavaType;
+import net.sf.clirr.core.spi.Method;
+import net.sf.clirr.core.spi.Scope;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -78,7 +77,7 @@ public class MethodSetCheck
         this.scopeSelector = scopeSelector;
     }
 
-    public final boolean check(JavaClass compatBaseline, JavaClass currentVersion)
+    public final boolean check(JavaType compatBaseline, JavaType currentVersion)
     {
         // Dont't report method problems when gender has changed, as
         // really the whole API is a pile of crap then - let GenderChange check
@@ -166,9 +165,9 @@ public class MethodSetCheck
      * this method.
      */
     private void filterSoftMatchedMethods(
-            JavaClass compatBaseline,
+            JavaType compatBaseline,
             List baselineMethods,
-            JavaClass currentVersion,
+            JavaType currentVersion,
             List currentMethods)
     {
         for (Iterator bIter = baselineMethods.iterator(); bIter.hasNext();)
@@ -236,9 +235,9 @@ public class MethodSetCheck
      */
     private void filterChangedMethods(
             String methodName,
-            JavaClass compatBaseline,
+            JavaType compatBaseline,
             List baselineMethods,
-            JavaClass currentVersion,
+            JavaType currentVersion,
             List currentMethods)
     {
         // ok, we now have to deal with the tricky cases, where it is not
@@ -292,8 +291,8 @@ public class MethodSetCheck
 
     private int distance(Method m1, Method m2)
     {
-        final Type[] m1Args = m1.getArgumentTypes();
-        final Type[] m2Args = m2.getArgumentTypes();
+        final JavaType[] m1Args = m1.getArgumentTypes();
+        final JavaType[] m2Args = m2.getArgumentTypes();
 
         if (m1Args.length != m2Args.length)
         {
@@ -317,12 +316,12 @@ public class MethodSetCheck
      * @param clazz class where search starts
      * @return class name of a superclass of clazz, might be null
      */
-    private String findSuperClassWithSignature(String methodSignature, JavaClass clazz)
+    private String findSuperClassWithSignature(String methodSignature, JavaType clazz)
     {
-        final JavaClass[] superClasses = clazz.getSuperClasses();
+        final JavaType[] superClasses = clazz.getSuperClasses();
         for (int i = 0; i < superClasses.length; i++)
         {
-            JavaClass superClass = superClasses[i];
+            JavaType superClass = superClasses[i];
             final Method[] superMethods = superClass.getMethods();
             for (int j = 0; j < superMethods.length; j++)
             {
@@ -330,7 +329,7 @@ public class MethodSetCheck
                 final String superMethodSignature = getMethodId(superClass, superMethod);
                 if (methodSignature.equals(superMethodSignature))
                 {
-                    return superClass.getClassName();
+                    return superClass.getName();
                 }
             }
 
@@ -344,12 +343,12 @@ public class MethodSetCheck
      * @param clazz class where search starts
      * @return class name of a superinterface of clazz, might be null
      */
-    private String findSuperInterfaceWithSignature(String methodSignature, JavaClass clazz)
+    private String findSuperInterfaceWithSignature(String methodSignature, JavaType clazz)
     {
-        final JavaClass[] superClasses = clazz.getAllInterfaces();
+        final JavaType[] superClasses = clazz.getAllInterfaces();
         for (int i = 0; i < superClasses.length; i++)
         {
-            JavaClass superClass = superClasses[i];
+            JavaType superClass = superClasses[i];
             final Method[] superMethods = superClass.getMethods();
             for (int j = 0; j < superMethods.length; j++)
             {
@@ -357,7 +356,7 @@ public class MethodSetCheck
                 final String superMethodSignature = getMethodId(superClass, superMethod);
                 if (methodSignature.equals(superMethodSignature))
                 {
-                    return superClass.getClassName();
+                    return superClass.getName();
                 }
             }
 
@@ -369,9 +368,9 @@ public class MethodSetCheck
      * Given a list of methods, report each one as being removed.
      */
     private void reportMethodsRemoved(
-            JavaClass baselineClass,
+            JavaType baselineClass,
             List baselineMethods,
-            JavaClass currentClass)
+            JavaType currentClass)
     {
         for (Iterator i = baselineMethods.iterator(); i.hasNext();)
         {
@@ -387,9 +386,9 @@ public class MethodSetCheck
      * @param currentClass the superclass where the method is now available, might be null
      */
     private void reportMethodRemoved(
-            JavaClass oldClass,
+            JavaType oldClass,
             Method oldMethod,
-            JavaClass currentClass)
+            JavaType currentClass)
     {
         if (!scopeSelector.isSelected(oldMethod))
         {
@@ -464,7 +463,7 @@ public class MethodSetCheck
      * Given a list of methods, report each one as being added.
      */
     private void reportMethodsAdded(
-            JavaClass currentClass,
+            JavaType currentClass,
             List currentMethods)
     {
         for (Iterator i = currentMethods.iterator(); i.hasNext();)
@@ -477,7 +476,7 @@ public class MethodSetCheck
     /**
      * Report that a method has been added to a class.
      */
-    private void reportMethodAdded(JavaClass newClass, Method newMethod)
+    private void reportMethodAdded(JavaType newClass, Method newMethod)
     {
         if (!scopeSelector.isSelected(newMethod))
         {
@@ -528,7 +527,7 @@ public class MethodSetCheck
     /**
      * Builds a map from a method name to a List of methods.
      */
-    private Map buildNameToMethodMap(JavaClass clazz)
+    private Map buildNameToMethodMap(JavaType clazz)
     {
         Method[] methods = clazz.getMethods();
         Map retVal = new HashMap();
@@ -548,7 +547,7 @@ public class MethodSetCheck
         return retVal;
     }
 
-    private void check(JavaClass compatBaseline, Method baselineMethod, Method currentMethod)
+    private void check(JavaType compatBaseline, Method baselineMethod, Method currentMethod)
     {
         if (!scopeSelector.isSelected(baselineMethod) && !scopeSelector.isSelected(currentMethod))
         {
@@ -563,10 +562,10 @@ public class MethodSetCheck
         checkFinal(compatBaseline, baselineMethod, currentMethod);
     }
 
-    private void checkParameterTypes(JavaClass compatBaseline, Method baselineMethod, Method currentMethod)
+    private void checkParameterTypes(JavaType compatBaseline, Method baselineMethod, Method currentMethod)
     {
-        Type[] bArgs = baselineMethod.getArgumentTypes();
-        Type[] cArgs = currentMethod.getArgumentTypes();
+        JavaType[] bArgs = baselineMethod.getArgumentTypes();
+        JavaType[] cArgs = currentMethod.getArgumentTypes();
 
         if (bArgs.length != cArgs.length)
         {
@@ -579,10 +578,10 @@ public class MethodSetCheck
         //System.out.println("baselineMethod = " + getMethodId(compatBaseline, baselineMethod));
         for (int i = 0; i < bArgs.length; i++)
         {
-            Type bArg = bArgs[i];
-            Type cArg = cArgs[i];
+            JavaType bArg = bArgs[i];
+            JavaType cArg = cArgs[i];
 
-            if (bArg.toString().equals(cArg.toString()))
+            if (bArg.getName().equals(cArg.getName()))
             {
                 continue;
             }
@@ -599,10 +598,10 @@ public class MethodSetCheck
         }
     }
 
-    private void checkReturnType(JavaClass compatBaseline, Method baselineMethod, Method currentMethod)
+    private void checkReturnType(JavaType compatBaseline, Method baselineMethod, Method currentMethod)
     {
-        Type bReturnType = baselineMethod.getReturnType();
-        Type cReturnType = currentMethod.getReturnType();
+        JavaType bReturnType = baselineMethod.getReturnType();
+        JavaType cReturnType = currentMethod.getReturnType();
 
         // TODO: Check assignability. If the new return type is
         // assignable to the old type, then the code is source-code
@@ -617,18 +616,18 @@ public class MethodSetCheck
     }
 
     private void checkDeclaredExceptions(
-            JavaClass compatBaseline,
+            JavaType compatBaseline,
             Method baselineMethod, Method currentMethod)
     {
         // TODO
     }
 
     private void checkDeprecated(
-            JavaClass compatBaseline,
+            JavaType compatBaseline,
             Method baselineMethod, Method currentMethod)
     {
-        boolean bIsDeprecated = isDeprecated(baselineMethod);
-        boolean cIsDeprecated = isDeprecated(currentMethod);
+        boolean bIsDeprecated = baselineMethod.isDeprecated();
+        boolean cIsDeprecated = currentMethod.isDeprecated();
 
         if (bIsDeprecated && !cIsDeprecated)
         {
@@ -646,10 +645,10 @@ public class MethodSetCheck
      * Report changes in the declared accessibility of a method
      * (public/protected/etc).
      */
-    private void checkVisibility(JavaClass compatBaseline, Method baselineMethod, Method currentMethod)
+    private void checkVisibility(JavaType compatBaseline, Method baselineMethod, Method currentMethod)
     {
-        ScopeSelector.Scope bScope = ScopeSelector.getScope(baselineMethod);
-        ScopeSelector.Scope cScope = ScopeSelector.getScope(currentMethod);
+        Scope bScope = baselineMethod.getEffectiveScope();
+        Scope cScope = currentMethod.getEffectiveScope();
 
         if (cScope.isLessVisibleThan(bScope))
         {
@@ -667,7 +666,7 @@ public class MethodSetCheck
     }
 
     private void checkFinal(
-            JavaClass compatBaseline,
+            JavaType compatBaseline,
             Method baselineMethod, Method currentMethod)
     {
         boolean bIsFinal = baselineMethod.isFinal();
@@ -692,11 +691,11 @@ public class MethodSetCheck
      * @param method the method to identify.
      * @return a human readable id, for example "public void print(java.lang.String)"
      */
-    private String getMethodId(JavaClass clazz, Method method)
+    private String getMethodId(JavaType clazz, Method method)
     {
         StringBuffer buf = new StringBuffer();
 
-        final String scopeDecl = ScopeSelector.getScopeDecl(method);
+        final String scopeDecl = method.getDeclaredScope().getDecl();
         if (scopeDecl.length() > 0)
         {
             buf.append(scopeDecl);
@@ -706,7 +705,7 @@ public class MethodSetCheck
         String name = method.getName();
         if ("<init>".equals(name))
         {
-            final String className = clazz.getClassName();
+            final String className = clazz.getName();
             int idx = className.lastIndexOf('.');
             name = className.substring(idx + 1);
         }
@@ -724,36 +723,23 @@ public class MethodSetCheck
 
     private void appendHumanReadableArgTypeList(Method method, StringBuffer buf)
     {
-        Type[] argTypes = method.getArgumentTypes();
+        JavaType[] argTypes = method.getArgumentTypes();
         String argSeparator = "";
         for (int i = 0; i < argTypes.length; i++)
         {
             buf.append(argSeparator);
-            buf.append(argTypes[i].toString());
+            buf.append(argTypes[i].getName());
             argSeparator = ", ";
         }
     }
 
-    private void fireDiff(Message msg, Severity severity, JavaClass clazz, Method method, String[] args)
+    private void fireDiff(Message msg, Severity severity, JavaType clazz, Method method, String[] args)
     {
-        final String className = clazz.getClassName();
+        final String className = clazz.getName();
         final ApiDifference diff =
             new ApiDifference(
                 msg, severity, className, getMethodId(clazz, method), null, args);
         getApiDiffDispatcher().fireDiff(diff);
     }
 
-    private boolean isDeprecated(Method method)
-    {
-        Attribute[] attrs = method.getAttributes();
-        for (int i = 0; i < attrs.length; ++i)
-        {
-            if (attrs[i] instanceof org.apache.bcel.classfile.Deprecated)
-            {
-                return true;
-            }
-        }
-
-        return false;
-    }
 }

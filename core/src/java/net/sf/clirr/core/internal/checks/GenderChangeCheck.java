@@ -24,7 +24,7 @@ import net.sf.clirr.core.Message;
 import net.sf.clirr.core.internal.AbstractDiffReporter;
 import net.sf.clirr.core.internal.ApiDiffDispatcher;
 import net.sf.clirr.core.internal.ClassChangeCheck;
-import org.apache.bcel.classfile.JavaClass;
+import net.sf.clirr.core.spi.JavaType;
 
 /**
  * Detects gender changes (a class became an interface or vice versa).
@@ -49,19 +49,19 @@ public final class GenderChangeCheck
 
 
     /** {@inheritDoc} */
-    public boolean check(JavaClass baseLine, JavaClass current)
+    public boolean check(JavaType baseLine, JavaType current)
     {
-        if (baseLine.isClass() && current.isInterface())
+        if (!baseLine.isInterface() && current.isInterface())
         {
             log(MSG_GENDER_CLASS_TO_INTERFACE,
                 getSeverity(baseLine, Severity.ERROR),
-                baseLine.getClassName(), null, null, null);
+                baseLine.getName(), null, null, null);
         }
-        else if (baseLine.isInterface() && current.isClass())
+        else if (baseLine.isInterface() && !current.isInterface())
         {
             log(MSG_GENDER_INTERFACE_TO_CLASS,
                 getSeverity(baseLine, Severity.ERROR),
-                baseLine.getClassName(), null, null, null);
+                baseLine.getName(), null, null, null);
         }
 
         return true;

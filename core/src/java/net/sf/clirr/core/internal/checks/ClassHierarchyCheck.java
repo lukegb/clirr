@@ -25,8 +25,8 @@ import net.sf.clirr.core.internal.AbstractDiffReporter;
 import net.sf.clirr.core.internal.ApiDiffDispatcher;
 import net.sf.clirr.core.internal.ClassChangeCheck;
 import net.sf.clirr.core.internal.CoIterator;
-import net.sf.clirr.core.internal.JavaClassNameComparator;
-import org.apache.bcel.classfile.JavaClass;
+import net.sf.clirr.core.internal.NameComparator;
+import net.sf.clirr.core.spi.JavaType;
 
 /**
  * Detects changes in the set of superclasses.
@@ -48,30 +48,30 @@ public final class ClassHierarchyCheck extends AbstractDiffReporter implements C
     }
 
     /** {@inheritDoc} */
-    public boolean check(JavaClass compatBaseline, JavaClass currentVersion)
+    public boolean check(JavaType compatBaseline, JavaType currentVersion)
     {
-        JavaClass[] compatSupers = compatBaseline.getSuperClasses();
-        JavaClass[] currentSupers = currentVersion.getSuperClasses();
+        JavaType[] compatSupers = compatBaseline.getSuperClasses();
+        JavaType[] currentSupers = currentVersion.getSuperClasses();
 
         boolean isThrowable = false;
         for (int i = 0; i < compatSupers.length; i++)
         {
-            JavaClass javaClass = compatSupers[i];
-            if ("java.lang.Throwable".equals(javaClass.getClassName()))
+            JavaType javaClass = compatSupers[i];
+            if ("java.lang.Throwable".equals(javaClass.getName()))
             {
                 isThrowable = true;
             }
         }
 
-        final String className = compatBaseline.getClassName();
+        final String className = compatBaseline.getName();
 
-        CoIterator iter = new CoIterator(JavaClassNameComparator.COMPARATOR, compatSupers, currentSupers);
+        CoIterator iter = new CoIterator(new NameComparator(), compatSupers, currentSupers);
 
         while (iter.hasNext())
         {
             iter.next();
-            JavaClass baselineSuper = (JavaClass) iter.getLeft();
-            JavaClass currentSuper = (JavaClass) iter.getRight();
+            JavaType baselineSuper = (JavaType) iter.getLeft();
+            JavaType currentSuper = (JavaType) iter.getRight();
 
             if (baselineSuper == null)
             {
@@ -90,13 +90,13 @@ public final class ClassHierarchyCheck extends AbstractDiffReporter implements C
 
                 log(MSG_ADDED_CLASS_TO_SUPERCLASSES,
                     getSeverity(compatBaseline, severity), className, null, null,
-                    new String[] {currentSuper.getClassName()});
+                    new String[] {currentSuper.getName()});
             }
             else if (currentSuper == null)
             {
                 log(MSG_REMOVED_CLASS_FROM_SUPERCLASSES,
                     getSeverity(compatBaseline, Severity.ERROR), className, null, null,
-                    new String[] {baselineSuper.getClassName()});
+                    new String[] {baselineSuper.getName()});
             }
         }
 

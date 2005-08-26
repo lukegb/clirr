@@ -25,13 +25,14 @@ import net.sf.clirr.core.internal.ClassChangeCheck;
 import net.sf.clirr.core.internal.AbstractDiffReporter;
 import net.sf.clirr.core.internal.ApiDiffDispatcher;
 import net.sf.clirr.core.internal.CoIterator;
+import net.sf.clirr.core.internal.NameComparator;
+import net.sf.clirr.core.spi.Field;
+import net.sf.clirr.core.spi.JavaType;
+import net.sf.clirr.core.spi.Scope;
 import net.sf.clirr.core.ApiDifference;
 import net.sf.clirr.core.Severity;
 import net.sf.clirr.core.ScopeSelector;
 import net.sf.clirr.core.Message;
-import org.apache.bcel.classfile.JavaClass;
-import org.apache.bcel.classfile.Field;
-import org.apache.bcel.classfile.ConstantValue;
 
 /**
  * Checks the fields of a class.
@@ -55,21 +56,7 @@ public class FieldSetCheck
     private static final Message MSG_FIELD_LESS_ACCESSIBLE = new Message(6010);
     private static final Message MSG_CONSTANT_FIELD_REMOVED = new Message(6011);
 
-    private static final class FieldNameComparator implements Comparator
-    {
-        public int compare(Object o1, Object o2)
-        {
-            Field f1 = (Field) o1;
-            Field f2 = (Field) o2;
-
-            final String name1 = f1.getName();
-            final String name2 = f2.getName();
-
-            return name1.compareTo(name2);
-        }
-    }
-
-    private static final Comparator COMPARATOR = new FieldNameComparator();
+    private static final Comparator COMPARATOR = new NameComparator();
     private ScopeSelector scopeSelector;
 
     public FieldSetCheck(ApiDiffDispatcher dispatcher, ScopeSelector scopeSelector)
@@ -78,7 +65,7 @@ public class FieldSetCheck
         this.scopeSelector = scopeSelector;
     }
 
-    public final boolean check(JavaClass baselineClass, JavaClass currentClass)
+    public final boolean check(JavaType baselineClass, JavaType currentClass)
     {
         final Field[] baselineFields = baselineClass.getFields();
         final Field[] currentFields = currentClass.getFields();
@@ -97,7 +84,7 @@ public class FieldSetCheck
             {
                 if (scopeSelector.isSelected(cField))
                 {
-                    String scope = ScopeSelector.getScopeDesc(cField);
+                    String scope = cField.getDeclaredScope().getDesc();
                     fireDiff(MSG_FIELD_ADDED,
                         Severity.INFO, currentClass, cField,
                         new String[]{scope});
@@ -141,19 +128,19 @@ public class FieldSetCheck
         return true;
     }
 
-    private void checkForConstantValueChange(Field bField, Field cField, JavaClass currentClass)
+    private void checkForConstantValueChange(Field bField, Field cField, JavaType currentClass)
     {
         if (!(bField.isStatic() && bField.isFinal() && cField.isStatic() && cField.isFinal()))
         {
             return;
         }
 
-        final ConstantValue bVal = bField.getConstantValue();
+        final Object bVal = bField.getConstantValue();
 
         if (bVal != null)
         {
             final String bValRep = bVal.toString();
-            final ConstantValue cVal = cField.getConstantValue();
+            final Object cVal = cField.getConstantValue();
             if (cVal == null)
             {
                 // TODO: also check whether old field is final. If it's not
@@ -182,7 +169,7 @@ public class FieldSetCheck
         }
     }
 
-    private void checkForTypeChange(Field bField, Field cField, JavaClass currentClass)
+    private void checkForTypeChange(Field bField, Field cField, JavaType currentClass)
     {
         final String bSig = bField.getType().toString();
         final String cSig = cField.getType().toString();
@@ -195,7 +182,7 @@ public class FieldSetCheck
         }
     }
 
-    private void checkForModifierChange(Field bField, Field cField, JavaClass clazz)
+    private void checkForModifierChange(Field bField, Field cField, JavaType clazz)
     {
         if (bField.isFinal() && !cField.isFinal())
         {
@@ -228,10 +215,10 @@ public class FieldSetCheck
         // TODO: What about volatile?
     }
 
-    private void checkForVisibilityChange(Field bField, Field cField, JavaClass clazz)
+    private void checkForVisibilityChange(Field bField, Field cField, JavaType clazz)
     {
-        ScopeSelector.Scope bScope = ScopeSelector.getScope(bField);
-        ScopeSelector.Scope cScope = ScopeSelector.getScope(cField);
+        Scope bScope = bField.getEffectiveScope();
+        Scope cScope = cField.getEffectiveScope();
 
         if (cScope.isMoreVisibleThan(bScope))
         {
@@ -251,7 +238,7 @@ public class FieldSetCheck
     private void fireDiff(
         Message msg,
         Severity severity,
-        JavaClass clazz,
+        JavaType clazz,
         Field field,
         String[] args)
     {
@@ -262,11 +249,11 @@ public class FieldSetCheck
         Message msg,
         Severity binarySeverity,
         Severity sourceSeverity,
-        JavaClass clazz,
+        JavaType clazz,
         Field field,
         String[] args)
     {
-        final String className = clazz.getClassName();
+        final String className = clazz.getName();
         final ApiDifference diff =
             new ApiDifference(
                 msg,

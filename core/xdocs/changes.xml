@@ -7,6 +7,20 @@
   </properties>
   <body>
 
+    <release version="0.6-dev" date="in CVS">
+        <action dev="lkuehne" type="add">
+            Clirr now provides a SPI to represent the java code structure, the checks
+            now work against this SPI. Clirr provides a SPI implementation that works
+            on jar files, but other implementations can be used as well. For example,
+            an IDE will typically already have an in-memory representation of the Java
+            sources, so a Clirr IDE plugin could use that (via an adapter) and would
+            not require a full compile before running Clirr.
+        </action>
+        <action dev="lkuehne" type="fix">
+            Improved test coverage.
+        </action>
+    </release>
+
     <release version="0.5" date="2005-08-07">
         <action dev="lkuehne" type="fix">
             Avoid false alarms when package visible classes are removed.

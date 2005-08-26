@@ -24,11 +24,9 @@ import net.sf.clirr.core.Message;
 import net.sf.clirr.core.internal.AbstractDiffReporter;
 import net.sf.clirr.core.internal.ApiDiffDispatcher;
 import net.sf.clirr.core.internal.ClassChangeCheck;
-import net.sf.clirr.core.CheckerException;
-import net.sf.clirr.core.ScopeSelector;
-
-import org.apache.bcel.classfile.JavaClass;
-import org.apache.bcel.classfile.Method;
+import net.sf.clirr.core.spi.JavaType;
+import net.sf.clirr.core.spi.Method;
+import net.sf.clirr.core.spi.Scope;
 
 /**
  * Detects changes in class modifiers (abstract, final).
@@ -56,24 +54,15 @@ public final class ClassModifierCheck
     }
 
     /** {@inheritDoc} */
-    public boolean check(JavaClass compatBaseLine, JavaClass currentVersion)
+    public boolean check(JavaType compatBaseLine, JavaType currentVersion)
     {
-        final String className = compatBaseLine.getClassName();
+        final String className = compatBaseLine.getName();
 
-        try
+        Scope currentScope = currentVersion.getEffectiveScope();
+        if (currentScope.isLessVisibleThan(Scope.PACKAGE))
         {
-            ScopeSelector.Scope currentScope = ScopeSelector.getClassScope(currentVersion);
-            if (currentScope == ScopeSelector.SCOPE_PRIVATE)
-            {
-                // for private classes, we don't care if they are now final,
-                // or now abstract, or now an interface.
-                return true;
-            }
-        }
-        catch (CheckerException ex)
-        {
-            log(MSG_MODIFIER_UNABLE_TO_DETERMINE_CLASS_SCOPE,
-                    Severity.ERROR, className, null, null, null);
+            // for private classes, we don't care if they are now final,
+            // or now abstract, or now an interface.
             return true;
         }
 
@@ -126,7 +115,7 @@ public final class ClassModifierCheck
      * classes we should not emit errors when a final modifier is
      * introduced.
      */
-    private boolean isEffectivelyFinal(JavaClass clazz)
+    private boolean isEffectivelyFinal(JavaType clazz)
     {
         if (clazz.isFinal())
         {
@@ -142,7 +131,7 @@ public final class ClassModifierCheck
             final String methodName = method.getName();
             if (methodName.equals("<init>"))
             {
-                if (method.isPublic() || method.isProtected())
+                if (method.getEffectiveScope().isMoreVisibleThan(Scope.PACKAGE))
                 {
                     return false;
                 }

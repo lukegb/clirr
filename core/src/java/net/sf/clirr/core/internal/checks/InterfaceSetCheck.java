@@ -28,8 +28,8 @@ import net.sf.clirr.core.internal.AbstractDiffReporter;
 import net.sf.clirr.core.internal.ApiDiffDispatcher;
 import net.sf.clirr.core.internal.ClassChangeCheck;
 import net.sf.clirr.core.internal.CoIterator;
-import net.sf.clirr.core.internal.JavaClassNameComparator;
-import org.apache.bcel.classfile.JavaClass;
+import net.sf.clirr.core.internal.NameComparator;
+import net.sf.clirr.core.spi.JavaType;
 
 /**
  * Detects changes in the set of interfaces implemented by a class.
@@ -53,30 +53,30 @@ public final class InterfaceSetCheck
     }
 
     /** {@inheritDoc} */
-    public boolean check(JavaClass compatBaseline, JavaClass currentVersion)
+    public boolean check(JavaType compatBaseline, JavaType currentVersion)
     {
-        JavaClass[] compatInterfaces = compatBaseline.getAllInterfaces();
-        JavaClass[] currentInterfaces = currentVersion.getAllInterfaces();
+        JavaType[] compatInterfaces = compatBaseline.getAllInterfaces();
+        JavaType[] currentInterfaces = currentVersion.getAllInterfaces();
 
         // Note: getAllInterfaces might return multiple array entries with the same
         // interface, so we need to use sets to remove duplicates...
         Set compat = createClassSet(compatInterfaces);
         Set current = createClassSet(currentInterfaces);
 
-        final String className = compatBaseline.getClassName();
+        final String className = compatBaseline.getName();
 
         CoIterator iter = new CoIterator(
-            JavaClassNameComparator.COMPARATOR, compat, current);
+            new NameComparator(), compat, current);
 
         while (iter.hasNext())
         {
             iter.next();
 
-            JavaClass compatInterface = (JavaClass) iter.getLeft();
-            JavaClass currentInterface = (JavaClass) iter.getRight();
+            JavaType compatInterface = (JavaType) iter.getLeft();
+            JavaType currentInterface = (JavaType) iter.getRight();
 
-            if (compatInterface != null && className.equals(compatInterface.getClassName())
-                || currentInterface != null && className.equals(currentInterface.getClassName()))
+            if (compatInterface != null && className.equals(compatInterface.getName())
+                || currentInterface != null && className.equals(currentInterface.getName()))
             {
                 // This occurs because an interface has itself in the set of all interfaces.
                 // We can't just let the test below handle this case because that won't
@@ -96,14 +96,14 @@ public final class InterfaceSetCheck
                 // a throwable. However this is fairly low probability..
                 log(MSG_IFACE_ADDED,
                         Severity.INFO, className, null, null,
-                        new String[] {currentInterface.getClassName()});
+                        new String[] {currentInterface.getName()});
             }
             else if (currentInterface == null)
             {
                 log(MSG_IFACE_REMOVED,
                         getSeverity(compatBaseline, Severity.ERROR),
                         className, null, null,
-                        new String[] {compatInterface.getClassName()});
+                        new String[] {compatInterface.getName()});
             }
         }
 
@@ -111,16 +111,16 @@ public final class InterfaceSetCheck
     }
 
     /**
-     * Creates a Set of JavaClass objects.
+     * Creates a Set of JavaType objects.
      * @param classes the classes to include in the set, might contain duplicates
-     * @return Set<JavaClass>
+     * @return Set<JavaType>
      */
-    private Set createClassSet(JavaClass[] classes)
+    private Set createClassSet(JavaType[] classes)
     {
-        // JavaClass does not define equals(), so we use a Set implementation
+        // JavaType does not specify the semantics of equals(), so we use a Set implementation
         // that determines equality by invoking a Comparator instead of calling equals()
 
-        Set current = new TreeSet(JavaClassNameComparator.COMPARATOR);
+        Set current = new TreeSet(new NameComparator());
         for (int i = 0; i < classes.length; i++)
         {
             current.add(classes[i]);

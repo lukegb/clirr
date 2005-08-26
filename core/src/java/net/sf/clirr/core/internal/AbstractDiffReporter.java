@@ -22,11 +22,10 @@ package net.sf.clirr.core.internal;
 import net.sf.clirr.core.ApiDifference;
 import net.sf.clirr.core.Severity;
 import net.sf.clirr.core.Message;
-import net.sf.clirr.core.ScopeSelector;
-import net.sf.clirr.core.CheckerException;
-import org.apache.bcel.classfile.Field;
-import org.apache.bcel.classfile.Method;
-import org.apache.bcel.classfile.JavaClass;
+import net.sf.clirr.core.spi.JavaType;
+import net.sf.clirr.core.spi.Field;
+import net.sf.clirr.core.spi.Method;
+import net.sf.clirr.core.spi.Scope;
 
 public abstract class AbstractDiffReporter
 {
@@ -73,34 +72,17 @@ public abstract class AbstractDiffReporter
      * @return param sev if the class is public/protected, and Severity.INFO
      * if the class is package or private scope.
      */
-    protected final Severity getSeverity(JavaClass clazz, Severity sev)
+    protected final Severity getSeverity(JavaType clazz, Severity sev)
     {
-        // use ScopeSelector, not isPublic/isProtected, because the latter
-        // methods don't correctly handle scopes of nested classes.
-        ScopeSelector.Scope scope;
+        Scope scope = clazz.getEffectiveScope();
 
-        try
+        if (scope.isLessVisibleThan(Scope.PROTECTED))
         {
-            scope = ScopeSelector.getClassScope(clazz);
-        }
-        catch (CheckerException ex)
-        {
-            // Note: this should never happen. If it does, it probably
-            // means clirr has been passed a severely-stuffed-up jar
-            // for analysis.
-            log(MSG_UNABLE_TO_DETERMINE_CLASS_SCOPE,
-                Severity.ERROR, clazz.getClassName(), null, null, null);
-            return sev;
-        }
-
-        if ((scope == ScopeSelector.SCOPE_PUBLIC)
-            || (scope == ScopeSelector.SCOPE_PROTECTED))
-        {
-            return sev;
+            return Severity.INFO;
         }
         else
         {
-            return Severity.INFO;
+            return sev;
         }
     }
 
@@ -128,9 +110,10 @@ public abstract class AbstractDiffReporter
      * @return param sev if the method is public/protected, and Severity.INFO
      * if the method is package or private scope.
      */
-    protected final Severity getSeverity(JavaClass clazz, Method method, Severity sev)
+    protected final Severity getSeverity(JavaType clazz, Method method, Severity sev)
     {
-        if (method.isPublic() || method.isProtected())
+        
+        if (!method.getDeclaredScope().isLessVisibleThan(Scope.PROTECTED))
         {
             return getSeverity(clazz, sev);
         }
@@ -164,9 +147,9 @@ public abstract class AbstractDiffReporter
      * @return param sev if the field is public/protected, and Severity.INFO
      * if the field is package or private scope.
      */
-    protected final Severity getSeverity(JavaClass clazz, Field field, Severity sev)
+    protected final Severity getSeverity(JavaType clazz, Field field, Severity sev)
     {
-        if (field.isPublic() || field.isProtected())
+        if (!field.getDeclaredScope().isLessVisibleThan(Scope.PROTECTED))
         {
             return getSeverity(clazz, sev);
         }

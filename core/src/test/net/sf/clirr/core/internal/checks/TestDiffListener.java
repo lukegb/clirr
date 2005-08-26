@@ -7,10 +7,11 @@ import java.util.Iterator;
 import net.sf.clirr.core.internal.ApiDiffDispatcher;
 import net.sf.clirr.core.internal.checks.ExpectedDiff;
 import net.sf.clirr.core.ApiDifference;
+import net.sf.clirr.core.DiffListener;
 import net.sf.clirr.core.MessageTranslator;
 import junit.framework.TestCase;
 
-class TestDiffListener implements ApiDiffDispatcher
+class TestDiffListener implements ApiDiffDispatcher, DiffListener
 {
         private MessageTranslator translator = new MessageTranslator();
 
@@ -94,5 +95,17 @@ class TestDiffListener implements ApiDiffDispatcher
                 // we must have found at least one unexpected diff
                 TestCase.fail(buf.toString());
             }
+        }
+
+        public void start() 
+        {
+        }
+
+        public void reportDiff(ApiDifference difference) {
+            diffs.add(difference);
+        }
+
+        public void stop() 
+        {
         }
 }

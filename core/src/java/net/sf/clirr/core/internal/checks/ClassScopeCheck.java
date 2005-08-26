@@ -25,9 +25,8 @@ import net.sf.clirr.core.Message;
 import net.sf.clirr.core.internal.AbstractDiffReporter;
 import net.sf.clirr.core.internal.ApiDiffDispatcher;
 import net.sf.clirr.core.internal.ClassChangeCheck;
-import net.sf.clirr.core.CheckerException;
-
-import org.apache.bcel.classfile.JavaClass;
+import net.sf.clirr.core.spi.JavaType;
+import net.sf.clirr.core.spi.Scope;
 
 /**
  * Detects changes in class access declaration, for both "top-level" classes,
@@ -68,33 +67,10 @@ public final class ClassScopeCheck
     }
 
     /** {@inheritDoc} */
-    public boolean check(JavaClass compatBaseline, JavaClass currentVersion)
+    public boolean check(JavaType compatBaseline, JavaType currentVersion)
     {
-        ScopeSelector.Scope bScope;
-        try
-        {
-            bScope = ScopeSelector.getClassScope(compatBaseline);
-        }
-        catch (CheckerException ex)
-        {
-            log(MSG_ERROR_DETERMINING_SCOPE_OLD,
-                Severity.ERROR, compatBaseline.getClassName(), null, null,
-                new String[] {ex.getMessage()});
-            return false;
-        }
-
-        ScopeSelector.Scope cScope;
-        try
-        {
-            cScope = ScopeSelector.getClassScope(currentVersion);
-        }
-        catch (CheckerException ex)
-        {
-            log(MSG_ERROR_DETERMINING_SCOPE_NEW,
-                Severity.ERROR, compatBaseline.getClassName(), null, null,
-                new String[] {ex.getMessage()});
-            return false;
-        }
+        Scope bScope = compatBaseline.getEffectiveScope();
+        Scope cScope = currentVersion.getEffectiveScope();
 
         if (!scopeSelector.isSelected(bScope) && !scopeSelector.isSelected(cScope))
         {
@@ -109,7 +85,7 @@ public final class ClassScopeCheck
             String[] args = {bScope.getDesc(), cScope.getDesc()};
 
             log(MSG_SCOPE_INCREASED,
-                Severity.INFO, compatBaseline.getClassName(), null, null, args);
+                Severity.INFO, compatBaseline.getName(), null, null, args);
         }
         else if (cScope.isLessVisibleThan(bScope))
         {
@@ -117,7 +93,7 @@ public final class ClassScopeCheck
 
             log(MSG_SCOPE_DECREASED,
                 getSeverity(compatBaseline, Severity.ERROR),
-                compatBaseline.getClassName(), null, null, args);
+                compatBaseline.getName(), null, null, args);
         }
 
         // Apply further checks only if both versions of the class have scopes

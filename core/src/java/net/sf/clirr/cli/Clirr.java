@@ -25,7 +25,8 @@ import net.sf.clirr.core.ClassSelector;
 import net.sf.clirr.core.PlainDiffListener;
 import net.sf.clirr.core.XmlDiffListener;
 import net.sf.clirr.core.DiffListener;
-import net.sf.clirr.core.ScopeSelector;
+import net.sf.clirr.core.spi.Scope;
+
 import org.apache.commons.cli.BasicParser;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.HelpFormatter;
@@ -102,11 +103,11 @@ public class Clirr
         Checker checker = new Checker();
         if (showAll)
         {
-            checker.getScopeSelector().setScope(ScopeSelector.SCOPE_PRIVATE);
+            checker.getScopeSelector().setScope(Scope.PRIVATE);
         }
         else if (showPkg)
         {
-            checker.getScopeSelector().setScope(ScopeSelector.SCOPE_PACKAGE);
+            checker.getScopeSelector().setScope(Scope.PACKAGE);
         }
 
         ClassSelector classSelector;

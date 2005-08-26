@@ -19,10 +19,10 @@
 
 package net.sf.clirr.core.internal;
 
-import org.apache.bcel.classfile.JavaClass;
 import net.sf.clirr.core.CheckerException;
+import net.sf.clirr.core.spi.JavaType;
 
 public interface ClassChangeCheck
 {
-    boolean check(JavaClass compatBaseline, JavaClass currentVersion) throws CheckerException;
+    boolean check(JavaType compatBaseline, JavaType currentVersion) throws CheckerException;
 }
