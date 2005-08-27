@@ -16,6 +16,10 @@
             sources, so a Clirr IDE plugin could use that (via an adapter) and would
             not require a full compile before running Clirr.
         </action>
+       <action dev="lkuehne" type="fix">
+            <!-- Bug #1267189-->
+            Ant task: Class exclusion via apiclasses subelement was broken on Windows.
+        </action>
         <action dev="lkuehne" type="fix">
             Improved test coverage.
         </action>
