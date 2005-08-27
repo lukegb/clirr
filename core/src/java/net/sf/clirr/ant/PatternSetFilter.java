@@ -57,7 +57,7 @@ class PatternSetFilter implements ClassFilter
         // The patternset evaluation code below was copied from Apache Ant's Expand task.
         // I feel this code should be available as a library function inside Ant somewhere...
         String className = clazz.getClassName();
-        String name = className.replace('.', '/');
+        String name = className.replace('.', File.separatorChar);
 
 
         if (patternSets == null || patternSets.isEmpty())
