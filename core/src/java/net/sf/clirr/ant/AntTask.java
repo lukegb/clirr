@@ -35,6 +35,8 @@ import net.sf.clirr.core.XmlDiffListener;
 import net.sf.clirr.core.ClassSelector;
 import net.sf.clirr.core.ClassFilter;
 import net.sf.clirr.core.internal.ExceptionUtil;
+import net.sf.clirr.core.internal.bcel.BcelTypeArrayBuilder;
+import net.sf.clirr.core.spi.JavaType;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.DirectoryScanner;
@@ -294,8 +296,14 @@ public final class AntTask extends Task
         checker.addDiffListener(counter);
         try
         {
-            checker.reportDiffs(
-                origJars, newJars, origThirdPartyLoader, newThirdPartyLoader, buildClassFilter());
+            ClassFilter classSelector = buildClassFilter();
+            final JavaType[] origClasses =
+                BcelTypeArrayBuilder.createClassSet(origJars, origThirdPartyLoader, classSelector);
+            
+            final JavaType[] newClasses =
+                BcelTypeArrayBuilder.createClassSet(newJars, newThirdPartyLoader, classSelector);
+            
+            checker.reportDiffs(origClasses, newClasses);
         }
         catch (CheckerException ex)
         {

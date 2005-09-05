@@ -7,6 +7,8 @@ import net.sf.clirr.core.Checker;
 import net.sf.clirr.core.CheckerFactory;
 import net.sf.clirr.core.Severity;
 import net.sf.clirr.core.internal.ClassChangeCheck;
+import net.sf.clirr.core.internal.bcel.BcelTypeArrayBuilder;
+import net.sf.clirr.core.spi.JavaType;
 import net.sf.clirr.core.ClassFilter;
 
 public class ClassAddedRemovedTest extends AbstractCheckTestCase
@@ -19,11 +21,13 @@ public class ClassAddedRemovedTest extends AbstractCheckTestCase
         
         ClassFilter classSelector = createClassSelector();
 
-        checker.reportDiffs(
-                getBaseLine(), getCurrent(),
-                new URLClassLoader(new URL[]{}),
-                new URLClassLoader(new URL[]{}),
-                classSelector);
+        final JavaType[] origClasses =
+            BcelTypeArrayBuilder.createClassSet(getBaseLine(), new URLClassLoader(new URL[]{}), classSelector);
+        
+        final JavaType[] newClasses =
+            BcelTypeArrayBuilder.createClassSet(getCurrent(), new URLClassLoader(new URL[]{}), classSelector);
+        
+        checker.reportDiffs(origClasses, newClasses);
 
         ExpectedDiff[] expected = new ExpectedDiff[] {
                 new ExpectedDiff("Class testlib.AddedClass added", Severity.INFO, "testlib.AddedClass", null, null),

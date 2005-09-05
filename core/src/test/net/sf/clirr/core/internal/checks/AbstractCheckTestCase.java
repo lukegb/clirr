@@ -7,6 +7,9 @@ import net.sf.clirr.core.ApiDifference;
 import net.sf.clirr.core.CheckerFactory;
 import net.sf.clirr.core.ClassFilter;
 import net.sf.clirr.core.internal.ClassChangeCheck;
+import net.sf.clirr.core.internal.bcel.BcelTypeArrayBuilder;
+import net.sf.clirr.core.spi.JavaType;
+
 import org.apache.bcel.util.ClassSet;
 
 import java.io.File;
@@ -53,11 +56,13 @@ public abstract class AbstractCheckTestCase extends TestCase
         Checker checker = CheckerFactory.createChecker(createCheck(tdl));
         ClassFilter classSelector = createClassSelector();
 
-        checker.reportDiffs(
-            getBaseLine(), getCurrent(),
-            new URLClassLoader(new URL[]{}),
-            new URLClassLoader(new URL[]{}),
-            classSelector);
+        final JavaType[] origClasses =
+            BcelTypeArrayBuilder.createClassSet(getBaseLine(), new URLClassLoader(new URL[]{}), classSelector);
+        
+        final JavaType[] newClasses =
+            BcelTypeArrayBuilder.createClassSet(getCurrent(), new URLClassLoader(new URL[]{}), classSelector);
+        
+        checker.reportDiffs(origClasses, newClasses);
 
         tdl.checkExpected(expected);
     }

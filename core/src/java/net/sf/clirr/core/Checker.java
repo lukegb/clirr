@@ -22,36 +22,20 @@ package net.sf.clirr.core;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Enumeration;
-import java.util.zip.ZipFile;
-import java.util.zip.ZipEntry;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
-import java.net.MalformedURLException;
-import java.net.URLClassLoader;
 
-import net.sf.clirr.core.internal.bcel.BcelJavaType;
-import net.sf.clirr.core.internal.checks.ClassHierarchyCheck;
-import net.sf.clirr.core.internal.checks.ClassScopeCheck;
-import net.sf.clirr.core.internal.checks.ClassModifierCheck;
-import net.sf.clirr.core.internal.checks.GenderChangeCheck;
-import net.sf.clirr.core.internal.checks.InterfaceSetCheck;
-import net.sf.clirr.core.internal.checks.FieldSetCheck;
-import net.sf.clirr.core.internal.checks.MethodSetCheck;
 import net.sf.clirr.core.internal.ApiDiffDispatcher;
 import net.sf.clirr.core.internal.ClassChangeCheck;
 import net.sf.clirr.core.internal.CoIterator;
-import net.sf.clirr.core.internal.ExceptionUtil;
 import net.sf.clirr.core.internal.NameComparator;
+import net.sf.clirr.core.internal.checks.ClassHierarchyCheck;
+import net.sf.clirr.core.internal.checks.ClassModifierCheck;
+import net.sf.clirr.core.internal.checks.ClassScopeCheck;
+import net.sf.clirr.core.internal.checks.FieldSetCheck;
+import net.sf.clirr.core.internal.checks.GenderChangeCheck;
+import net.sf.clirr.core.internal.checks.InterfaceSetCheck;
+import net.sf.clirr.core.internal.checks.MethodSetCheck;
 import net.sf.clirr.core.spi.JavaType;
 import net.sf.clirr.core.spi.Scope;
-
-import org.apache.bcel.classfile.JavaClass;
-import org.apache.bcel.classfile.ClassParser;
-import org.apache.bcel.util.Repository;
-import org.apache.bcel.util.ClassLoaderRepository;
 
 /**
  * This is the main class to be used by Clirr frontends,
@@ -137,177 +121,6 @@ public final class Checker implements ApiDiffDispatcher
     }
 
     /**
-     * Compare the classes in the two sets of jars and report any differences
-     * to this object's DiffListener object. If the classes in those jars reference
-     * third party classes (e.g. as base class, implemented interface or method param),
-     * such third party classes must be made available via the xyzThirdPartyLoader
-     * classloaders.
-     *
-     * @param origJars is a set of jars containing the "original" versions of
-     * the classes to be compared.
-     *
-     * @param newJars is a set of jars containing the new versions of the
-     * classes to be compared.
-     *
-     * @param origThirdPartyLoader is a classloader that provides third party classes
-     * which are referenced by origJars.
-     *
-     * @param newThirdPartyLoader is a classloader that provides third party classes
-     * which are referenced by newJars.
-     *
-     * @param classSelector is an object which determines which classes from the
-     * old and new jars are to be compared. This parameter may be null, in
-     * which case all classes in the old and new jars are compared.
-     */
-    public void reportDiffs(
-        File[] origJars, File[] newJars,
-        ClassLoader origThirdPartyLoader, ClassLoader newThirdPartyLoader,
-        ClassFilter classSelector)
-        throws CheckerException
-    {
-        if (classSelector == null)
-        {
-            // create a class selector that selects all classes
-            classSelector = new ClassSelector(ClassSelector.MODE_UNLESS);
-        }
-
-        final JavaType[] origClasses =
-            createClassSet(origJars, origThirdPartyLoader, classSelector);
-
-        final JavaType[] newClasses =
-            createClassSet(newJars, newThirdPartyLoader, classSelector);
-
-        reportDiffs(origClasses, newClasses);
-    }
-
-    /**
-     * Creates a set of classes to check.
-     *
-     * @param jarFiles a set of jar filed to scan for class files.
-     *
-     * @param thirdPartyClasses loads classes that are referenced
-     * by the classes in the jarFiles
-     *
-     * @param classSelector is an object which determines which classes from the
-     * old and new jars are to be compared. This parameter may be null, in
-     * which case all classes in the old and new jars are compared.
-     */
-    private static JavaType[] createClassSet(
-        File[] jarFiles, ClassLoader thirdPartyClasses, ClassFilter classSelector)
-        throws CheckerException
-    {
-        if (classSelector == null)
-        {
-            // create a class selector that selects all classes
-            classSelector = new ClassSelector(ClassSelector.MODE_UNLESS);
-        }
-
-        ClassLoader classLoader = createClassLoader(jarFiles, thirdPartyClasses);
-
-        Repository repository = new ClassLoaderRepository(classLoader);
-
-        List selected = new ArrayList();
-
-        for (int i = 0; i < jarFiles.length; i++)
-        {
-            File jarFile = jarFiles[i];
-            ZipFile zip = null;
-            try
-            {
-                zip = new ZipFile(jarFile, ZipFile.OPEN_READ);
-            }
-            catch (IOException ex)
-            {
-                throw new CheckerException(
-                    "Cannot open " + jarFile + " for reading", ex);
-            }
-            Enumeration enumEntries = zip.entries();
-            while (enumEntries.hasMoreElements())
-            {
-                ZipEntry zipEntry = (ZipEntry) enumEntries.nextElement();
-                if (!zipEntry.isDirectory() && zipEntry.getName().endsWith(".class"))
-                {
-                    JavaClass clazz = extractClass(zipEntry, zip, repository);
-                    if (classSelector.isSelected(clazz))
-                    {
-                        selected.add(new BcelJavaType(clazz));
-                        repository.storeClass(clazz);
-                    }
-                }
-            }
-        }
-
-        JavaType[] ret = new JavaType[selected.size()];
-        selected.toArray(ret);
-        return ret;
-    }
-
-    private static JavaClass extractClass(
-        ZipEntry zipEntry, ZipFile zip, Repository repository)
-        throws CheckerException
-    {
-        String name = zipEntry.getName();
-        InputStream is = null;
-        try
-        {
-            is = zip.getInputStream(zipEntry);
-
-            ClassParser parser = new ClassParser(is, name);
-            JavaClass clazz = parser.parse();
-            clazz.setRepository(repository);
-            return clazz;
-        }
-        catch (IOException ex)
-        {
-            throw new CheckerException(
-                "Cannot read " + zipEntry.getName() + " from " + zip.getName(),
-                ex);
-        }
-        finally
-        {
-            if (is != null)
-            {
-                try
-                {
-                    is.close();
-                }
-                catch (IOException ex)
-                {
-                    throw new CheckerException("Cannot close " + zip.getName(), ex);
-                }
-            }
-        }
-    }
-
-    private static ClassLoader createClassLoader(
-        File[] jarFiles, ClassLoader thirdPartyClasses)
-    {
-        final URL[] jarUrls = new URL[jarFiles.length];
-        for (int i = 0; i < jarFiles.length; i++)
-        {
-            File jarFile = jarFiles[i];
-            try
-            {
-                URL url = jarFile.toURL();
-                jarUrls[i] = url;
-            }
-            catch (MalformedURLException ex)
-            {
-                // this should never happen
-                final IllegalArgumentException illegalArgumentException =
-                    new IllegalArgumentException(
-                        "Cannot create classloader with jar file " + jarFile);
-                ExceptionUtil.initCause(illegalArgumentException, ex);
-                throw illegalArgumentException;
-            }
-        }
-        final URLClassLoader jarsLoader = new URLClassLoader(jarUrls, thirdPartyClasses);
-
-        return jarsLoader;
-    }
-
-
-    /**
      * Checks two sets of classes for api changes and reports
      * them to the DiffListeners.
      * @param compatibilityBaseline the classes that form the
@@ -315,7 +128,7 @@ public final class Checker implements ApiDiffDispatcher
      * @param currentVersion the classes that are checked for
      *        compatibility with compatibilityBaseline
      */
-    private void reportDiffs(
+    public void reportDiffs(
         JavaType[] compatibilityBaseline, JavaType[] currentVersion)
         throws CheckerException
     {

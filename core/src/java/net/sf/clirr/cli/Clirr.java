@@ -25,6 +25,8 @@ import net.sf.clirr.core.ClassSelector;
 import net.sf.clirr.core.PlainDiffListener;
 import net.sf.clirr.core.XmlDiffListener;
 import net.sf.clirr.core.DiffListener;
+import net.sf.clirr.core.internal.bcel.BcelTypeArrayBuilder;
+import net.sf.clirr.core.spi.JavaType;
 import net.sf.clirr.core.spi.Scope;
 
 import org.apache.commons.cli.BasicParser;
@@ -165,7 +167,13 @@ public class Clirr
 
         try
         {
-            checker.reportDiffs(origJars, newJars, loader1, loader2, classSelector);
+            final JavaType[] origClasses =
+                BcelTypeArrayBuilder.createClassSet(origJars, loader1, classSelector);
+            
+            final JavaType[] newClasses =
+                BcelTypeArrayBuilder.createClassSet(newJars, loader2, classSelector);
+            
+            checker.reportDiffs(origClasses, newClasses);
         }
         catch (CheckerException ex)
         {
