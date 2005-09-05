@@ -79,20 +79,10 @@ public final class ScopeSelector
     }
 
     /**
-     * Given a BCEL object, return true if this object's scope is one of the
+     * Given a scoped object, return true if this object's scope is one of the
      * values this object is configured to match.
-     * <p>
-     * Note that BCEL classes Field and Method inherit from the AccessFlags
-     * base class and so are valid parameters to this method.
-     * <p>
-     * Note that despite JavaClass objects extending AccessFlags, the
-     * methods which determine the accessibility of a JavaClass fail
-     * miserably (bad bcel design) for nested classes. Therefore this
-     * method <i>must not</i> be passed a JavaClass object as a parameter.
-     * If this is done, a RuntimeException will be thrown to indicate a
-     * programmer error.
      *
-     * @param object is the object whose scope is to be checked.
+     * @param scoped is the object whose scope is to be checked.
      * @return true if the object is selected.
      */
     public boolean isSelected(Scoped scoped)
