@@ -38,6 +38,7 @@ import org.apache.commons.cli.ParseException;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
@@ -50,10 +51,6 @@ import java.util.ArrayList;
 public class Clirr
 {
 
-    private static final File[] EMPTY_FILE_ARRAY = new File[]{};
-
-    // ===================================================================
-
     public static void main(String[] args)
     {
         new Clirr().run(args);
@@ -63,33 +60,14 @@ public class Clirr
 
     private void run(String[] args)
     {
-        BasicParser parser = new BasicParser();
-        Options options = new Options();
-        options.addOption("o", "old-version", true, "jar files of old version");
-        options.addOption("n", "new-version", true, "jar files of new version");
-        options.addOption("s", "style", true, "output style [text|xml]");
-        options.addOption("i", "include-pkg", true,
-            "include only classes from this package and its subpackages");
-        options.addOption("p", "show-pkg-scope", false,
-            "show package scope classes");
-        options.addOption("a", "show-all-scopes", false,
-            "show private and package classes");
-        options.addOption("f", "output-file", true, "output file name");
+        Options options = defineOptions();
 
-        CommandLine cmdline = null;
-        try
-        {
-            cmdline = parser.parse(options, args);
-        }
-        catch (ParseException ex)
-        {
-            System.err.println("Invalid command line arguments.");
-            usage(options);
-            System.exit(-1);
-        }
+        CommandLine cmdline = parseCommandLine(args, options);
 
         String oldPath = cmdline.getOptionValue('o');
         String newPath = cmdline.getOptionValue('n');
+        String oldClassPath = cmdline.getOptionValue("ocp");
+        String newClassPath = cmdline.getOptionValue("ncp");
         String style = cmdline.getOptionValue('s', "text");
         String outputFileName = cmdline.getOptionValue('f');
         String[] includePkgs = cmdline.getOptionValues('i');
@@ -157,16 +135,17 @@ public class Clirr
             System.exit(-1);
         }
 
+
         File[] origJars = pathToFileArray(oldPath);
         File[] newJars = pathToFileArray(newPath);
-
-        ClassLoader loader1 = new URLClassLoader(new URL[]{});
-        ClassLoader loader2 = new URLClassLoader(new URL[]{});
 
         checker.addDiffListener(diffListener);
 
         try
         {
+            ClassLoader loader1 = new URLClassLoader(convertFilesToURLs(pathToFileArray(oldClassPath)));
+            ClassLoader loader2 = new URLClassLoader(convertFilesToURLs(pathToFileArray(newClassPath)));
+
             final JavaType[] origClasses =
                 BcelTypeArrayBuilder.createClassSet(origJars, loader1, classSelector);
             
@@ -174,12 +153,64 @@ public class Clirr
                 BcelTypeArrayBuilder.createClassSet(newJars, loader2, classSelector);
             
             checker.reportDiffs(origClasses, newClasses);
+            
+            System.exit(0);
         }
         catch (CheckerException ex)
         {
             System.err.println("Unable to complete checks:" + ex.getMessage());
             System.exit(1);
         }
+        catch (MalformedURLException ex)
+        {
+            System.err.println("Unable to create classloader for 3rd party classes:" + ex.getMessage());
+            System.err.println("old classpath: " + oldClassPath);
+            System.err.println("new classpath: " + newClassPath);
+            System.exit(1);
+        }
+    }
+
+    /**
+     * @param args
+     * @param parser
+     * @param options
+     * @return
+     */
+    private CommandLine parseCommandLine(String[] args, Options options) 
+    {
+        BasicParser parser = new BasicParser();
+        CommandLine cmdline = null;
+        try
+        {
+            cmdline = parser.parse(options, args);
+        }
+        catch (ParseException ex)
+        {
+            System.err.println("Invalid command line arguments.");
+            usage(options);
+            System.exit(-1);
+        }
+        return cmdline;
+    }
+
+    /**
+     * @return
+     */
+    private Options defineOptions() {
+        Options options = new Options();
+        options.addOption("o", "old-version", true, "jar files of old version");
+        options.addOption("n", "new-version", true, "jar files of new version");
+        options.addOption("ocp", "orig-classpath", true, "3rd party classpath that is referenced by old-version");
+        options.addOption("ncp", "new-classpath", true, "3rd party classpath that is referenced by new-version");
+        options.addOption("s", "style", true, "output style [text|xml]");
+        options.addOption("i", "include-pkg", true,
+            "include only classes from this package and its subpackages");
+        options.addOption("p", "show-pkg-scope", false,
+            "show package scope classes");
+        options.addOption("a", "show-all-scopes", false,
+            "show private and package classes");
+        options.addOption("f", "output-file", true, "output file name");
+        return options;
     }
 
     private void usage(Options options)
@@ -194,12 +225,17 @@ public class Clirr
 
     private File[] pathToFileArray(String path)
     {
+        if (path == null)
+        {
+            return new File[0];            
+        }
+        
         ArrayList files = new ArrayList();
 
         int pos = 0;
         while (pos < path.length())
         {
-            int colonPos = path.indexOf(pos, ':');
+            int colonPos = path.indexOf(pos, File.pathSeparatorChar);
             if (colonPos == -1)
             {
                 files.add(new File(path.substring(pos)));
@@ -210,6 +246,15 @@ public class Clirr
             pos = colonPos + 1;
         }
 
-        return (File[]) files.toArray(EMPTY_FILE_ARRAY);
+        return (File[]) files.toArray(new File[files.size()]);
+    }
+    
+    private URL[] convertFilesToURLs(File[] files) throws MalformedURLException
+    {
+        URL[] ret = new URL[files.length];
+        for (int i = 0; i < files.length; i++) {
+            ret[i] = files[i].toURL();
+        }
+        return ret;
     }
 }

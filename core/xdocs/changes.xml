@@ -15,12 +15,21 @@
             an IDE will typically already have an in-memory representation of the Java
             sources, so a Clirr IDE plugin could use that (via an adapter) and would
             not require a full compile before running Clirr.
+            The API will most probably be in flux when Clirr adds support for Java 1.5
+            features like generics and varargs.
         </action>
-       <action dev="lkuehne" type="fix">
+        <action dev="lkuehne" type="fix">
             <!-- Bug #1267189-->
             Ant task: Class exclusion via apiclasses subelement was broken on Windows.
         </action>
         <action dev="lkuehne" type="fix">
+            CLI: Handling of multi-jar libraries in parameters -o and -n was broken on Windows.
+        </action>
+        <action dev="lkuehne" type="fix">
+            <!-- Bug #1284303-->
+            CLI: Allow specitication of 3rd party jars via new options -ocp and -ncp.
+        </action>
+        <action dev="lkuehne" type="update">
             Improved test coverage.
         </action>
     </release>
