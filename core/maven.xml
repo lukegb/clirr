@@ -4,7 +4,7 @@
         xmlns:u="jelly:util"
   	xmlns:j="jelly:core">
   
-    <goal name="dist" prereqs="jar:install,uberjar:uberjar"/>
+    <goal name="dist" prereqs="jar:install,javaapp"/>
 
     <preGoal name="test:test">
         <attainGoal name="clirr:compiletestlibs"/>
