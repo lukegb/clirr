@@ -12,17 +12,6 @@
                 href="http://sourceforge.net/project/showfiles.php?group_id=89627">Sourceforge
                 download page</a>.
             </p>
-            <p>
-                Development snapshots are occasionally made available
-                between releases <a
-                href="http://clirr.sourceforge.net/builds/clirr/distributions/">here</a>.
-            </p>
-            <p>
-                <strong>Sourceforge.net provides their infrastructure
-                for free. Please use the Sourceforge download pages above
-                whenever possible to save bandwith on the sourceforge
-                servers.</strong>
-            </p>
         </section>
         <section name="Compile Clirr yourself">
             <p>
@@ -32,11 +21,13 @@
             </p>
             <ul>
                 <li>
-                    <a href="http://maven.apache.org">Maven</a> 1.0 or above.
+                    <a href="http://maven.apache.org">Maven</a> 1.0.2.
+                    Maven 1.1 might also work but is currently untested.
+                    Maven2 will not work.
                 </li>
                 <li>
                     A CVS client. If you are on Linux you probably
-                    already have that. If you are on Windows, you use
+                    already have that. If you are on Windows, you can use
                     the binary that is included in the WinCVS
                     distribution. For other platforms, please search
                     Google for a precompiled client or build one
