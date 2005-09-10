@@ -44,8 +44,12 @@
 cvs -d :pserver:anonymous@cvs.sourceforge.net:/cvsroot/clirr login
 cvs -z3 -d :pserver:anonymous@cvs.sourceforge.net:/cvsroot/clirr checkout clirr
 cd clirr
+maven -Dgoal=jar:install multiproject:goal
 maven
 ]]></source>
+<!--
+TODO: Change the build so maven plugin will build without the explicit multiproject call above
+-->
             <p>
                 Note that the anonymous CVS server on Sourceforge is
                 under heavy load, and you might experience
