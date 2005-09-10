@@ -33,11 +33,11 @@
             Improved test coverage.
         </action>
         <action dev="lkuehne" type="update">
-            <!- rfe #1283314, now using javaapp plugin instead of uberjar plugin -->
+            <!-- rfe #1283314, now using javaapp plugin instead of uberjar plugin -->
             Improved startup time of commandline uberjar.
         </action>
         <action dev="lkuehne" type="fix">
-            <!- rfe #1022920, now using javaapp plugin instead of uberjar plugin -->
+            <!-- rfe #1022920, now using javaapp plugin instead of uberjar plugin -->
             Ant task now works with uberjar.
         </action>
     </release>
