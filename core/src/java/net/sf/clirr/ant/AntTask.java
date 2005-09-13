@@ -21,23 +21,21 @@ package net.sf.clirr.ant;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLClassLoader;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
 import net.sf.clirr.core.Checker;
 import net.sf.clirr.core.CheckerException;
+import net.sf.clirr.core.ClassFilter;
+import net.sf.clirr.core.ClassSelector;
 import net.sf.clirr.core.PlainDiffListener;
 import net.sf.clirr.core.XmlDiffListener;
-import net.sf.clirr.core.ClassSelector;
-import net.sf.clirr.core.ClassFilter;
-import net.sf.clirr.core.internal.ExceptionUtil;
+import net.sf.clirr.core.internal.ClassLoaderUtil;
 import net.sf.clirr.core.internal.bcel.BcelTypeArrayBuilder;
 import net.sf.clirr.core.spi.JavaType;
 
+import org.apache.bcel.classfile.JavaClass;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.DirectoryScanner;
 import org.apache.tools.ant.Project;
@@ -45,7 +43,6 @@ import org.apache.tools.ant.Task;
 import org.apache.tools.ant.types.FileSet;
 import org.apache.tools.ant.types.Path;
 import org.apache.tools.ant.types.PatternSet;
-import org.apache.bcel.classfile.JavaClass;
 
 
 /**
@@ -334,27 +331,7 @@ public final class AntTask extends Task
     private ClassLoader createClasspathLoader(Path classpath)
     {
         final String[] cpEntries = classpath.list();
-        final URL[] cpUrls = new URL[cpEntries.length];
-        for (int i = 0; i < cpEntries.length; i++)
-        {
-            String cpEntry = cpEntries[i];
-            File entry = new File(cpEntry);
-            try
-            {
-                URL url = entry.toURL();
-                cpUrls[i] = url;
-            }
-            catch (MalformedURLException ex)
-            {
-                final IllegalArgumentException illegalArgEx =
-                    new IllegalArgumentException(
-                        "Cannot create classLoader from classpath entry " + entry);
-                ExceptionUtil.initCause(illegalArgEx, ex);
-                throw illegalArgEx;
-            }
-        }
-        final URLClassLoader classPathLoader = new URLClassLoader(cpUrls);
-        return classPathLoader;
+        return ClassLoaderUtil.createClassLoader(cpEntries);
     }
 
     private File[] scanFileSet(FileSet fs)
