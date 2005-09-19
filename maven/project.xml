@@ -8,7 +8,7 @@
   <!-- Note: Although we inherit from project.xml, we still cannot 
   	   remove the <currentVersion> tag as this project.xml is parsed at 
   	   runtime whenever our plugin is called. -->
-  <currentVersion>0.6-dev</currentVersion>
+  <currentVersion>0.6</currentVersion>
 
   <package>net.sf.clirr.maven</package>
   <description>Maven plugin for Clirr</description>
@@ -33,7 +33,7 @@
     <dependency>
       <groupId>maven</groupId>
       <artifactId>maven</artifactId>
-      <version>1.0-rc2</version>
+      <version>1.0.2</version>
     </dependency>
     <dependency>
       <groupId>commons-jelly</groupId>
