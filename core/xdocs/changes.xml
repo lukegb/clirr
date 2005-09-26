@@ -7,7 +7,7 @@
   </properties>
   <body>
 
-    <release version="0.6-dev" date="in CVS">
+    <release version="0.6" date="2005-09-27">
         <action dev="lkuehne" type="add">
             Clirr now provides a SPI to represent the java code structure, the checks
             now work against this SPI. Clirr provides a SPI implementation that works
@@ -27,7 +27,7 @@
         </action>
         <action dev="lkuehne" type="fix">
             <!-- Bug #1284303-->
-            CLI: Allow specitication of 3rd party jars via new options -ocp and -ncp.
+            CLI: Allow specification of 3rd party jars via new options -ocp and -ncp.
         </action>
         <action dev="lkuehne" type="update">
             Improved test coverage.

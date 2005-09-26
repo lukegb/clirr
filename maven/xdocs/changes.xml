@@ -7,6 +7,14 @@
 
   <body>
 
+    <release version="0.6" date="2005-09-27">
+      <action dev="lkuehne" type="add">
+        Upgraded to version 0.6 of clirr-core.
+        The new apiclasses feature in the Ant task is currently
+        not supported by the maven plugin.
+      </action>
+    </release>
+
     <release version="0.5" date="2005-08-07">
       <action dev="lkuehne" type="add">
         Upgraded to version 0.5 of clirr-core.
