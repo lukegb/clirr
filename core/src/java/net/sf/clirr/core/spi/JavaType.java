@@ -8,7 +8,7 @@ package net.sf.clirr.core.spi;
 public interface JavaType extends Named, Scoped
 {
     /**
-     * Type fully qualified class name.
+     * The type's fully qualified class name.
      * 
      * @return a fully qualified class name,
      * like <code>"my.company.procuct.SampleClass"</code>.
