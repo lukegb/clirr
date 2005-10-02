@@ -7,6 +7,12 @@
   </properties>
   <body>
 
+    <release version="0.7-dev" date="in CVS">
+        <action dev="lkuehne" type="fix">
+            BCEL was leaking into the Clirr API via our ClassFilter/ClassSelector.
+        </action>
+    </release>
+
     <release version="0.6" date="2005-09-27">
         <action dev="lkuehne" type="add">
             Clirr now provides a SPI to represent the java code structure, the checks

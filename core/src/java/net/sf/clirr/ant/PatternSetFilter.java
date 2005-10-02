@@ -20,11 +20,11 @@
 package net.sf.clirr.ant;
 
 import net.sf.clirr.core.ClassFilter;
+import net.sf.clirr.core.spi.JavaType;
 
 import java.util.List;
 import java.io.File;
 
-import org.apache.bcel.classfile.JavaClass;
 import org.apache.tools.ant.types.selectors.SelectorUtils;
 import org.apache.tools.ant.types.PatternSet;
 import org.apache.tools.ant.Project;
@@ -52,11 +52,11 @@ class PatternSetFilter implements ClassFilter
     }
 
 
-    public boolean isSelected(JavaClass clazz)
+    public boolean isSelected(JavaType clazz)
     {
         // The patternset evaluation code below was copied from Apache Ant's Expand task.
         // I feel this code should be available as a library function inside Ant somewhere...
-        String className = clazz.getClassName();
+        String className = clazz.getName();
         String name = className.replace('.', File.separatorChar);
 
 

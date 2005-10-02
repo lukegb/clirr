@@ -19,7 +19,7 @@
 
 package net.sf.clirr.core;
 
-import org.apache.bcel.classfile.JavaClass;
+import net.sf.clirr.core.spi.JavaType;
 
 /**
  * A filter for Java classes.
@@ -42,5 +42,5 @@ public interface ClassFilter
      * @return true if clazz should be considered by the Checker
      * in this object.
      */
-    boolean isSelected(JavaClass clazz);
+    boolean isSelected(JavaType clazz);
 }

@@ -35,7 +35,6 @@ import net.sf.clirr.core.internal.ClassLoaderUtil;
 import net.sf.clirr.core.internal.bcel.BcelTypeArrayBuilder;
 import net.sf.clirr.core.spi.JavaType;
 
-import org.apache.bcel.classfile.JavaClass;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.DirectoryScanner;
 import org.apache.tools.ant.Project;
@@ -105,7 +104,7 @@ public final class AntTask extends Task
             this.scopeSelector = scopeSelector;
         }
 
-        public boolean isSelected(JavaClass clazz)
+        public boolean isSelected(JavaType clazz)
         {
             return patternSetFilter.isSelected(clazz) && scopeSelector.isSelected(clazz);
         }

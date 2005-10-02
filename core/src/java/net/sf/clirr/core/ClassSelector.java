@@ -18,7 +18,7 @@
 //////////////////////////////////////////////////////////////////////////////
 package net.sf.clirr.core;
 
-import org.apache.bcel.classfile.JavaClass;
+import net.sf.clirr.core.spi.JavaType;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -97,7 +97,7 @@ public final class ClassSelector implements ClassFilter
      * Return true if this class is one selected by the criteria stored
      * in this object.
      */
-    public boolean isSelected(JavaClass clazz)
+    public boolean isSelected(JavaType clazz)
     {
         if (isAnonymousInnerClass(clazz))
         {
@@ -120,9 +120,9 @@ public final class ClassSelector implements ClassFilter
      * Not even developers working on a package would be interested
      * in API changes in these classes...
      */
-    private boolean isAnonymousInnerClass(JavaClass clazz)
+    private boolean isAnonymousInnerClass(JavaType clazz)
     {
-        String name = clazz.getClassName();
+        String name = clazz.getName();
         int dollarPos = name.indexOf('$');
         if (dollarPos == -1)
         {
@@ -146,9 +146,12 @@ public final class ClassSelector implements ClassFilter
      * Return true if this class matches one of the criteria stored
      * in this object.
      */
-    private boolean matchesCriteria(JavaClass clazz)
+    private boolean matchesCriteria(JavaType clazz)
     {
-        String packageName = clazz.getPackageName();
+        String className = clazz.getName();
+        int index = className.lastIndexOf('.');
+        String packageName = (index < 0) ? "" : className.substring(0, index);
+        
         if (packages.contains(packageName))
         {
             return true;
@@ -175,7 +178,6 @@ public final class ClassSelector implements ClassFilter
             }
         }
 
-        String className = clazz.getClassName();
         for (Iterator i = classes.iterator(); i.hasNext();)
         {
             String entry = (String) i.next();

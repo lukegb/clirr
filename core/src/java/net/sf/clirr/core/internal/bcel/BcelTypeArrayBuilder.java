@@ -80,9 +80,10 @@ public final class BcelTypeArrayBuilder
                 if (!zipEntry.isDirectory() && zipEntry.getName().endsWith(".class"))
                 {
                     JavaClass clazz = extractClass(zipEntry, zip, repository);
-                    if (classSelector.isSelected(clazz))
+                    final BcelJavaType bcelJavaType = new BcelJavaType(clazz);
+                    if (classSelector.isSelected(bcelJavaType))
                     {
-                        selected.add(new BcelJavaType(clazz));
+                        selected.add(bcelJavaType);
                         repository.storeClass(clazz);
                     }
                 }
