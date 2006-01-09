@@ -21,12 +21,12 @@ public class ClassModifierCheckTest extends AbstractCheckTestCase
         verify(expected);
     }
 
-    protected ClassChangeCheck createCheck(TestDiffListener tdl)
+    protected ClassChangeCheck createCheck()
     {
-        return new ClassModifierCheck(tdl);
+        return new ClassModifierCheck(getTestDiffListener());
     }
 
-    protected ClassFilter createClassSelector()
+    protected ClassFilter createClassFilter()
     {
         // only apply the check to classes in the testlib.modifiers package.
         ClassSelector classSelector = new ClassSelector(ClassSelector.MODE_IF);

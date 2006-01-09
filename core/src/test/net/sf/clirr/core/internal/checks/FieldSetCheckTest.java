@@ -1,11 +1,8 @@
 package net.sf.clirr.core.internal.checks;
 
-import net.sf.clirr.core.Severity;
 import net.sf.clirr.core.ScopeSelector;
+import net.sf.clirr.core.Severity;
 import net.sf.clirr.core.internal.ClassChangeCheck;
-import net.sf.clirr.core.internal.checks.FieldSetCheck;
-import net.sf.clirr.core.internal.checks.AbstractCheckTestCase;
-import net.sf.clirr.core.internal.checks.ExpectedDiff;
 
 /**
  * Tests FieldSetCheck.
@@ -41,10 +38,10 @@ public class FieldSetCheckTest extends AbstractCheckTestCase
     }
 
 
-    protected final ClassChangeCheck createCheck(TestDiffListener tdl)
+    protected final ClassChangeCheck createCheck()
     {
         ScopeSelector scopeSelector = new ScopeSelector();
-        return new FieldSetCheck(tdl, scopeSelector);
+        return new FieldSetCheck(getTestDiffListener(), scopeSelector);
     }
 
 }

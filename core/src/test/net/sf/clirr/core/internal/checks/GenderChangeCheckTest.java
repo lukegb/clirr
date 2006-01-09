@@ -2,9 +2,6 @@ package net.sf.clirr.core.internal.checks;
 
 import net.sf.clirr.core.Severity;
 import net.sf.clirr.core.internal.ClassChangeCheck;
-import net.sf.clirr.core.internal.checks.GenderChangeCheck;
-import net.sf.clirr.core.internal.checks.AbstractCheckTestCase;
-import net.sf.clirr.core.internal.checks.ExpectedDiff;
 
 public class GenderChangeCheckTest extends AbstractCheckTestCase
 {
@@ -17,8 +14,9 @@ public class GenderChangeCheckTest extends AbstractCheckTestCase
         verify(expected);
     }
 
-    protected final ClassChangeCheck createCheck(TestDiffListener tdl) {
-        return new GenderChangeCheck(tdl);
+    protected final ClassChangeCheck createCheck()
+    {
+        return new GenderChangeCheck(getTestDiffListener());
     }
 
 }

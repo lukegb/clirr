@@ -16,9 +16,9 @@ public class InterfaceSetCheckTest extends AbstractCheckTestCase {
         verify(expected);
     }
 
-    protected ClassChangeCheck createCheck(TestDiffListener tdl)
+    protected ClassChangeCheck createCheck()
     {
-        return new InterfaceSetCheck(tdl);
+        return new InterfaceSetCheck(getTestDiffListener());
     }
 
 }

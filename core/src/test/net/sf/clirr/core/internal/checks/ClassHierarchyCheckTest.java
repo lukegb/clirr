@@ -20,8 +20,8 @@ public class ClassHierarchyCheckTest extends AbstractCheckTestCase
         verify(expected);
     }
 
-    protected ClassChangeCheck createCheck(TestDiffListener tdl)
+    protected ClassChangeCheck createCheck()
     {
-        return new ClassHierarchyCheck(tdl);
+        return new ClassHierarchyCheck(getTestDiffListener());
     }
 }

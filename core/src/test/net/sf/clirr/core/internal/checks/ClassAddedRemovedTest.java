@@ -5,11 +5,11 @@ import java.net.URLClassLoader;
 
 import net.sf.clirr.core.Checker;
 import net.sf.clirr.core.CheckerFactory;
+import net.sf.clirr.core.ClassFilter;
 import net.sf.clirr.core.Severity;
 import net.sf.clirr.core.internal.ClassChangeCheck;
 import net.sf.clirr.core.internal.bcel.BcelTypeArrayBuilder;
 import net.sf.clirr.core.spi.JavaType;
-import net.sf.clirr.core.ClassFilter;
 
 public class ClassAddedRemovedTest extends AbstractCheckTestCase
 {
@@ -19,7 +19,7 @@ public class ClassAddedRemovedTest extends AbstractCheckTestCase
         TestDiffListener tld = new TestDiffListener();
         checker.addDiffListener(tld);
         
-        ClassFilter classSelector = createClassSelector();
+        ClassFilter classSelector = createClassFilter();
 
         final JavaType[] origClasses =
             BcelTypeArrayBuilder.createClassSet(getBaseLine(), new URLClassLoader(new URL[]{}), classSelector);
@@ -37,7 +37,7 @@ public class ClassAddedRemovedTest extends AbstractCheckTestCase
         tld.checkExpected(expected);
     }
     
-    protected ClassChangeCheck createCheck(TestDiffListener tdl)
+    protected ClassChangeCheck createCheck()
     {
         // changes are reported directly by the Checker
         return null;

@@ -5,8 +5,6 @@ import net.sf.clirr.core.Severity;
 import net.sf.clirr.core.ClassSelector;
 import net.sf.clirr.core.ScopeSelector;
 import net.sf.clirr.core.ClassFilter;
-import net.sf.clirr.core.internal.checks.ClassScopeCheck;
-import net.sf.clirr.core.internal.checks.AbstractCheckTestCase;
 import net.sf.clirr.core.spi.Scope;
 
 /**
@@ -39,13 +37,13 @@ public class ClassScopeCheckTest extends AbstractCheckTestCase
         verify(expected);
     }
 
-    protected ClassChangeCheck createCheck(TestDiffListener tdl)
+    protected ClassChangeCheck createCheck()
     {
         ScopeSelector scopeSelector = new ScopeSelector(Scope.PRIVATE);
-        return new ClassScopeCheck(tdl, scopeSelector);
+        return new ClassScopeCheck(getTestDiffListener(), scopeSelector);
     }
 
-    protected ClassFilter createClassSelector()
+    protected ClassFilter createClassFilter()
     {
         // only check the testlib/scope/ClassScopeChange class.
         ClassSelector classSelector = new ClassSelector(ClassSelector.MODE_IF);

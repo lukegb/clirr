@@ -1,11 +1,8 @@
 package net.sf.clirr.core.internal.checks;
 
-import net.sf.clirr.core.internal.ClassChangeCheck;
-import net.sf.clirr.core.Severity;
 import net.sf.clirr.core.ScopeSelector;
-import net.sf.clirr.core.internal.checks.MethodSetCheck;
-import net.sf.clirr.core.internal.checks.AbstractCheckTestCase;
-import net.sf.clirr.core.internal.checks.ExpectedDiff;
+import net.sf.clirr.core.Severity;
+import net.sf.clirr.core.internal.ClassChangeCheck;
 
 /**
  * TODO: Docs.
@@ -77,8 +74,8 @@ public class MethodSetCheckTest extends AbstractCheckTestCase
         verify(expected);
     }
 
-    protected final ClassChangeCheck createCheck(TestDiffListener tdl)
+    protected final ClassChangeCheck createCheck()
     {
-        return new MethodSetCheck(tdl, new ScopeSelector());
+        return new MethodSetCheck(getTestDiffListener(), new ScopeSelector());
     }
 }

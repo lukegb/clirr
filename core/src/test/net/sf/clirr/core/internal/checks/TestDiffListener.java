@@ -9,103 +9,132 @@ import net.sf.clirr.core.internal.checks.ExpectedDiff;
 import net.sf.clirr.core.ApiDifference;
 import net.sf.clirr.core.DiffListener;
 import net.sf.clirr.core.MessageTranslator;
+import net.sf.clirr.core.Severity;
 import junit.framework.TestCase;
 
 class TestDiffListener implements ApiDiffDispatcher, DiffListener
 {
-        private MessageTranslator translator = new MessageTranslator();
-
-        private Set diffs = new HashSet();
-
-        public void fireDiff(ApiDifference difference)
+    private MessageTranslator translator = new MessageTranslator();
+    
+    private Set diffs = new HashSet();
+    
+    public void fireDiff(ApiDifference difference)
+    {
+        diffs.add(difference);
+    }
+    
+    public void checkExpected(ExpectedDiff[] expectedDiffs)
+    {
+        for (int i=0; i<expectedDiffs.length; ++i)
         {
-            diffs.add(difference);
-        }
+            ExpectedDiff expected = expectedDiffs[i];
 
-        public void checkExpected(ExpectedDiff[] expectedDiffs)
-        {
-            for (int i=0; i<expectedDiffs.length; ++i)
+            // now see if the expected diff is in fact in the set of
+            // diffs that occurred during the test comparison
+            boolean found = false;
+            for(Iterator j = diffs.iterator(); j.hasNext() && !found;)
             {
-                ExpectedDiff expected = expectedDiffs[i];
-
-                // now see if the expected diff is in fact in the set of
-                // diffs that occurred during the test comparison
-                boolean found = false;
-                for(Iterator j = diffs.iterator(); j.hasNext() && !found;)
-                {
-                    ApiDifference actual = (ApiDifference) j.next();
-                    found = expected.matches(actual);
-                }
-
-                if (!found)
-                {
-                    // build a useful failure message
-                    MessageTranslator translator = new MessageTranslator();
-
-                    StringBuffer buf = new StringBuffer();
-                    buf.append("Expected diff " + expected + " was not generated.\n");
-                    if (diffs.size() == 0)
-                    {
-                        buf.append("No diffs were generated.");
-                    }
-                    else
-                    {
-                        buf.append("Actual diffs generated were: \n");
-                        for(Iterator diffIter = diffs.iterator(); diffIter.hasNext();)
-                        {
-                            ApiDifference diff = (ApiDifference) diffIter.next();
-
-                            buf.append(" * ");
-                            buf.append(diff.toString(translator));
-                            buf.append("\n");
-                        }
-                    }
-
-                    TestCase.fail(buf.toString());
-                }
+                ApiDifference actual = (ApiDifference) j.next();
+                found = expected.matches(actual);
             }
 
-            StringBuffer buf = null;
-            for (Iterator it = diffs.iterator(); it.hasNext();)
+            if (!found)
             {
-                ApiDifference actual = (ApiDifference) it.next();
-
-                // see if the actual (generated) diff is in the expected set
-                boolean found = false;
-                for(int i=0; i<expectedDiffs.length && !found; ++i)
+                // build a useful failure message
+                MessageTranslator translator = new MessageTranslator();
+                
+                StringBuffer buf = new StringBuffer();
+                buf.append("Expected diff " + expected + " was not generated.\n");
+                if (diffs.size() == 0)
                 {
-                    found = expectedDiffs[i].matches(actual);
+                    buf.append("No diffs were generated.");
                 }
-
-                if (!found)
+                else
                 {
-                    if (buf == null)
+                    buf.append("Actual diffs generated were: \n");
+                    for(Iterator diffIter = diffs.iterator(); diffIter.hasNext();)
                     {
-                        buf = new StringBuffer();
-                        buf.append("Unexpected diffs:\n");
+                        ApiDifference diff = (ApiDifference) diffIter.next();
+                        
+                        buf.append(" * ");
+                        buf.append(diff.toString(translator));
+                        buf.append("\n");
                     }
-                    buf.append(" * ");
-                    buf.append(actual.toString(translator));
-                    buf.append("\n");
                 }
-            }
-
-            if (buf != null)
-            {
-                // we must have found at least one unexpected diff
+                
                 TestCase.fail(buf.toString());
             }
         }
-
-        public void start() 
+        
+        StringBuffer buf = null;
+        for (Iterator it = diffs.iterator(); it.hasNext();)
         {
+            ApiDifference actual = (ApiDifference) it.next();
+            
+            // see if the actual (generated) diff is in the expected set
+            boolean found = false;
+            for(int i=0; i<expectedDiffs.length && !found; ++i)
+            {
+                found = expectedDiffs[i].matches(actual);
+            }
+            
+            if (!found)
+            {
+                if (buf == null)
+                {
+                    buf = new StringBuffer();
+                    buf.append("Unexpected diffs:\n");
+                }
+                buf.append(" * ");
+                buf.append(actual.toString(translator));
+                buf.append("\n");
+            }
         }
-
-        public void reportDiff(ApiDifference difference) {
-            diffs.add(difference);
-        }
-
-        public void stop() 
+        
+        if (buf != null)
         {
+            // we must have found at least one unexpected diff
+            TestCase.fail(buf.toString());
         }
+    }
+
+    public int countBinaryCompatibilityDiffs(Severity severity)
+    {
+        int ret = 0;
+        for (Iterator it = diffs.iterator(); it.hasNext();)
+        {
+            ApiDifference diff = (ApiDifference) it.next();
+            if (diff.getBinaryCompatibilitySeverity().equals(severity))
+            {
+                ret += 1;
+            }
+        }
+        return ret;
+    }
+    
+    public int countSourceCompatibilityDiffs(Severity severity)
+    {
+        int ret = 0;
+        for (Iterator it = diffs.iterator(); it.hasNext();)
+        {
+            ApiDifference diff = (ApiDifference) it.next();
+            if (diff.getSourceCompatibilitySeverity().equals(severity))
+            {
+                ret += 1;
+            }
+        }
+        return ret;
+    }
+    
+    public void start() 
+    {
+    }
+    
+    public void reportDiff(ApiDifference difference) {
+        diffs.add(difference);
+    }
+    
+    public void stop() 
+    {
+    }
 }
