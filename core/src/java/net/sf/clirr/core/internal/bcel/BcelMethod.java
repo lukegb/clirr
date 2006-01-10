@@ -1,12 +1,14 @@
 package net.sf.clirr.core.internal.bcel;
 
+import java.util.Arrays;
+
+import net.sf.clirr.core.spi.JavaType;
+import net.sf.clirr.core.spi.Scope;
+
 import org.apache.bcel.classfile.Attribute;
 import org.apache.bcel.classfile.JavaClass;
 import org.apache.bcel.classfile.Method;
 import org.apache.bcel.generic.Type;
-
-import net.sf.clirr.core.spi.JavaType;
-import net.sf.clirr.core.spi.Scope;
 
 final class BcelMethod implements net.sf.clirr.core.spi.Method
 {
@@ -83,4 +85,12 @@ final class BcelMethod implements net.sf.clirr.core.spi.Method
         }
         return retval;
     }
+
+    public String toString() {
+        return owningClass.getClassName() 
+        + "#" + getName() 
+        + Arrays.asList(getArgumentTypes()); 
+    }
+    
+    
 }
