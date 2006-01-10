@@ -575,7 +575,6 @@ public class MethodSetCheck
             return;
         }
 
-        //System.out.println("baselineMethod = " + getMethodId(compatBaseline, baselineMethod));
         for (int i = 0; i < bArgs.length; i++)
         {
             JavaType bArg = bArgs[i];
