@@ -35,15 +35,23 @@ public final class ClassSelector implements ClassFilter
     /** Class for implementing an enumeration. */
     public static final class Mode
     {
-        private Mode()
+        private final String descr;
+
+        private Mode(String descr)
         {
+            this.descr = descr;
+        }
+
+        public String toString()
+        {
+            return "Mode." + descr;
         }
     }
 
     /** positive selection. */
-    public static final Mode MODE_IF = new Mode();
+    public static final Mode MODE_IF = new Mode("IF");
     /** negative selection. */
-    public static final Mode MODE_UNLESS = new Mode();
+    public static final Mode MODE_UNLESS = new Mode("UNLESS");
 
     private Mode mode;
 
