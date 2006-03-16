@@ -32,8 +32,9 @@ import net.sf.clirr.core.ClassSelector;
 import net.sf.clirr.core.PlainDiffListener;
 import net.sf.clirr.core.XmlDiffListener;
 import net.sf.clirr.core.internal.ClassLoaderUtil;
-import net.sf.clirr.core.internal.bcel.BcelTypeArrayBuilder;
+import net.sf.clirr.core.internal.asm.AsmTypeArrayBuilder;
 import net.sf.clirr.core.spi.JavaType;
+import net.sf.clirr.core.spi.TypeArrayBuilder;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.DirectoryScanner;
@@ -293,11 +294,15 @@ public final class AntTask extends Task
         try
         {
             ClassFilter classSelector = buildClassFilter();
+            
+            TypeArrayBuilder tab1 = new AsmTypeArrayBuilder();
+            TypeArrayBuilder tab2 = new AsmTypeArrayBuilder();
+
             final JavaType[] origClasses =
-                BcelTypeArrayBuilder.createClassSet(origJars, origThirdPartyLoader, classSelector);
+                tab1.createClassSet(origJars, origThirdPartyLoader, classSelector);
             
             final JavaType[] newClasses =
-                BcelTypeArrayBuilder.createClassSet(newJars, newThirdPartyLoader, classSelector);
+                tab2.createClassSet(newJars, newThirdPartyLoader, classSelector);
             
             checker.reportDiffs(origClasses, newClasses);
         }

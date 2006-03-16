@@ -6,8 +6,7 @@ package net.sf.clirr.core.spi;
 public interface Method extends Named, Scoped
 {
     /**
-     * 
-     * @return the return type of this method, or null if the method return type is <code>void</code>
+     * @return the return type of this method or <code>null</code> for void.
      */
     JavaType getReturnType();
 
@@ -17,7 +16,7 @@ public interface Method extends Named, Scoped
      */
     JavaType[] getArgumentTypes();
 
-//    JavaType[] getDeclaredExceptions();
+    JavaType[] getDeclaredExceptions();
 
     boolean isFinal();
     

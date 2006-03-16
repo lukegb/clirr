@@ -602,16 +602,25 @@ public class MethodSetCheck
         JavaType bReturnType = baselineMethod.getReturnType();
         JavaType cReturnType = currentMethod.getReturnType();
 
+        if (bReturnType == null && cReturnType == null)
+        {
+            return;
+        }
+        
         // TODO: Check assignability. If the new return type is
         // assignable to the old type, then the code is source-code
         // compatible even when binary-incompatible.
-        if (!bReturnType.toString().equals(cReturnType.toString()))
+        
+        if (bReturnType != null && cReturnType != null && bReturnType.getName().equals(cReturnType.getName()))
         {
-            fireDiff(MSG_METHOD_RETURNTYPE_CHANGED,
-                    getSeverity(compatBaseline, baselineMethod, Severity.ERROR),
-                    compatBaseline, baselineMethod,
-                    new String[] {cReturnType.toString()});
+            return;
         }
+
+        final String name = cReturnType == null ? "void" : cReturnType.getName();
+        fireDiff(MSG_METHOD_RETURNTYPE_CHANGED,
+                getSeverity(compatBaseline, baselineMethod, Severity.ERROR),
+                compatBaseline, baselineMethod,
+                new String[] {name});
     }
 
     private void checkDeclaredExceptions(

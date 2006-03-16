@@ -8,12 +8,12 @@ import net.sf.clirr.core.CheckerFactory;
 import net.sf.clirr.core.ClassFilter;
 import net.sf.clirr.core.Severity;
 import net.sf.clirr.core.internal.ClassChangeCheck;
-import net.sf.clirr.core.internal.bcel.BcelTypeArrayBuilder;
+import net.sf.clirr.core.internal.asm.AsmTypeArrayBuilder;
 import net.sf.clirr.core.spi.JavaType;
 
 public class ClassAddedRemovedTest extends AbstractCheckTestCase
 {
-    public void testClassAddionOrRemovalIsReported() throws Exception
+    public void testClassAdditionOrRemovalIsReported() throws Exception
     {
         Checker checker = CheckerFactory.createChecker(null);
         TestDiffListener tld = new TestDiffListener();
@@ -21,11 +21,13 @@ public class ClassAddedRemovedTest extends AbstractCheckTestCase
         
         ClassFilter classSelector = createClassFilter();
 
+        AsmTypeArrayBuilder tabOrig = new AsmTypeArrayBuilder();
+        AsmTypeArrayBuilder tabNew = new AsmTypeArrayBuilder();
         final JavaType[] origClasses =
-            BcelTypeArrayBuilder.createClassSet(getBaseLine(), new URLClassLoader(new URL[]{}), classSelector);
+            tabOrig.createClassSet(getBaseLine(), new URLClassLoader(new URL[]{}), classSelector);
         
         final JavaType[] newClasses =
-            BcelTypeArrayBuilder.createClassSet(getCurrent(), new URLClassLoader(new URL[]{}), classSelector);
+            tabNew.createClassSet(getCurrent(), new URLClassLoader(new URL[]{}), classSelector);
         
         checker.reportDiffs(origClasses, newClasses);
 

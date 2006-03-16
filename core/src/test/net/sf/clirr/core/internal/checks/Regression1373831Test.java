@@ -31,9 +31,8 @@ public class Regression1373831Test extends AbstractRegressionTestCase
     {
         runChecker();
         final TestDiffListener testDiffListener = getTestDiffListener();
-        // TODO: fix the bug and enable the following assertions
-        // assertEquals("false alarm (binary error)", 0, testDiffListener.countBinaryCompatibilityDiffs(Severity.ERROR));
-        // assertEquals("false alarm (source error)", 0, testDiffListener.countSourceCompatibilityDiffs(Severity.ERROR));
+        assertEquals("false alarm (binary error)", 0, testDiffListener.countBinaryCompatibilityDiffs(Severity.ERROR));
+        assertEquals("false alarm (source error)", 0, testDiffListener.countSourceCompatibilityDiffs(Severity.ERROR));
         assertEquals("false alarm (binary warning)", 0, testDiffListener.countBinaryCompatibilityDiffs(Severity.WARNING));
         assertEquals("false alarm (source warning)", 0, testDiffListener.countSourceCompatibilityDiffs(Severity.WARNING));
     }

@@ -11,6 +11,14 @@
         <action dev="lkuehne" type="fix">
             BCEL was leaking into the Clirr API via our ClassFilter/ClassSelector.
         </action>
+        <action dev="lkuehne" type="fix">
+            Replaced BCEL with ASM (leaner, meaner, supports Java5 class file format).
+            This also fixes bug 1373831 "Clirr incorrectly reports error when methods
+            are pulled up to a new superclass", which was due to a bug in BCEL.
+        </action>
+        <action dev="lkuehne" type="fix">
+            Incompatible changes to java code structure SPI.
+        </action>
     </release>
 
     <release version="0.6" date="2005-09-27">

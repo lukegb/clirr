@@ -9,6 +9,16 @@ public interface JavaType extends Named, Scoped
 {
     /**
      * The type's fully qualified class name.
+     * In case of array types, this is the name without the array brackets
+     * 
+     * @return a fully qualified class name,
+     * like <code>"my.company.procuct.SampleClass"</code>.
+     */
+    String getBasicName();
+
+    /**
+     * The type's fully qualified class name.
+     * In case of array types, this is the name with the array brackets.
      * 
      * @return a fully qualified class name,
      * like <code>"my.company.procuct.SampleClass"</code>.
@@ -59,13 +69,36 @@ public interface JavaType extends Named, Scoped
      */
     Field[] getFields();
 
+    /**
+     * The number of array dimensions this type has.
+     * @return 0 if this type does not represent an array.
+     */
+    int getArrayDimension();
+    
+    /**
+     * Whether this type represents a primitive type like <code>int</code>.
+     * @return true iff this type represents a primitive type.
+     */
     boolean isPrimitive();
     
-    boolean isArray();
-    
+    /**
+     * Whether this class is declared as final.
+     * @return true iff this type represents a final class or a {@link #isPrimitive() primitive} type.
+     */
     boolean isFinal();
 
+    /**
+     * Whether this type represents a class that is declared as abstract. 
+     * Note that interfaces are not abstract.
+     * 
+     * @return true iff this type represents an abstract class.
+     */
     boolean isAbstract();
 
+    /**
+     * Whether this type represents an interface.
+     * 
+     * @return true iff this type represents an interface. 
+     */
     boolean isInterface();
 }

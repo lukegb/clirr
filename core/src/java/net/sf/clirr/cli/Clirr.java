@@ -25,9 +25,10 @@ import net.sf.clirr.core.ClassSelector;
 import net.sf.clirr.core.PlainDiffListener;
 import net.sf.clirr.core.XmlDiffListener;
 import net.sf.clirr.core.DiffListener;
-import net.sf.clirr.core.internal.bcel.BcelTypeArrayBuilder;
+import net.sf.clirr.core.internal.asm.AsmTypeArrayBuilder;
 import net.sf.clirr.core.spi.JavaType;
 import net.sf.clirr.core.spi.Scope;
+import net.sf.clirr.core.spi.TypeArrayBuilder;
 
 import org.apache.commons.cli.BasicParser;
 import org.apache.commons.cli.CommandLine;
@@ -146,11 +147,14 @@ public class Clirr
             ClassLoader loader1 = new URLClassLoader(convertFilesToURLs(pathToFileArray(oldClassPath)));
             ClassLoader loader2 = new URLClassLoader(convertFilesToURLs(pathToFileArray(newClassPath)));
 
+            TypeArrayBuilder tab1 = new AsmTypeArrayBuilder();
+            TypeArrayBuilder tab2 = new AsmTypeArrayBuilder();
+
             final JavaType[] origClasses =
-                BcelTypeArrayBuilder.createClassSet(origJars, loader1, classSelector);
+                tab1.createClassSet(origJars, loader1, classSelector);
             
             final JavaType[] newClasses =
-                BcelTypeArrayBuilder.createClassSet(newJars, loader2, classSelector);
+                tab2.createClassSet(newJars, loader2, classSelector);
             
             checker.reportDiffs(origClasses, newClasses);
             
