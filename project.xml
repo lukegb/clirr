@@ -14,7 +14,7 @@
 
   <!-- The version of the project under development, e.g.
        1.1, 1.2, 2.0-dev -->
-  <currentVersion>0.6</currentVersion>
+  <currentVersion>0.7-dev</currentVersion>
 
   <!-- details about the organization that 'owns' the project -->
   <organization>
@@ -27,17 +27,17 @@
   <package>net.sf.clirr</package>
   <logo>/images/clirr.png</logo>
   <description>
-    Clirr is a tool that checks Java libraries for binary
+    Clirr is a tool that checks Java libraries for binary and source
     compatibility with older releases. Basically you give it two sets
     of jar files and Clirr dumps out a list of changes in the public
     api. Clirr provides an Ant task that can be configured to break
     the build if it detects incompatible api changes. In a continuous
     integration process Clirr can automatically prevent accidental
-    introduction of binary compatibility problems in Java libraries.
+    introduction of compatibility problems in Java libraries.
   </description>
   <!-- a short description of what the project does -->
   <shortDescription>
-    Java binary compatibility checker
+    Java compatibility checker
   </shortDescription>
 
   <!-- the project home page -->
@@ -75,6 +75,11 @@
       <id>0.5</id>
       <name>0.5</name>
       <tag>RELEASE_CLIRR_0_5</tag>
+    </version>
+    <version>
+      <id>0.6</id>
+      <name>0.6</name>
+      <tag>RELEASE_CLIRR_0_6</tag>
     </version>
   </versions>
 
