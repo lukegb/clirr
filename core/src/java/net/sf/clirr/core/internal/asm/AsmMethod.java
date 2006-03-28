@@ -36,7 +36,7 @@ public class AsmMethod extends AbstractAsmScoped implements Method
         {
             return null;
         }
-        return repository.findTypeByName(returnType.getClassName());
+        return findJavaType(returnType);
     }
 
     public JavaType[] getArgumentTypes()
@@ -45,10 +45,15 @@ public class AsmMethod extends AbstractAsmScoped implements Method
         JavaType[] ret = new JavaType[argumentTypes.length];
         for (int i = 0; i < ret.length; i++)
         {
-            final String className = argumentTypes[i].getClassName();
-            ret[i] = repository.findTypeByName(className);
+            ret[i] = findJavaType(argumentTypes[i]);
         }
         return ret;
+    }
+    
+    private JavaType findJavaType(Type asmType)
+    {
+        String name = asmType.getClassName();
+        return repository.findTypeByName(name);
     }
 
     public JavaType[] getDeclaredExceptions()
