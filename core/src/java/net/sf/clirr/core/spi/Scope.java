@@ -57,4 +57,9 @@ public final class Scope
     {
         return decl;
     }
+    
+    public String toString()
+    {
+        return "Scope[" + desc + "]";
+    }
 }
