@@ -302,7 +302,7 @@ public class MethodSetCheck
         int retVal = 0;
         for (int i = 0; i < m1Args.length; i++)
         {
-            if (!m1Args[i].toString().equals(m2Args[i].toString()))
+            if (!m1Args[i].getName().equals(m2Args[i].getName()))
             {
                 retVal += 1;
             }
@@ -589,7 +589,7 @@ public class MethodSetCheck
             String[] args =
             {
                 "" + (i + 1),
-                cArg.toString()
+                cArg.getName()
             };
             fireDiff(MSG_METHOD_PARAMTYPE_CHANGED,
                     getSeverity(compatBaseline, baselineMethod, Severity.ERROR),
@@ -719,7 +719,8 @@ public class MethodSetCheck
         }
         else
         {
-            buf.append(method.getReturnType());
+            final JavaType returnType = method.getReturnType();
+            buf.append(returnType == null ? "void" : returnType.getName());
             buf.append(' ');
         }
         buf.append(name);

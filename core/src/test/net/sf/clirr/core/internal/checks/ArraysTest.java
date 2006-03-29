@@ -1,33 +1,39 @@
 package net.sf.clirr.core.internal.checks;
 
-import net.sf.clirr.core.internal.ClassChangeCheck;
-import net.sf.clirr.core.ClassSelector;
 import net.sf.clirr.core.ClassFilter;
-import net.sf.clirr.core.internal.checks.ClassModifierCheck;
-import net.sf.clirr.core.internal.checks.AbstractCheckTestCase;
+import net.sf.clirr.core.ClassSelector;
+import net.sf.clirr.core.ScopeSelector;
+import net.sf.clirr.core.Severity;
+import net.sf.clirr.core.internal.ClassChangeCheck;
+import net.sf.clirr.core.spi.Scope;
 
 /**
  * Tests for the ClassModifierCheck class.
  */
 public class ArraysTest extends AbstractCheckTestCase
 {
-    public void testAll() throws Exception
+    public void testReturnTypeChanges() throws Exception
     {
         ExpectedDiff[] expected = new ExpectedDiff[] {
-// TODO: enable the following expected messages:
-// ERROR: 7006: testlib.arrays.Arrays: Return type of method 'public java.lang.String[][] arrayDimDecreases()' has been changed to java.lang.String[]
-// ERROR: 7006: testlib.arrays.Arrays: Return type of method 'public java.lang.String[] arrayDimIncreases()' has been changed to java.lang.String[][]
-// ERROR: 7006: testlib.arrays.Arrays: Return type of method 'public java.lang.String[] objectArrayBecomesObject()' has been changed to java.lang.String
-// ERROR: 7006: testlib.arrays.Arrays: Return type of method 'public java.lang.String objectBecomesArray()' has been changed to java.lang.String[]
-// ERROR: 7006: testlib.arrays.Arrays: Return type of method 'public int[] primitiveArrayBecomesPrimitive()' has been changed to int
-// ERROR: 7006: testlib.arrays.Arrays: Return type of method 'public int primitiveBecomesArray()' has been changed to int[]
+                new ExpectedDiff("Return type of method 'public java.lang.String[][] arrayDimDecreases()' has been changed to java.lang.String[]",
+                        Severity.ERROR, "testlib.arrays.Arrays", "public java.lang.String[][] arrayDimDecreases()", null),
+                new ExpectedDiff("Return type of method 'public java.lang.String[] arrayDimIncreases()' has been changed to java.lang.String[][]",
+                        Severity.ERROR, "testlib.arrays.Arrays", "public java.lang.String[] arrayDimIncreases()", null),
+                new ExpectedDiff("Return type of method 'public java.lang.String[] objectArrayBecomesObject()' has been changed to java.lang.String",
+                        Severity.ERROR, "testlib.arrays.Arrays", "public java.lang.String[] objectArrayBecomesObject()", null),
+                new ExpectedDiff("Return type of method 'public int primitiveBecomesArray()' has been changed to int[]",
+                        Severity.ERROR, "testlib.arrays.Arrays", "public int primitiveBecomesArray()", null),
+                new ExpectedDiff("Return type of method 'public java.lang.String objectBecomesArray()' has been changed to java.lang.String[]",
+                        Severity.ERROR, "testlib.arrays.Arrays", "public java.lang.String objectBecomesArray()", null),
+                new ExpectedDiff("Return type of method 'public int[] primitiveArrayBecomesPrimitive()' has been changed to int",
+                        Severity.ERROR, "testlib.arrays.Arrays", "public int[] primitiveArrayBecomesPrimitive()", null),
         };
         verify(expected);
     }
 
     protected ClassChangeCheck createCheck()
     {
-        return new ClassModifierCheck(getTestDiffListener());
+        return new MethodSetCheck(getTestDiffListener(), new ScopeSelector(Scope.PROTECTED));
     }
 
     protected ClassFilter createClassFilter()

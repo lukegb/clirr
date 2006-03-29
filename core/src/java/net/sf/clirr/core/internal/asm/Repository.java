@@ -23,17 +23,16 @@ import org.objectweb.asm.ClassReader;
  */
 class Repository
 {
-    private static final Pattern PRIMITIVE_PATTERN = Pattern.compile("(int|float|long|double|boolean|char|short)(\\[\\])*");
+    private static final Pattern PRIMITIVE_PATTERN = Pattern.compile("(int|float|long|double|boolean|char|short|byte)");
+    private static final Pattern ARRAY_PATTERN = Pattern.compile("(\\[\\])+$");
 
     private static final class PrimitiveType implements JavaType
     {
         private final String basicName;
-        private final int dimension;
 
-        private PrimitiveType(String name, int dimension)
+        private PrimitiveType(String name)
         {
             this.basicName = name;
-            this.dimension = dimension;
         }
         
         public String getBasicName()
@@ -43,11 +42,6 @@ class Repository
 
         public String getName()
         {
-            String name = basicName;
-            for (int i = 0; i < getArrayDimension(); i++)
-            {
-                name += "[]";
-            }
             return basicName;
         }
 
@@ -83,7 +77,7 @@ class Repository
 
         public int getArrayDimension()
         {
-            return dimension;
+            return 0;
         }
 
         public boolean isPrimitive()
@@ -150,42 +144,49 @@ class Repository
         return javaType;
     }
 
-    public JavaType findTypeByName(String typeName)
+    public JavaType findTypeByName(String fullTypeName)
     {
+        // separate basic typename and array brackets
+        final Matcher arrayMatcher = ARRAY_PATTERN.matcher(fullTypeName);
+        final String typeName;
+        final int dimension;
+        if (arrayMatcher.find())
+        {
+            String brackets = arrayMatcher.group();
+            typeName = fullTypeName.substring(0, fullTypeName.length() - brackets.length());
+            dimension = brackets.length() / 2;
+        }
+        else
+        {
+            typeName = fullTypeName;
+            dimension = 0;
+        }
+        
+        // search cache for basic typename
         JavaType type = (JavaType) nameTypeMap.get(typeName);
         if (type != null)
         {
-            return type;
+            return wrapInArrayTypeIfRequired(dimension, type);
         }
-        final Matcher matcher = PRIMITIVE_PATTERN.matcher(typeName);
-        if (matcher.matches())
+        
+        final Matcher primitiveMatcher = PRIMITIVE_PATTERN.matcher(typeName);
+        if (primitiveMatcher.matches())
         {
-            final String basicType = matcher.group(1);
-            final String arrayBrackets = matcher.group(2);
-            final int dimension = arrayBrackets == null ? 0 : arrayBrackets.length() / 2;
-            JavaType primitive = new PrimitiveType(basicType, dimension);
+            JavaType primitive = new PrimitiveType(typeName);
             nameTypeMap.put(typeName, primitive);
-            return primitive; 
+            return wrapInArrayTypeIfRequired(dimension, primitive); 
         }
+        
         String resourceName = typeName.replace('.', '/') + ".class";
         InputStream is = classLoader.getResourceAsStream(resourceName);
         if (is == null)
         {
-            String clDetails;
-            if (classLoader instanceof URLClassLoader)
-            {
-                URLClassLoader ucl = (URLClassLoader) classLoader;
-                clDetails = String.valueOf(Arrays.asList(ucl.getURLs()));
-            }
-            else
-            {
-                clDetails = String.valueOf(classLoader);
-            }
-            throw new IllegalArgumentException("Type " + typeName + " is unknown in classLoader " + clDetails);
+            reportTypeUnknownInClassLoader(typeName);
         }
         try
         {
-            return readJavaTypeFromStream(is);
+            final AsmJavaType javaType = readJavaTypeFromStream(is);
+            return wrapInArrayTypeIfRequired(dimension, javaType);
         }
         catch (IOException ex)
         {
@@ -201,6 +202,39 @@ class Repository
             {
             }
         }
+    }
+
+    /**
+     * @param dimension
+     * @param javaType
+     * @return
+     */
+    private JavaType wrapInArrayTypeIfRequired(final int dimension, final JavaType javaType)
+    {
+        if (dimension == 0)
+        {
+            return javaType;
+        }
+        final ArrayType arrayType = new ArrayType(javaType, dimension);
+        return arrayType;
+    }
+
+    /**
+     * @param typeName
+     */
+    private void reportTypeUnknownInClassLoader(final String typeName)
+    {
+        String clDetails;
+        if (classLoader instanceof URLClassLoader)
+        {
+            URLClassLoader ucl = (URLClassLoader) classLoader;
+            clDetails = String.valueOf(Arrays.asList(ucl.getURLs()));
+        }
+        else
+        {
+            clDetails = String.valueOf(classLoader);
+        }
+        throw new IllegalArgumentException("Type " + typeName + " is unknown in classLoader " + clDetails);
     }
 
 }

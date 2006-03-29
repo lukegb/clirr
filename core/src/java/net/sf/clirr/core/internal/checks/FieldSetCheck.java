@@ -171,8 +171,8 @@ public class FieldSetCheck
 
     private void checkForTypeChange(Field bField, Field cField, JavaType currentClass)
     {
-        final String bSig = bField.getType().toString();
-        final String cSig = cField.getType().toString();
+        final String bSig = bField.getType().getName();
+        final String cSig = cField.getType().getName();
         if (!bSig.equals(cSig))
         {
             fireDiff(MSG_FIELD_TYPE_CHANGED,

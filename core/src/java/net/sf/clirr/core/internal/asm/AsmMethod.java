@@ -7,7 +7,7 @@ import net.sf.clirr.core.spi.JavaType;
 import net.sf.clirr.core.spi.Method;
 import net.sf.clirr.core.spi.Scope;
 
-public class AsmMethod extends AbstractAsmScoped implements Method
+class AsmMethod extends AbstractAsmScoped implements Method
 {
     private final Repository repository;
 
@@ -36,12 +36,12 @@ public class AsmMethod extends AbstractAsmScoped implements Method
         {
             return null;
         }
-        return findJavaType(returnType);
+        final JavaType javaType = findJavaType(returnType);
+        return javaType;
     }
 
     public JavaType[] getArgumentTypes()
     {
-        // TODO support primitive types
         JavaType[] ret = new JavaType[argumentTypes.length];
         for (int i = 0; i < ret.length; i++)
         {

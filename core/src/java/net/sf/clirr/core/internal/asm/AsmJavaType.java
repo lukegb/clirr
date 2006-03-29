@@ -1,7 +1,10 @@
 package net.sf.clirr.core.internal.asm;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.objectweb.asm.Opcodes;
 
@@ -10,11 +13,11 @@ import net.sf.clirr.core.spi.JavaType;
 import net.sf.clirr.core.spi.Method;
 import net.sf.clirr.core.spi.Scope;
 
-public class AsmJavaType extends AbstractAsmScoped implements JavaType
+class AsmJavaType extends AbstractAsmScoped implements JavaType
 {
     private final Repository repository;
     
-    private final String name;
+    private final String basicName;
 
     private String superClassName;
     
@@ -24,11 +27,11 @@ public class AsmJavaType extends AbstractAsmScoped implements JavaType
 
     private final String[] interfaceNames;
 
-    public AsmJavaType(Repository repository, int access, String name, String superClassName, String[] interfaceNames)
+    public AsmJavaType(Repository repository, int access, String basicName, String superClassName, String[] interfaceNames)
     {
         super(access);
         this.repository = repository;
-        this.name = name;
+        this.basicName = basicName;
         this.superClassName = superClassName;
         this.interfaceNames = interfaceNames;
     }
@@ -36,13 +39,13 @@ public class AsmJavaType extends AbstractAsmScoped implements JavaType
     
     public String getBasicName()
     {
-        // TODO handle array types correctly
-        return name;
+        return basicName;
     }
     
     public String getName()
     {
-        return name;
+        // arrays are always represented by ArrayType instances, so name == basicName
+        return basicName;
     }
 
     public JavaType getContainingClass()
@@ -67,11 +70,21 @@ public class AsmJavaType extends AbstractAsmScoped implements JavaType
 
     public JavaType[] getAllInterfaces()
     {
-        JavaType[] ret = new JavaType[interfaceNames.length];
-        for (int i = 0; i < ret.length; i++)
+        Set interfaceSet = new HashSet(interfaceNames.length);
+        for (int i = 0; i < interfaceNames.length; i++)
         {
-            ret[i] = repository.findTypeByName(interfaceNames[i]);
+            JavaType type = repository.findTypeByName(interfaceNames[i]);
+            interfaceSet.add(type);
         }
+        JavaType[] superClasses = getSuperClasses();
+        for (int i = 0; i < superClasses.length; i++)
+        {
+            JavaType superClass = superClasses[i];
+            final JavaType[] superInterfaces = superClass.getAllInterfaces();
+            interfaceSet.addAll(Arrays.asList(superInterfaces));
+        }
+        final JavaType[] ret = new JavaType[interfaceSet.size()];
+        interfaceSet.toArray(ret);
         return ret;
     }
 
@@ -138,8 +151,36 @@ public class AsmJavaType extends AbstractAsmScoped implements JavaType
         return getDeclaredScope();
     }
 
+
     public String toString()
     {
-        return "AsmJavaType[" + name + "]";
+        return "AsmJavaType[" + getName() + "]";
     }
+
+
+    public boolean equals(Object obj)
+    {
+        if (obj == null)
+        {
+            return false;
+        }
+        if (!AsmJavaType.class.equals(obj.getClass()))
+        {
+            return false;
+        }
+        AsmJavaType other = (AsmJavaType) obj;
+        if (other.repository != this.repository)
+        {
+            return false;
+        }
+        return (other.getName().equals(this.getName()));
+    }
+
+
+    public int hashCode()
+    {
+        return getName().hashCode();
+    }
+    
+    
 }
