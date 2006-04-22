@@ -90,7 +90,7 @@ public final class ClassSelector implements ClassFilter
      */
     public void addPackageTree(String packageName)
     {
-        packages.add(packageName);
+        packageTrees.add(packageName);
     }
 
     /**
