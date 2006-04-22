@@ -51,12 +51,6 @@ class ArrayType implements JavaType
         return null;
     }
 
-    public JavaType[] getInnerClasses()
-    {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
     public Method[] getMethods()
     {
         // TODO Auto-generated method stub

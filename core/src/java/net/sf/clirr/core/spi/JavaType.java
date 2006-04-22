@@ -50,8 +50,6 @@ public interface JavaType extends Named, Scoped
      */
     JavaType[] getAllInterfaces();
 
-    JavaType[] getInnerClasses();
-
     /**
      * All methods that are declared by this class.
      * Methods of superclasses/interfaces are not returned 

@@ -39,11 +39,6 @@ class PrimitiveType implements JavaType
         return new JavaType[0];
     }
 
-    public JavaType[] getInnerClasses()
-    {
-        return new JavaType[0];
-    }
-
     public Method[] getMethods()
     {
         return new Method[0];
