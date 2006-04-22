@@ -169,6 +169,7 @@ class Repository
             return wrapInArrayTypeIfRequired(dimension, type);
         }
         
+        // OK, typename is not in the cache. Is it a primitive type?
         final Matcher primitiveMatcher = PRIMITIVE_PATTERN.matcher(typeName);
         if (primitiveMatcher.matches())
         {
@@ -177,6 +178,7 @@ class Repository
             return wrapInArrayTypeIfRequired(dimension, primitive); 
         }
         
+        // it must be a normal class then, load it as a resource
         String resourceName = typeName.replace('.', '/') + ".class";
         InputStream is = classLoader.getResourceAsStream(resourceName);
         if (is == null)
