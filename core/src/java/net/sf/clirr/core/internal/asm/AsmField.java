@@ -13,11 +13,13 @@ class AsmField extends AbstractAsmScoped implements Field
     private final Object value;
     private final Type type;
     private final Repository repository;
+    private final AsmJavaType container;
 
-    AsmField(Repository repository, int access, String name, Object value, Type type)
+    AsmField(AsmJavaType container, int access, String name, Object value, Type type)
     {
         super(access);
-        this.repository = repository;
+        this.container = container;
+        this.repository = container.getRepository();
         this.name = name;
         this.value = value;
         this.type = type;
@@ -56,7 +58,9 @@ class AsmField extends AbstractAsmScoped implements Field
 
     public Scope getEffectiveScope()
     {
-        return getDeclaredScope(); // TODO: FIXME
+        final Scope containerScope = container.getEffectiveScope();
+        final Scope declaredScope = getDeclaredScope();
+        return containerScope.isLessVisibleThan(declaredScope) ? containerScope : declaredScope;
     }
 
 }

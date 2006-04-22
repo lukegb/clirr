@@ -33,7 +33,7 @@ class ClassInfoCollector extends ClassAdapter
     public FieldVisitor visitField(int access, String name, String desc, String signature, Object value)
     {
         Type type = Type.getType(desc);
-        final AsmField asmField = new AsmField(repository, access, name, value, type);
+        final AsmField asmField = new AsmField(javaType, access, name, value, type);
         javaType.addField(asmField);
         
         // currently no need for visiting annotations 
@@ -45,7 +45,7 @@ class ClassInfoCollector extends ClassAdapter
         final Type[] argumentTypes = Type.getArgumentTypes(desc);
         final Type returnType = Type.getReturnType(desc);
         final AsmMethod asmMethod = 
-            new AsmMethod(repository, access, returnType, name, argumentTypes, exceptions);
+            new AsmMethod(javaType, access, returnType, name, argumentTypes, exceptions);
         javaType.addMethod(asmMethod);
 
         // currently no need for visiting annotations 

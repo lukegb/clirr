@@ -18,12 +18,15 @@ class AsmMethod extends AbstractAsmScoped implements Method
     private final Type[] argumentTypes;
 
     private final String[] exceptions;
+
+    private AsmJavaType container;
     
-    AsmMethod(Repository repository, int access, Type returnType,
+    AsmMethod(AsmJavaType container, int access, Type returnType,
             String name, Type[] argumentTypes, String[] exceptions)
     {
         super(access);
-        this.repository = repository;
+        this.container = container;
+        this.repository = container.getRepository();
         this.returnType = returnType;
         this.name = name;
         this.argumentTypes = argumentTypes;
@@ -93,8 +96,9 @@ class AsmMethod extends AbstractAsmScoped implements Method
 
     public Scope getEffectiveScope()
     {
-        // TODO Auto-generated method stub
-        return getDeclaredScope();
+        final Scope containerScope = container.getEffectiveScope();
+        final Scope declaredScope = getDeclaredScope();
+        return containerScope.isLessVisibleThan(declaredScope) ? containerScope : declaredScope;
     }
 
 }

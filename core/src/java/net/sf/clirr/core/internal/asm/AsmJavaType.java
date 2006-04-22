@@ -27,7 +27,7 @@ class AsmJavaType extends AbstractAsmScoped implements JavaType
 
     private final String[] interfaceNames;
 
-    public AsmJavaType(Repository repository, int access, String basicName, String superClassName, String[] interfaceNames)
+    AsmJavaType(Repository repository, int access, String basicName, String superClassName, String[] interfaceNames)
     {
         super(access);
         this.repository = repository;
@@ -36,7 +36,13 @@ class AsmJavaType extends AbstractAsmScoped implements JavaType
         this.interfaceNames = interfaceNames;
     }
 
-    
+    Repository getRepository()
+    {
+        return repository;
+    }
+
+
+
     public String getBasicName()
     {
         return basicName;
@@ -50,8 +56,13 @@ class AsmJavaType extends AbstractAsmScoped implements JavaType
 
     public JavaType getContainingClass()
     {
-        // TODO Auto-generated method stub
-        return null;
+        int idx = basicName.lastIndexOf('$');
+        if (idx == -1)
+        {
+            return null;
+        }
+        // TODO: bug #1022446
+        return repository.findTypeByName(basicName.substring(0, idx));
     }
 
     public JavaType[] getSuperClasses()
@@ -88,12 +99,6 @@ class AsmJavaType extends AbstractAsmScoped implements JavaType
         return ret;
     }
 
-    public JavaType[] getInnerClasses()
-    {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
     void addMethod(Method method)
     {
         methods.add(method);
@@ -120,13 +125,13 @@ class AsmJavaType extends AbstractAsmScoped implements JavaType
 
     public boolean isPrimitive()
     {
-        // TODO Auto-generated method stub
+        // primitives are represented by PrimitiveType
         return false;
     }
 
     public int getArrayDimension()
     {
-        // TODO: handle correctly for method argument and return types
+        // array types are represented by ArrayType 
         return 0;
     }
 
@@ -147,8 +152,15 @@ class AsmJavaType extends AbstractAsmScoped implements JavaType
 
     public Scope getEffectiveScope()
     {
-        // TODO: replace with real impl
-        return getDeclaredScope();
+        JavaType container = getContainingClass();
+        final Scope declaredScope = getDeclaredScope();
+        if (container == null)
+        {
+            return declaredScope;
+        }
+
+        Scope containerScope = container.getEffectiveScope();
+        return containerScope.isLessVisibleThan(declaredScope) ? containerScope : declaredScope;
     }
 
 
