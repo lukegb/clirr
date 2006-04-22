@@ -9,10 +9,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import net.sf.clirr.core.spi.Field;
 import net.sf.clirr.core.spi.JavaType;
-import net.sf.clirr.core.spi.Method;
-import net.sf.clirr.core.spi.Scope;
 
 import org.objectweb.asm.ClassReader;
 
@@ -25,97 +22,6 @@ class Repository
 {
     private static final Pattern PRIMITIVE_PATTERN = Pattern.compile("(int|float|long|double|boolean|char|short|byte)");
     private static final Pattern ARRAY_PATTERN = Pattern.compile("(\\[\\])+$");
-
-    private static final class PrimitiveType implements JavaType
-    {
-        private final String basicName;
-
-        private PrimitiveType(String name)
-        {
-            this.basicName = name;
-        }
-        
-        public String getBasicName()
-        {
-            return basicName;
-        }
-
-        public String getName()
-        {
-            return basicName;
-        }
-
-        public JavaType getContainingClass()
-        {
-            return null;
-        }
-
-        public JavaType[] getSuperClasses()
-        {
-            return new JavaType[0];
-        }
-
-        public JavaType[] getAllInterfaces()
-        {
-            return new JavaType[0];
-        }
-
-        public JavaType[] getInnerClasses()
-        {
-            return new JavaType[0];
-        }
-
-        public Method[] getMethods()
-        {
-            return new Method[0];
-        }
-
-        public Field[] getFields()
-        {
-            return new Field[0];
-        }
-
-        public int getArrayDimension()
-        {
-            return 0;
-        }
-
-        public boolean isPrimitive()
-        {
-            return true;
-        }
-
-        public boolean isFinal()
-        {
-            return true;
-        }
-
-        public boolean isAbstract()
-        {
-            return false;
-        }
-
-        public boolean isInterface()
-        {
-            return false;
-        }
-
-        public Scope getDeclaredScope()
-        {
-            return Scope.PUBLIC;
-        }
-
-        public Scope getEffectiveScope()
-        {
-            // TODO Auto-generated method stub
-            return null;
-        }
-        
-        public String toString()
-        {
-            return getName();
-        }
-    }
 
     private final ClassLoader classLoader;
     private Map nameTypeMap = new HashMap();
