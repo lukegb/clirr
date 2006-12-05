@@ -41,8 +41,8 @@
                 for a password for anonymous, simply press the Enter key):
             </p>
 <source><![CDATA[
-cvs -d :pserver:anonymous@cvs.sourceforge.net:/cvsroot/clirr login
-cvs -z3 -d :pserver:anonymous@cvs.sourceforge.net:/cvsroot/clirr checkout clirr
+cvs -d :pserver:anonymous@clirr.cvs.sourceforge.net:/cvsroot/clirr login
+cvs -z3 -d :pserver:anonymous@clirr.cvs.sourceforge.net:/cvsroot/clirr checkout clirr
 cd clirr
 maven -Dgoal=jar:install multiproject:goal
 maven

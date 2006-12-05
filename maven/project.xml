@@ -15,8 +15,8 @@
   <shortDescription>Maven plugin for Clirr</shortDescription>
   <siteDirectory>/home/groups/c/cl/clirr/htdocs/maven</siteDirectory>
   <repository>
-    <connection>scm:cvs:pserver:anonymous@cvs.sourceforge.net:/cvsroot/clirr/maven:clirr</connection>
-    <url>http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/clirr/maven</url>
+    <connection>scm:cvs:pserver:anonymous@clirr.cvs.sourceforge.net:/cvsroot/clirr/maven:clirr</connection>
+    <url>http://clirr.cvs.sourceforge.net/clirr/maven</url>
   </repository>
   <dependencies>
     <dependency>

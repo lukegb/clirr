@@ -51,8 +51,8 @@
        the connection element has the form:
        scm:<system>:<system specific connection string> -->
   <repository>
-    <connection>scm:cvs:pserver:anonymous@cvs.sourceforge.net:/cvsroot/clirr:clirr</connection>
-    <url>http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/clirr</url>
+    <connection>scm:cvs:pserver:anonymous@clirr.cvs.sourceforge.net:/cvsroot/clirr:clirr</connection>
+    <url>http://clirr.cvs.sourceforge.net/clirr</url>
   </repository>
 
   <versions>
