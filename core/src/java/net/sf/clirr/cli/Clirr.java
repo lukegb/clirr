@@ -239,7 +239,7 @@ public class Clirr
         int pos = 0;
         while (pos < path.length())
         {
-            int colonPos = path.indexOf(pos, File.pathSeparatorChar);
+            int colonPos = path.indexOf(File.pathSeparatorChar, pos);
             if (colonPos == -1)
             {
                 files.add(new File(path.substring(pos)));

@@ -9,6 +9,10 @@
 
     <release version="0.7-dev" date="in CVS">
         <action dev="lkuehne" type="fix">
+            <!-- Bug #1700298-->
+            CLI: Classpath parsing was broken with multiple classpath entries.
+        </action>
+        <action dev="lkuehne" type="fix">
             BCEL was leaking into the Clirr API via our ClassFilter/ClassSelector.
         </action>
         <action dev="lkuehne" type="fix">
