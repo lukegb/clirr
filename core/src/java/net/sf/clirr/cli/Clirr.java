@@ -162,15 +162,25 @@ public class Clirr
         }
         catch (CheckerException ex)
         {
-            System.err.println("Unable to complete checks:" + ex.getMessage());
+            System.err.println("Unable to complete checks: " + ex.getMessage());
             System.exit(1);
         }
         catch (MalformedURLException ex)
         {
-            System.err.println("Unable to create classloader for 3rd party classes:" + ex.getMessage());
+            System.err.println("Unable to create classloader for 3rd party classes: " + ex.getMessage());
             System.err.println("old classpath: " + oldClassPath);
             System.err.println("new classpath: " + newClassPath);
             System.exit(1);
+        }
+        catch (RuntimeException ex)
+        {
+            System.err.println("Unable to complete checks: " + ex.toString());
+            Throwable cause = ex.getCause();
+            if (cause != null)
+            {
+                System.err.println("  caused by : " + cause.toString());
+            }
+            System.exit(2);
         }
     }
 
