@@ -30,7 +30,7 @@ public final class ClassLoaderUtil
             File entry = new File(cpEntry);
             try
             {
-                URL url = entry.toURL();
+                URL url = entry.toURI().toURL();
                 cpUrls[i] = url;
             }
             catch (MalformedURLException ex)

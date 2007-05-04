@@ -18,7 +18,7 @@ public abstract class TypeArrayBuilderSupport implements TypeArrayBuilder
             File jarFile = jarFiles[i];
             try
             {
-                URL url = jarFile.toURL();
+                URL url = jarFile.toURI().toURL();
                 jarUrls[i] = url;
             }
             catch (MalformedURLException ex)

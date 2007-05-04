@@ -267,7 +267,7 @@ public class Clirr
     {
         URL[] ret = new URL[files.length];
         for (int i = 0; i < files.length; i++) {
-            ret[i] = files[i].toURL();
+            ret[i] = files[i].toURI().toURL();
         }
         return ret;
     }
