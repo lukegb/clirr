@@ -11,7 +11,7 @@ public class InterfaceSetCheckTest extends AbstractCheckTestCase {
                 new ExpectedDiff("Added java.awt.event.WindowListener to the set of implemented interfaces", Severity.INFO, "testlib.ChangingHierarchy", null, null),
                 new ExpectedDiff("Added java.awt.event.WindowFocusListener to the set of implemented interfaces", Severity.INFO, "testlib.ChangingHierarchy", null, null),
                 new ExpectedDiff("Added java.awt.event.WindowStateListener to the set of implemented interfaces", Severity.INFO, "testlib.ChangingHierarchy", null, null),
-                new ExpectedDiff("Removed java.awt.event.MouseListener from the set of implemented interfaces", Severity.ERROR, "testlib.ChangingHierarchy", null, null),
+                new ExpectedDiff("Removed java.awt.event.MouseMotionListener from the set of implemented interfaces", Severity.ERROR, "testlib.ChangingHierarchy", null, null),
         };
         verify(expected);
     }
