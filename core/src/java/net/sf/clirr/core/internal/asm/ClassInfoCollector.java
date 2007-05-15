@@ -27,7 +27,7 @@ class ClassInfoCollector extends ClassAdapter
         final String className = prettyprintClassName(name);
         final String superClassName = prettyprintClassName(superName);
         final String[] interfaceNames = prettyprintClassNames(interfaces);
-        javaType = new AsmJavaType(repository, access, className, superClassName, interfaceNames);
+        javaType = new AsmJavaType(version, repository, access, className, superClassName, interfaceNames);
     }
 
     public FieldVisitor visitField(int access, String name, String desc, String signature, Object value)

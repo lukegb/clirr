@@ -27,9 +27,12 @@ class AsmJavaType extends AbstractAsmScoped implements JavaType
 
     private final String[] interfaceNames;
 
-    AsmJavaType(Repository repository, int access, String basicName, String superClassName, String[] interfaceNames)
+    private final int classFormatVersion;
+
+    AsmJavaType(int classFormatVersion, Repository repository, int access, String basicName, String superClassName, String[] interfaceNames)
     {
         super(access);
+        this.classFormatVersion = classFormatVersion;
         this.repository = repository;
         this.basicName = basicName;
         this.superClassName = superClassName;
