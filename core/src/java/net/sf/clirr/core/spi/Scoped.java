@@ -23,7 +23,7 @@ public interface Scoped
      * The effective Scope of this entity.
      * 
      * @return the minimum scope of the modifiers of this entity and
-     * it's all of it's containers.
+     * all of it's containers.
      */
     Scope getEffectiveScope();
 }
