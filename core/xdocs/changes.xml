@@ -8,6 +8,16 @@
   <body>
 
     <release version="0.7-dev" date="in CVS">
+        <action dev="lkuehne" type="add">
+            <!-- RFE #1719563-->
+            Made class format version accessible via java code structure SPI
+            (incompatible API change).
+        </action>
+        <action dev="lkuehne" type="fix">
+            <!-- Bug #1022446-->
+            Fixed Bug "Unable to locate enclosing class" when there are multiple
+            levels of nested inner classes.
+        </action>
         <action dev="lkuehne" type="fix">
             <!-- Bug #1700298-->
             CLI: Classpath parsing was broken with multiple classpath entries.
