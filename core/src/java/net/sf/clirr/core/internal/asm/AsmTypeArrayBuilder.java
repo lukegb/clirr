@@ -75,7 +75,6 @@ public class AsmTypeArrayBuilder extends TypeArrayBuilderSupport
             Repository repository, ZipEntry zipEntry, ZipFile zip)
             throws CheckerException
     {
-        String name = zipEntry.getName();
         InputStream is = null;
         try
         {
