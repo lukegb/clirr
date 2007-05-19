@@ -44,7 +44,7 @@ class TestDiffListener implements ApiDiffDispatcher, DiffListener
                 MessageTranslator translator = new MessageTranslator();
                 
                 StringBuffer buf = new StringBuffer();
-                buf.append("Expected diff " + expected + " was not generated.\n");
+                buf.append("Expected diff " + i + " '" + expected + "' was not generated.\n");
                 if (diffs.size() == 0)
                 {
                     buf.append("No diffs were generated.");
