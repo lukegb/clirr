@@ -30,7 +30,7 @@ import net.sf.clirr.core.internal.ExceptionUtil;
  * Unchecked exceptions are used for errors that are due to bugs within
  * clirr code (assertion-violation type problems).
  */
-public class CheckerException extends RuntimeException // TODO: revert this back to Exception to match the class doc above
+public class CheckerException extends Exception
 {
     public CheckerException(String msg)
     {

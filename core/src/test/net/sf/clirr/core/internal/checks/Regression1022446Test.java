@@ -1,5 +1,6 @@
 package net.sf.clirr.core.internal.checks;
 
+import net.sf.clirr.core.CheckerException;
 import net.sf.clirr.core.Severity;
 
 /**
@@ -10,7 +11,7 @@ import net.sf.clirr.core.Severity;
  */
 public class Regression1022446Test extends AbstractRegressionTestCase
 {
-    public void testRegression()
+    public void testRegression() throws CheckerException
     {
         runChecker();
         final TestDiffListener testDiffListener = getTestDiffListener();

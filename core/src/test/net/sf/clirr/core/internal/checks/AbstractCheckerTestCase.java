@@ -5,6 +5,7 @@ import java.net.URL;
 import java.net.URLClassLoader;
 
 import net.sf.clirr.core.Checker;
+import net.sf.clirr.core.CheckerException;
 import net.sf.clirr.core.ClassFilter;
 import net.sf.clirr.core.internal.asm.AsmTypeArrayBuilder;
 import net.sf.clirr.core.spi.JavaType;
@@ -65,14 +66,14 @@ public abstract class AbstractCheckerTestCase extends TestCase
     {
         runChecker();
 
-        // tdl.checkExpected(expected);
+        tdl.checkExpected(expected);
     }
 
     /**
      * Creates a Checker, wires it with a test listener, executes the
      * checker.
      */
-    protected void runChecker() {
+    protected void runChecker() throws CheckerException {
         Checker checker = createChecker();
         ClassFilter classSelector = createClassFilter();
 
