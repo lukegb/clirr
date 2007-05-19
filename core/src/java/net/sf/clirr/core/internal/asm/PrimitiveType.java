@@ -8,10 +8,17 @@ import net.sf.clirr.core.spi.Scope;
 class PrimitiveType implements JavaType
 {
     private final String basicName;
+    private final int classFormatVersion;
 
-    PrimitiveType(String name)
+    PrimitiveType(int classFormatVersion, String name)
     {
+        this.classFormatVersion = classFormatVersion;
         this.basicName = name;
+    }
+    
+    public int getClassFormatVersion()
+    {
+        return classFormatVersion;
     }
     
     public String getBasicName()

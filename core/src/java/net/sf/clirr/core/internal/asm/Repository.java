@@ -24,11 +24,13 @@ class Repository
     private static final Pattern ARRAY_PATTERN = Pattern.compile("(\\[\\])+$");
 
     private final ClassLoader classLoader;
-    private Map nameTypeMap = new HashMap();
+    private final Map nameTypeMap = new HashMap();
+    private final int primitiveClassFormatVersion;
 
     public Repository(ClassLoader classLoader)
     {
         this.classLoader = classLoader;
+        primitiveClassFormatVersion = findTypeByName("java.lang.Integer").getClassFormatVersion();
     }
 
     /**
@@ -42,6 +44,7 @@ class Repository
         
         ClassInfoCollector infoCollector = new ClassInfoCollector(this);
         
+        // TODO: Code for ASM 3.0: parser.accept(infoCollector, ClassReader.SKIP_CODE | ClassReader.SKIP_DEBUG);
         parser.accept(infoCollector, true);
         
         final AsmJavaType javaType = infoCollector.getJavaType();
@@ -79,7 +82,8 @@ class Repository
         final Matcher primitiveMatcher = PRIMITIVE_PATTERN.matcher(typeName);
         if (primitiveMatcher.matches())
         {
-            JavaType primitive = new PrimitiveType(typeName);
+            
+            JavaType primitive = new PrimitiveType(primitiveClassFormatVersion, typeName);
             nameTypeMap.put(typeName, primitive);
             return wrapInArrayTypeIfRequired(dimension, primitive); 
         }

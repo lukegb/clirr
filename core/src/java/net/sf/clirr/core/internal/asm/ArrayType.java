@@ -98,6 +98,11 @@ class ArrayType implements JavaType
         return basicType.getEffectiveScope();
     }
 
+    public int getClassFormatVersion()
+    {
+        return basicType.getClassFormatVersion();
+    }
+
     public String toString()
     {
         

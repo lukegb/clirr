@@ -8,6 +8,13 @@ package net.sf.clirr.core.spi;
 public interface JavaType extends Named, Scoped
 {
     /**
+     * The class format version of this class's bytecode.
+     * @return the class format version, like 49 for code that has been
+     * generated with the Java5 compiler. 
+     */
+    int getClassFormatVersion();
+    
+    /**
      * The type's fully qualified class name.
      * In case of array types, this is the name without the array brackets
      * 

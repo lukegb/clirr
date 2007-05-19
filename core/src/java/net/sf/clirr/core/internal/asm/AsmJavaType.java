@@ -166,6 +166,10 @@ class AsmJavaType extends AbstractAsmScoped implements JavaType
         return containerScope.isLessVisibleThan(declaredScope) ? containerScope : declaredScope;
     }
 
+    public int getClassFormatVersion()
+    {
+        return classFormatVersion;
+    }
 
     public String toString()
     {
