@@ -27,8 +27,6 @@ package net.sf.clirr.core;
  */
 public final class ApiDifference
 {
-    private static final int HASHCODE_MAGIC = 29;
-
     /**
      * Object representing the message text to be output (or null if
      * the constructor which takes a message string directly is used).
