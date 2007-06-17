@@ -27,6 +27,7 @@ import net.sf.clirr.core.internal.ApiDiffDispatcher;
 import net.sf.clirr.core.internal.ClassChangeCheck;
 import net.sf.clirr.core.internal.CoIterator;
 import net.sf.clirr.core.internal.NameComparator;
+import net.sf.clirr.core.internal.checks.ClassFormatVersionCheck;
 import net.sf.clirr.core.internal.checks.ClassHierarchyCheck;
 import net.sf.clirr.core.internal.checks.ClassModifierCheck;
 import net.sf.clirr.core.internal.checks.ClassScopeCheck;
@@ -76,6 +77,7 @@ public final class Checker implements ApiDiffDispatcher
     {
         classChecks.add(new ClassScopeCheck(this, scopeSelector));
         classChecks.add(new GenderChangeCheck(this));
+        classChecks.add(new ClassFormatVersionCheck(this));
         classChecks.add(new ClassModifierCheck(this));
         classChecks.add(new InterfaceSetCheck(this));
         classChecks.add(new ClassHierarchyCheck(this));

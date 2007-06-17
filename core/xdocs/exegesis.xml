@@ -736,6 +736,24 @@
         </p>
       </section>
 
+      <section name="10000 - Class Format Version Increased">
+        <p>Severity: <code>ERROR</code></p>
+        <p>
+          The new class is compiled with a higher "-target" compiler setting.
+          This means that library users must upgrade their Java compiler and/or
+          JVM in order to be able to use the new library version.
+        </p>
+      </section>
+
+      <section name="10001 - Class Format Version Decreased">
+        <p>Severity: <code>INFO</code></p>
+        <p>
+          The new class is compiled with a lower "-target" compiler setting.
+          Newer Java compilers and JVMs versions support all previous class
+          file formats, so this is a binary and source compatible change.
+        </p>
+      </section>
+
     </section>
   </body>
 </document>
