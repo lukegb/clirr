@@ -8,6 +8,13 @@
   <body>
 
     <release version="0.7-dev" date="in CVS">
+        <action dev="lkuehne" type="fix">
+            Fixed unit tests for scope change of inner classes. Surprisingly,
+            at the byte code level inner classes do not have the same access modifiers
+            as in the source code. Instead, private inner classes are technically
+            package visible and protected inner classes are technically public
+            (verified with the JDK's javap tool).
+        </action>
         <action dev="lkuehne" type="add">
             <!-- RFE #1719563-->
             Added check to report class format version changes.
