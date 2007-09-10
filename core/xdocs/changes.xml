@@ -8,6 +8,10 @@
   <body>
 
     <release version="0.7-dev" date="in CVS">
+        <action dev="lkuehne" type="add">
+            <!-- Patch #1791134 -->
+            Added french message translations, contributed by Luc Maisonobe.
+        </action>
         <action dev="lkuehne" type="fix">
             Fixed unit tests for scope change of inner classes. Surprisingly,
             at the byte code level inner classes do not have the same access modifiers
