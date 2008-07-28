@@ -1,5 +1,7 @@
 package net.sf.clirr.core.internal.checks;
 
+import java.util.Locale;
+
 import net.sf.clirr.core.ApiDifference;
 import net.sf.clirr.core.MessageTranslator;
 import net.sf.clirr.core.Severity;
@@ -10,7 +12,7 @@ import net.sf.clirr.core.Severity;
 
 public final class ExpectedDiff
 {
-    private static MessageTranslator translator = new MessageTranslator();
+    private static MessageTranslator translator = new MessageTranslator(Locale.ENGLISH);
 
     private String report;
     private Severity binaryCompatibilitySeverity;

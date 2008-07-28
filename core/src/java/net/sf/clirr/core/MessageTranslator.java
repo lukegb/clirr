@@ -36,16 +36,21 @@ public final class MessageTranslator
      */
     public static final String DFLT_RESOURCE_NAME = EventMessages.class.getName();
 
-    private Locale locale = Locale.getDefault();
+    private Locale locale;
     private String resourceName = DFLT_RESOURCE_NAME;
     private ResourceBundle messageText;
 
     /**
-     * This is a singleton class; to get an instance of this class, use
-     * the getInstance method.
+     * Translate using the system default locale.
      */
     public MessageTranslator()
     {
+    	this(Locale.getDefault());
+    }
+
+    public MessageTranslator(Locale locale)
+    {
+    	this.locale = locale;
     }
 
     /**
