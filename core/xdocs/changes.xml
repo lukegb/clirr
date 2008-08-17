@@ -9,6 +9,10 @@
 
     <release version="0.7-dev" date="in CVS">
         <action dev="lkuehne" type="add">
+            Dropped support for JDK 1.3. The API now uses chained exceptions,
+            consequently the ExceptionUtil class has been removed.
+        </action>
+        <action dev="lkuehne" type="add">
             <!-- Patch #1791134 -->
             Added french message translations, contributed by Luc Maisonobe.
         </action>

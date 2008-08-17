@@ -5,8 +5,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 
-import net.sf.clirr.core.internal.ExceptionUtil;
-
 public abstract class TypeArrayBuilderSupport implements TypeArrayBuilder
 {
 
@@ -23,12 +21,8 @@ public abstract class TypeArrayBuilderSupport implements TypeArrayBuilder
             }
             catch (MalformedURLException ex)
             {
-                // this should never happen
-                final IllegalArgumentException illegalArgumentException =
-                    new IllegalArgumentException(
-                            "Cannot create classloader with jar file " + jarFile);
-                ExceptionUtil.initCause(illegalArgumentException, ex);
-                throw illegalArgumentException;
+                throw new IllegalArgumentException(
+				        "Cannot create classloader with jar file " + jarFile, ex);
             }
         }
         final URLClassLoader jarsLoader = new URLClassLoader(jarUrls, thirdPartyClasses);

@@ -19,7 +19,6 @@
 
 package net.sf.clirr.core;
 
-import net.sf.clirr.core.internal.ExceptionUtil;
 
 /**
  * An exception class representing a failure during checking of the
@@ -39,7 +38,6 @@ public class CheckerException extends Exception
 
     public CheckerException(String msg, Throwable cause)
     {
-        super(msg);
-        ExceptionUtil.initCause(this, cause);
+        super(msg, cause);
     }
 }

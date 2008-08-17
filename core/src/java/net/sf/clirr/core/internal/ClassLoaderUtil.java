@@ -35,11 +35,8 @@ public final class ClassLoaderUtil
             }
             catch (MalformedURLException ex)
             {
-                final IllegalArgumentException illegalArgEx =
-                    new IllegalArgumentException(
-                        "Cannot create classLoader from classpath entry " + entry);
-                ExceptionUtil.initCause(illegalArgEx, ex);
-                throw illegalArgEx;
+                throw new IllegalArgumentException(
+				    "Cannot create classLoader from classpath entry " + entry, ex);
             }
         }
         final URLClassLoader classPathLoader = new URLClassLoader(cpUrls);
