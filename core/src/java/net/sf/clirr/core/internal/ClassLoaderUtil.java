@@ -12,7 +12,7 @@ import java.net.URLClassLoader;
 public final class ClassLoaderUtil
 {
     
-    /** prevent instatiation. */
+    /** prevent instantiation. */
     private ClassLoaderUtil()
     {
     }
