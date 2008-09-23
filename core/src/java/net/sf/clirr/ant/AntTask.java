@@ -32,7 +32,7 @@ import net.sf.clirr.core.ClassSelector;
 import net.sf.clirr.core.PlainDiffListener;
 import net.sf.clirr.core.XmlDiffListener;
 import net.sf.clirr.core.internal.ClassLoaderUtil;
-import net.sf.clirr.core.internal.asm.AsmTypeArrayBuilder;
+import net.sf.clirr.core.spi.DefaultTypeArrayBuilderFactory;
 import net.sf.clirr.core.spi.JavaType;
 import net.sf.clirr.core.spi.TypeArrayBuilder;
 
@@ -295,8 +295,10 @@ public final class AntTask extends Task
         {
             ClassFilter classSelector = buildClassFilter();
             
-            TypeArrayBuilder tab1 = new AsmTypeArrayBuilder();
-            TypeArrayBuilder tab2 = new AsmTypeArrayBuilder();
+            DefaultTypeArrayBuilderFactory tabFactory = new DefaultTypeArrayBuilderFactory();
+
+            TypeArrayBuilder tab1 = tabFactory.build();
+            TypeArrayBuilder tab2 = tabFactory.build();
 
             final JavaType[] origClasses =
                 tab1.createClassSet(origJars, origThirdPartyLoader, classSelector);

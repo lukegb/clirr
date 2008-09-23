@@ -8,8 +8,9 @@ import net.sf.clirr.core.CheckerFactory;
 import net.sf.clirr.core.ClassFilter;
 import net.sf.clirr.core.Severity;
 import net.sf.clirr.core.internal.ClassChangeCheck;
-import net.sf.clirr.core.internal.asm.AsmTypeArrayBuilder;
+import net.sf.clirr.core.spi.DefaultTypeArrayBuilderFactory;
 import net.sf.clirr.core.spi.JavaType;
+import net.sf.clirr.core.spi.TypeArrayBuilder;
 
 public class ClassAddedRemovedTest extends AbstractCheckTestCase
 {
@@ -21,8 +22,9 @@ public class ClassAddedRemovedTest extends AbstractCheckTestCase
         
         ClassFilter classSelector = createClassFilter();
 
-        AsmTypeArrayBuilder tabOrig = new AsmTypeArrayBuilder();
-        AsmTypeArrayBuilder tabNew = new AsmTypeArrayBuilder();
+        DefaultTypeArrayBuilderFactory tabFactory = new DefaultTypeArrayBuilderFactory();
+        TypeArrayBuilder tabOrig = tabFactory.build();
+        TypeArrayBuilder tabNew = tabFactory.build();
         final JavaType[] origClasses =
             tabOrig.createClassSet(getBaseLine(), new URLClassLoader(new URL[]{}), classSelector);
         

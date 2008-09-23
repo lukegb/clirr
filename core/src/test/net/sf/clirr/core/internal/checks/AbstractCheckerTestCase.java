@@ -4,13 +4,13 @@ import java.io.File;
 import java.net.URL;
 import java.net.URLClassLoader;
 
+import junit.framework.TestCase;
 import net.sf.clirr.core.Checker;
 import net.sf.clirr.core.CheckerException;
 import net.sf.clirr.core.ClassFilter;
-import net.sf.clirr.core.internal.asm.AsmTypeArrayBuilder;
+import net.sf.clirr.core.spi.DefaultTypeArrayBuilderFactory;
 import net.sf.clirr.core.spi.JavaType;
-
-import junit.framework.TestCase;
+import net.sf.clirr.core.spi.TypeArrayBuilder;
 
 /**
  * Abstract baseclass for unit tests that check the output of the {@link Checker}.
@@ -77,8 +77,9 @@ public abstract class AbstractCheckerTestCase extends TestCase
         Checker checker = createChecker();
         ClassFilter classSelector = createClassFilter();
 
-        AsmTypeArrayBuilder tabOrig = new AsmTypeArrayBuilder();
-        AsmTypeArrayBuilder tabNew = new AsmTypeArrayBuilder();
+        DefaultTypeArrayBuilderFactory tabFactory = new DefaultTypeArrayBuilderFactory();
+        TypeArrayBuilder tabOrig = tabFactory.build();
+        TypeArrayBuilder tabNew = tabFactory.build();
         final JavaType[] origClasses =
             tabOrig.createClassSet(getBaseLine(), new URLClassLoader(new URL[]{}), classSelector);
         

@@ -19,13 +19,22 @@
 
 package net.sf.clirr.cli;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.PrintWriter;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.util.ArrayList;
+
 import net.sf.clirr.core.Checker;
 import net.sf.clirr.core.CheckerException;
 import net.sf.clirr.core.ClassSelector;
+import net.sf.clirr.core.DiffListener;
 import net.sf.clirr.core.PlainDiffListener;
 import net.sf.clirr.core.XmlDiffListener;
-import net.sf.clirr.core.DiffListener;
-import net.sf.clirr.core.internal.asm.AsmTypeArrayBuilder;
+import net.sf.clirr.core.spi.DefaultTypeArrayBuilderFactory;
 import net.sf.clirr.core.spi.JavaType;
 import net.sf.clirr.core.spi.Scope;
 import net.sf.clirr.core.spi.TypeArrayBuilder;
@@ -36,16 +45,8 @@ import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.util.ArrayList;
-
 /**
- * Commandline interface for generating a difference report or checking
+ * Command line interface for generating a difference report or checking
  * for binary compatibility between two versions of the same application.
  */
 
@@ -77,7 +78,7 @@ public class Clirr
 
         if ((oldPath == null) || (newPath == null))
         {
-            usage(options);
+            printUsage(options, System.err);
             System.exit(-1);
         }
 
@@ -132,7 +133,7 @@ public class Clirr
         else
         {
             System.err.println("Invalid style option. Must be one of 'text', 'xml'.");
-            usage(options);
+            printUsage(options, System.err);
             System.exit(-1);
         }
 
@@ -147,8 +148,10 @@ public class Clirr
             ClassLoader loader1 = new URLClassLoader(convertFilesToURLs(pathToFileArray(oldClassPath)));
             ClassLoader loader2 = new URLClassLoader(convertFilesToURLs(pathToFileArray(newClassPath)));
 
-            TypeArrayBuilder tab1 = new AsmTypeArrayBuilder();
-            TypeArrayBuilder tab2 = new AsmTypeArrayBuilder();
+            DefaultTypeArrayBuilderFactory tabFactory = new DefaultTypeArrayBuilderFactory();
+            
+            TypeArrayBuilder tab1 = tabFactory.build();
+            TypeArrayBuilder tab2 = tabFactory.build();
 
             final JavaType[] origClasses =
                 tab1.createClassSet(origJars, loader1, classSelector);
@@ -201,7 +204,7 @@ public class Clirr
         catch (ParseException ex)
         {
             System.err.println("Invalid command line arguments.");
-            usage(options);
+            printUsage(options, System.err);
             System.exit(-1);
         }
         return cmdline;
@@ -227,14 +230,15 @@ public class Clirr
         return options;
     }
 
-    private void usage(Options options)
+    private void printUsage(Options options, OutputStream os)
     {
         HelpFormatter hf = new HelpFormatter();
-        PrintWriter out = new PrintWriter(System.err);
+        PrintWriter out = new PrintWriter(os);
         hf.printHelp(
-            75,
+            out, 75,
             "java " + getClass().getName() + " -o path -n path [options]",
-            null, options, null);
+            null, options, HelpFormatter.DEFAULT_LEFT_PAD, HelpFormatter.DEFAULT_DESC_PAD, null);
+        out.flush();
     }
 
     private File[] pathToFileArray(String path)
