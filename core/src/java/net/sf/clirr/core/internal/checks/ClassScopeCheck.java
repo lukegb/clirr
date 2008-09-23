@@ -40,7 +40,7 @@ import net.sf.clirr.core.spi.Scope;
  * way to tell the real scope of a nested class is to ignore the scope in
  * the actual class file itself, and instead look in the "InnerClasses"
  * attribute stored on the enclosing class. This is exactly what the java
- * compiler does when compiling, and what the jvm does when verifying class
+ * compiler does when compiling, and what the JVM does when verifying class
  * linkage at runtime.
  *
  * @author Simon Kitching
