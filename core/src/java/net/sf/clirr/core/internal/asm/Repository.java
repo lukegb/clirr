@@ -14,7 +14,7 @@ import net.sf.clirr.core.spi.JavaType;
 import org.objectweb.asm.ClassReader;
 
 /**
- * Stores all known JavaTypes, used to implement crossreferences between types.
+ * Stores all known JavaTypes, used to implement cross references between types.
  *  
  * @author lkuehne
  */
@@ -55,7 +55,7 @@ class Repository
 
     public JavaType findTypeByName(String fullTypeName)
     {
-        // separate basic typename and array brackets
+        // separate basic typeName and array brackets
         final Matcher arrayMatcher = ARRAY_PATTERN.matcher(fullTypeName);
         final String typeName;
         final int dimension;
@@ -71,14 +71,14 @@ class Repository
             dimension = 0;
         }
         
-        // search cache for basic typename
+        // search cache for basic typeName
         JavaType type = (JavaType) nameTypeMap.get(typeName);
         if (type != null)
         {
             return wrapInArrayTypeIfRequired(dimension, type);
         }
         
-        // OK, typename is not in the cache. Is it a primitive type?
+        // OK, typeName is not in the cache. Is it a primitive type?
         final Matcher primitiveMatcher = PRIMITIVE_PATTERN.matcher(typeName);
         if (primitiveMatcher.matches())
         {
