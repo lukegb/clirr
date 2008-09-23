@@ -240,12 +240,12 @@ public class MethodSetCheck
             JavaType currentVersion,
             List currentMethods)
     {
-        // ok, we now have to deal with the tricky cases, where it is not
+        // OK, we now have to deal with the tricky cases, where it is not
         // immediately obvious which old methods correspond to which new
         // methods.
         //
         // Here we build a similarity table, i.e. for new method i and old
-        // method j we have number that charaterizes how similar the method
+        // method j we have number that characterizes how similar the method
         // signatures are (0 means equal, higher number means more different)
 
         while (!baselineMethods.isEmpty() && !currentMethods.isEmpty())
@@ -338,7 +338,7 @@ public class MethodSetCheck
     }
 
     /**
-     * Searches the class hierarchy for a method that has a certtain signature.
+     * Searches the class hierarchy for a method that has a certain signature.
      * @param methodSignature the sig we're looking for
      * @param clazz class where search starts
      * @return class name of a superinterface of clazz, might be null
