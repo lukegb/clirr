@@ -21,22 +21,20 @@
             </p>
             <ul>
                 <li>
-                    <a href="http://maven.apache.org">Maven</a> 1.0.2.
-                    Maven 1.1 might also work but is currently untested.
-                    Maven2 will not work.
+                    <a href="http://maven.apache.org">Maven</a> 2.0.9.
+                    Maven 1 no longer works and other versions of Maven 2 are currently untested.
                 </li>
                 <li>
                     A CVS client. If you are on Linux you probably
                     already have that. If you are on Windows, you can use
-                    the binary that is included in the WinCVS
-                    distribution. For other platforms, please search
+                    TortoiseCVS. For other platforms, please search
                     Google for a precompiled client or build one
                     yourself using the sources available from the <a
                     href="http://www.cvshome.org">CVS homepage</a>.
                 </li>
             </ul>
             <p>
-                To build Clirr, open a command line shell, cd to an empty
+                To build Clirr from CVS, open a command line shell, cd to an empty
                 directory and enter the following commands (when prompted
                 for a password for anonymous, simply press the Enter key):
             </p>
@@ -44,19 +42,14 @@
 cvs -d :pserver:anonymous@clirr.cvs.sourceforge.net:/cvsroot/clirr login
 cvs -z3 -d :pserver:anonymous@clirr.cvs.sourceforge.net:/cvsroot/clirr checkout clirr
 cd clirr
-maven -Dgoal=jar:install multiproject:goal
-maven
+mvn package
 ]]></source>
-<!--
-TODO: Change the build so maven plugin will build without the explicit multiproject call above
--->
             <p>
                 Note that the anonymous CVS server on Sourceforge is
                 under heavy load, and you might experience
                 difficulties when checking out the sources. This is
                 temporary, please try again a few minutes
-                later. Sourceforge is currently in the process of
-                installing more capable hardware.
+                later.
             </p>
         </section>
     </body>
