@@ -77,6 +77,9 @@
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
         <version>2.0.2</version>
+        <configuration>
+          <encoding>${project.build.sourceEncoding}</encoding>
+        </configuration>
       </plugin>
 
       <plugin>
@@ -98,10 +101,10 @@
                 <property name="srcbase" value="src/testinput"/>
                 <property name="dstbase" value="target/testinput"/>
                 <mkdir dir="${dstbase}/testlib-v1"/>
-                <javac srcdir="${srcbase}/testlib-v1" destdir="${dstbase}/testlib-v1"/>
+                <javac srcdir="${srcbase}/testlib-v1" destdir="${dstbase}/testlib-v1" encoding="${project.build.sourceEncoding}"/>
                 <jar destfile="target/testlib-v1.jar" basedir="${dstbase}/testlib-v1"/>
                 <mkdir dir="${dstbase}/testlib-v2"/>
-                <javac srcdir="${srcbase}/testlib-v2" destdir="${dstbase}/testlib-v2"/>
+                <javac srcdir="${srcbase}/testlib-v2" destdir="${dstbase}/testlib-v2" encoding="${project.build.sourceEncoding}"/>
                 <jar destfile="target/testlib-v2.jar" basedir="${dstbase}/testlib-v2"/>
               </tasks>
             </configuration>
@@ -206,7 +209,9 @@
         <artifactId>maven-javadoc-plugin</artifactId>
         <version>2.3</version>
         <configuration>
+          <encoding>${project.build.sourceEncoding}</encoding>
           <show>protected</show>
+          <excludePackageNames>net.sf.clirr.core.internal</excludePackageNames>
         </configuration>
       </plugin>
 
