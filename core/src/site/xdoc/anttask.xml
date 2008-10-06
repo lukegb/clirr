@@ -28,8 +28,8 @@
 &lt;target name="checkbinarycompatibility" depends="build"&gt;
 
   &lt;!-- buildtools.classpath should either contain
-        clirr-core-uber.jar or alternatively
-        clirr-core.jar and the libraries it depends on --&gt;
+        clirr-core-@VERSION@-all.jar or alternatively
+        clirr-core-@VERSION@.jar and the libraries it depends on --&gt;
 
   &lt;taskdef
         classpathref="buildtools.classpath"
