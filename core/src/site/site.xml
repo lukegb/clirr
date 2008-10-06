@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<project name="Clirr Core">
+	<title>Clirr Core</title>
+	<bannerRight>
+		<name>Clirr</name>
+		<src>images/clirr.png</src>
+	</bannerRight>
+	<body>
+		<links>
+			<item name="SourceForge Project Page" href="http://sourceforge.net/projects/clirr" />
+			<item name="Hosted by SourceForge" href="http://sourceforge.net/" />
+		</links>
+		<menu name="Clirr Core">
+			<item name="Overview" href="/index.html" />
+			<item name="Running Clirr">
+				<item name="From Ant" href="/anttask.html" />
+				<item name="From a command-line" href="/runcli.html" />
+			</item>
+			<item name="Message Explanations" href="/exegesis.html" />
+		</menu>
+		<menu ref="reports" />
+	</body>
+</project>
