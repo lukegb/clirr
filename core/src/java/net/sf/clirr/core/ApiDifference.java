@@ -19,6 +19,8 @@
 
 package net.sf.clirr.core;
 
+import java.text.MessageFormat;
+
 
 /**
  * Describes an API change.
@@ -40,16 +42,16 @@ public final class ApiDifference
      * severity of the change in terms of binary compatibility,
      * as determined by clirr.
      */
-    private Severity binaryCompatibilitySeverity;
+    private final Severity binaryCompatibilitySeverity;
 
     /**
      * severity of the change in terms of source compatibility,
      * as determined by clirr.
      */
-    private Severity sourceCompatibilitySeverity;
+    private final Severity sourceCompatibilitySeverity;
 
     /** The fully qualified class name that is affected by the API change. */
-    private String affectedClass;
+    private final String affectedClass;
 
     /**
      * The method that is affected, if any.
@@ -63,7 +65,7 @@ public final class ApiDifference
      * api change affects a field or is global
      * (like "class is now final").
      */
-    private String affectedMethod;
+    private final String affectedMethod;
 
     /**
      * The field that is affected, if any.
@@ -76,14 +78,14 @@ public final class ApiDifference
      * api change affects a method or is global
      * (like "class is now final").
      */
-    private String affectedField;
+    private final String affectedField;
 
     /**
      * The set of additional parameters that are available for use
      * when building the actual message description. These vary depending
      * upon the actual difference being reported.
      */
-    private String[] extraInfo;
+    private final String[] extraInfo;
 
     /**
      * Invokes the two-severity-level version of this constructor.
@@ -233,7 +235,7 @@ public final class ApiDifference
             strings[i + 3] = extraInfo[i];
         }
 
-        return java.text.MessageFormat.format(desc, strings);
+        return MessageFormat.format(desc, strings);
     }
 
     /**

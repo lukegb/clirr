@@ -14,13 +14,13 @@ import net.sf.clirr.core.spi.TypeArrayBuilder;
 
 /**
  * Abstract baseclass for unit tests that check the output of the {@link Checker}.
- *  
+ *
  * @author lk
  */
 public abstract class AbstractCheckerTestCase extends TestCase
 {
-    private TestDiffListener tdl = new TestDiffListener();
-    
+    private final TestDiffListener tdl = new TestDiffListener();
+
     /**
      * Returns the directory where test input jars are located.
      * <p>
@@ -28,19 +28,19 @@ public abstract class AbstractCheckerTestCase extends TestCase
      * This is handled automatically during by the normal build but
      * requires manual intervention so it the tests can be run from the IDE.
      * <p>
-     * For example in Eclipse, you need to add a VM argument like 
+     * For example in Eclipse, you need to add a VM argument like
      * <code>-Dtestinput=target/testinput</code> in your JUnit launch configuration.
      */
-    protected final File getTestInputDir() 
+    protected final File getTestInputDir()
     {
         // property is set in project.properties
         return new File(System.getProperty("testinput"));
     }
 
     /**
-     * Returns the baseline jar files to test agaoinst (the old version).
+     * Returns the baseline jar files to test against (the old version).
      */
-    protected File[] getBaseLine() 
+    protected File[] getBaseLine()
     {
         return new File[]{
             new File(getTestInputDir(), "testlib-v1.jar")
@@ -50,7 +50,7 @@ public abstract class AbstractCheckerTestCase extends TestCase
     /**
      * Returns the current set of jar files (the new version).
      */
-    protected File[] getCurrent() 
+    protected File[] getCurrent()
     {
         return new File[]{
             new File(getTestInputDir(), "testlib-v2.jar")
@@ -82,7 +82,7 @@ public abstract class AbstractCheckerTestCase extends TestCase
         TypeArrayBuilder tabNew = tabFactory.build();
         final JavaType[] origClasses =
             tabOrig.createClassSet(getBaseLine(), new URLClassLoader(new URL[]{}), classSelector);
-        
+
         final JavaType[] newClasses =
             tabNew.createClassSet(getCurrent(), new URLClassLoader(new URL[]{}), classSelector);
 
@@ -97,8 +97,8 @@ public abstract class AbstractCheckerTestCase extends TestCase
 
     /**
      * Createas the Checker that is configured to run this test.
-     * 
-     * @param tdl a 
+     *
+     * @param tdl a
      */
     protected abstract Checker createChecker();
 

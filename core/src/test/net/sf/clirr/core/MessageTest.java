@@ -1,5 +1,6 @@
 package net.sf.clirr.core;
 
+import java.util.Collection;
 import java.util.Locale;
 import junit.framework.TestCase;
 import net.sf.clirr.core.MessageManager;
@@ -42,7 +43,7 @@ public class MessageTest extends TestCase
     public void testComplete()
     {
         Checker checker = CheckerFactory.createChecker();
-        java.util.Collection messages = MessageManager.getInstance().getMessages();
+        Collection messages = MessageManager.getInstance().getMessages();
 
         // there are at least 10 messages in the system
         assertTrue(messages.size() > 10);
