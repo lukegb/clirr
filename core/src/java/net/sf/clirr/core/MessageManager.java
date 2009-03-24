@@ -19,6 +19,8 @@
 
 package net.sf.clirr.core;
 
+import java.io.Serializable;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -31,13 +33,15 @@ import java.util.Collection;
 public final class MessageManager
 {
     private static MessageManager instance;
-    private ArrayList messages = new ArrayList();
+    private final ArrayList messages = new ArrayList();
 
     /**
      * Utility class to sort messages by their numeric ids.
      */
-    private static class MessageComparator implements Comparator
+    private static class MessageComparator implements Comparator, Serializable
     {
+        private static final long serialVersionUID = -7967384385861738856L;
+
         public int compare(Object o1, Object o2)
         {
             Message m1 = (Message) o1;
@@ -85,7 +89,7 @@ public final class MessageManager
      */
     public void checkUnique()
     {
-        java.util.Collections.sort(messages, new MessageComparator());
+        Collections.sort(messages, new MessageComparator());
         int lastId = -1;
         for (Iterator i = messages.iterator(); i.hasNext();)
         {

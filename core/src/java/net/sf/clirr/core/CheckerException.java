@@ -31,6 +31,8 @@ package net.sf.clirr.core;
  */
 public class CheckerException extends Exception
 {
+    private static final long serialVersionUID = -431747144112381632L;
+
     public CheckerException(String msg)
     {
         super(msg);

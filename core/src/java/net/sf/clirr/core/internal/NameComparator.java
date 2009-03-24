@@ -1,18 +1,21 @@
 package net.sf.clirr.core.internal;
 
+import java.io.Serializable;
 import java.util.Comparator;
 
 import net.sf.clirr.core.spi.Named;
 
 /**
  * Compares {@link Named named entities} by their name.
- * 
+ *
  * @author Simon Kitching
  * @author lkuehne
  */
-public final class NameComparator implements Comparator 
+public final class NameComparator implements Comparator, Serializable
 {
-    public NameComparator() 
+    private static final long serialVersionUID = -6730235504132614557L;
+
+    public NameComparator()
     {
     }
 

@@ -27,8 +27,8 @@ package net.sf.clirr.core;
 public final class Severity implements Comparable
 {
 
-    private String representation;
-    private int value;
+    private final String representation;
+    private final int value;
 
     private Severity(String representation, int value)
     {
@@ -56,5 +56,28 @@ public final class Severity implements Comparable
     {
         Severity other = (Severity) o;
         return this.value - other.value;
+    }
+
+    public int hashCode()
+    {
+        return value;
+    }
+
+    public boolean equals(Object obj)
+    {
+        if (this == obj)
+        {
+            return true;
+        }
+        if (obj == null)
+        {
+            return false;
+        }
+        if (getClass() != obj.getClass())
+        {
+            return false;
+        }
+        Severity other = (Severity) obj;
+        return (value == other.value);
     }
 }
