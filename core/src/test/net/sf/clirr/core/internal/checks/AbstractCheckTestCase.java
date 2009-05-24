@@ -13,9 +13,9 @@ import net.sf.clirr.core.internal.ClassChangeCheck;
 public abstract class AbstractCheckTestCase extends AbstractCheckerTestCase
 {
     /**
-     * Createas the Checker that is configured to run this test.
-     * 
-     * @param tdl a 
+     * Creates the Checker that is configured to run this test.
+     *
+     * @param tdl a
      */
     protected Checker createChecker()
     {
