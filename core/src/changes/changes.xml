@@ -8,6 +8,13 @@
   <body>
 
     <release version="0.7-SNAPSHOT" date="in CVS">
+        <action dev="lkuehne" type="add">
+            Old and new classes no longer have to be packaged in jars, a directory will work as well,
+            both on the command line tool and the SPI level
+            (request by Jochen Wiedmann from the clirr-maven-plugin team).
+            For the Ant frontend this feature is currently not available, because the origFiles and
+            newFiles filesets cannot contain directories.
+        </action>
         <action dev="lkuehne" type="fix">
             Removed dependency commons-lang.
         </action>

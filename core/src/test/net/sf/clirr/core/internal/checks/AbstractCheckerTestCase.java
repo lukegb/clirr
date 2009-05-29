@@ -38,7 +38,7 @@ public abstract class AbstractCheckerTestCase extends TestCase
     }
 
     /**
-     * Returns the baseline jar files to test against (the old version).
+     * Returns the baseline classpath entry files to test against (the old version).
      */
     protected File[] getBaseLine()
     {
@@ -48,12 +48,12 @@ public abstract class AbstractCheckerTestCase extends TestCase
     }
 
     /**
-     * Returns the current set of jar files (the new version).
+     * Returns the current set of classpath entry files (the new version).
      */
     protected File[] getCurrent()
     {
         return new File[]{
-            new File(getTestInputDir(), "testlib-v2.jar")
+            new File(getTestInputDir(), "testinput/testlib-v2")
         };
     }
 

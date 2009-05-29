@@ -8,26 +8,27 @@ import java.net.URLClassLoader;
 public abstract class TypeArrayBuilderSupport implements TypeArrayBuilder
 {
 
-    protected ClassLoader createClassLoader(File[] jarFiles, ClassLoader thirdPartyClasses)
+    protected ClassLoader createClassLoader(File[] classPathEntries, ClassLoader thirdPartyClasses)
     {
-        final URL[] jarUrls = new URL[jarFiles.length];
-        for (int i = 0; i < jarFiles.length; i++)
+        final URL[] entryUrls = new URL[classPathEntries.length];
+        for (int i = 0; i < classPathEntries.length; i++)
         {
-            File jarFile = jarFiles[i];
+            File entry = classPathEntries[i];
             try
             {
-                URL url = jarFile.toURI().toURL();
-                jarUrls[i] = url;
+                URL url = entry.toURI().toURL();
+                entryUrls[i] = url;
             }
             catch (MalformedURLException ex)
             {
+                String fileType = entry.isDirectory() ? "directory" : "jar file";
                 throw new IllegalArgumentException(
-				        "Cannot create classloader with jar file " + jarFile, ex);
+                        "Cannot create classloader with " + fileType + " " + entry, ex);
             }
         }
-        final URLClassLoader jarsLoader = new URLClassLoader(jarUrls, thirdPartyClasses);
-        
-        return jarsLoader;
+        final URLClassLoader loader = new URLClassLoader(entryUrls, thirdPartyClasses);
+
+        return loader;
     }
 
 }

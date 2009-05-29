@@ -138,8 +138,8 @@ public class Clirr
         }
 
 
-        File[] origJars = pathToFileArray(oldPath);
-        File[] newJars = pathToFileArray(newPath);
+        File[] origClassPathEntries = pathToFileArray(oldPath);
+        File[] newClassPathEntries = pathToFileArray(newPath);
 
         checker.addDiffListener(diffListener);
 
@@ -149,18 +149,18 @@ public class Clirr
             ClassLoader loader2 = new URLClassLoader(convertFilesToURLs(pathToFileArray(newClassPath)));
 
             DefaultTypeArrayBuilderFactory tabFactory = new DefaultTypeArrayBuilderFactory();
-            
+
             TypeArrayBuilder tab1 = tabFactory.build();
             TypeArrayBuilder tab2 = tabFactory.build();
 
             final JavaType[] origClasses =
-                tab1.createClassSet(origJars, loader1, classSelector);
-            
+                tab1.createClassSet(origClassPathEntries, loader1, classSelector);
+
             final JavaType[] newClasses =
-                tab2.createClassSet(newJars, loader2, classSelector);
-            
+                tab2.createClassSet(newClassPathEntries, loader2, classSelector);
+
             checker.reportDiffs(origClasses, newClasses);
-            
+
             System.exit(0);
         }
         catch (CheckerException ex)
@@ -193,7 +193,7 @@ public class Clirr
      * @param options
      * @return
      */
-    private CommandLine parseCommandLine(String[] args, Options options) 
+    private CommandLine parseCommandLine(String[] args, Options options)
     {
         BasicParser parser = new BasicParser();
         CommandLine cmdline = null;
@@ -245,9 +245,9 @@ public class Clirr
     {
         if (path == null)
         {
-            return new File[0];            
+            return new File[0];
         }
-        
+
         ArrayList files = new ArrayList();
 
         int pos = 0;
@@ -266,7 +266,7 @@ public class Clirr
 
         return (File[]) files.toArray(new File[files.size()]);
     }
-    
+
     private URL[] convertFilesToURLs(File[] files) throws MalformedURLException
     {
         URL[] ret = new URL[files.length];
