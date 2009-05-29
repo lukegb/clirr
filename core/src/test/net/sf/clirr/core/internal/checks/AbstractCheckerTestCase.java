@@ -96,9 +96,7 @@ public abstract class AbstractCheckerTestCase extends TestCase
     protected abstract ClassFilter createClassFilter();
 
     /**
-     * Createas the Checker that is configured to run this test.
-     *
-     * @param tdl a
+     * Creates the Checker that is configured to run this test.
      */
     protected abstract Checker createChecker();
 
